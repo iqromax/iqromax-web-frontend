@@ -49,11 +49,10 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
 
   // Prevent body scroll when mobile menu is open and auto-scroll to active item
   useEffect(() => {
+    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
-      
-      // Auto-scroll to active navigation item
-      setTimeout(() => {
+      scrollTimeout = setTimeout(() => {
         const activeButton = navScrollRef.current?.querySelector('[data-active="true"]');
         if (activeButton) {
           activeButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -64,6 +63,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
     }
     return () => {
       document.body.style.overflow = '';
+      if (scrollTimeout) clearTimeout(scrollTimeout);
     };
   }, [mobileMenuOpen]);
 

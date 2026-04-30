@@ -150,6 +150,12 @@ const Statistics = () => {
     fetchData();
   }, [user]);
 
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+  }, [authLoading, user, navigate]);
+
   if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5">
@@ -158,10 +164,7 @@ const Statistics = () => {
     );
   }
 
-  if (!user) {
-    navigate('/auth');
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div className="min-h-screen pb-24 bg-gradient-to-br from-primary/5 via-background to-accent/5">

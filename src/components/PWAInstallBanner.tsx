@@ -60,6 +60,7 @@ export const PWAInstallBanner = () => {
     <div className="fixed bottom-20 md:bottom-4 left-2 right-2 sm:left-4 sm:right-4 md:left-auto md:right-4 md:max-w-sm z-40 animate-slide-up">
       <div className="bg-gradient-to-r from-primary via-primary/95 to-emerald-600 text-primary-foreground rounded-2xl p-3 sm:p-4 shadow-2xl border border-primary-foreground/10">
         <button
+          type="button"
           onClick={handleDismiss}
           className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-primary-foreground/10 transition-colors"
           aria-label="Yopish"

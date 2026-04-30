@@ -40,26 +40,29 @@ export const TypewriterText = ({
 
     const fullText = extractText(children);
     fullTextRef.current = fullText;
-    
-    // Delay before starting typing
+
+    let typeInterval: ReturnType<typeof setInterval> | null = null;
+
     const delayTimeout = setTimeout(() => {
       setIsTyping(true);
       let currentIndex = 0;
-      
-      const typeInterval = setInterval(() => {
+
+      typeInterval = setInterval(() => {
         if (currentIndex <= fullText.length) {
           setDisplayedText(fullText.slice(0, currentIndex));
           currentIndex++;
         } else {
-          clearInterval(typeInterval);
+          if (typeInterval) clearInterval(typeInterval);
+          typeInterval = null;
           setIsTyping(false);
         }
       }, speed);
-
-      return () => clearInterval(typeInterval);
     }, delay);
 
-    return () => clearTimeout(delayTimeout);
+    return () => {
+      clearTimeout(delayTimeout);
+      if (typeInterval) clearInterval(typeInterval);
+    };
   }, [isActive, children, speed, delay]);
 
   // Render with original structure but typed text

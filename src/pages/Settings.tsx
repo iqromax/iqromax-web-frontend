@@ -235,12 +235,12 @@ const Settings = () => {
     }
     
     setUploading(true);
-    console.log('Starting avatar upload for user:', user.id);
-    console.log('Blob size:', croppedBlob.size);
+    if (import.meta.env.DEV) {
+      console.log('Starting avatar upload for user:', user.id, 'size:', croppedBlob.size);
+    }
 
     try {
       const fileName = `${user.id}/avatar.jpg`;
-      console.log('Uploading to path:', fileName);
 
       // Upload cropped image to storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -249,8 +249,6 @@ const Settings = () => {
           upsert: true,
           contentType: 'image/jpeg'
         });
-
-      console.log('Upload response:', { uploadData, uploadError });
 
       if (uploadError) {
         console.error('Upload error details:', uploadError);
@@ -262,7 +260,9 @@ const Settings = () => {
         .from('avatars')
         .getPublicUrl(fileName);
 
-      console.log('Public URL:', publicUrl);
+      if (import.meta.env.DEV) {
+        console.log('Public URL:', publicUrl);
+      }
 
       // Update profile with new avatar URL
       const { error: updateError } = await supabase

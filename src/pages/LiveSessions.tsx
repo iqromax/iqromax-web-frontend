@@ -95,19 +95,27 @@ const LiveSessions = () => {
   };
 
   const handleStartSession = async (session: any) => {
-    await supabase
+    const { error } = await supabase
       .from('live_sessions')
       .update({ status: 'live', started_at: new Date().toISOString() })
       .eq('id', session.id);
+    if (error) {
+      console.error('Start session error:', error);
+      toast.error("Darsni boshlashda xatolik");
+      return;
+    }
     navigate(`/live/${session.id}`);
   };
 
   const handleDeleteSession = async (session: any) => {
     const { error } = await supabase.from('live_sessions').delete().eq('id', session.id);
-    if (!error) {
-      toast.success("Dars o'chirildi");
-      fetchSessions();
+    if (error) {
+      console.error('Delete session error:', error);
+      toast.error("Darsni o'chirishda xatolik");
+      return;
     }
+    toast.success("Dars o'chirildi");
+    fetchSessions();
   };
 
   const copyLink = (id: string) => {

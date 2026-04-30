@@ -37,8 +37,10 @@ export const Leaderboard = ({ currentUserId }: LeaderboardProps) => {
       setLoading(true);
 
       if (timeFilter === 'all') {
-        const { data } = await supabase.rpc('get_leaderboard_with_gamification');
-        if (data) {
+        const { data, error } = await supabase.rpc('get_leaderboard_with_gamification');
+        if (error) {
+          console.error('Leaderboard fetch error:', error);
+        } else if (data) {
           setEntries((data as any[]).map(d => ({
             id: d.id,
             user_id: d.user_id,
@@ -52,7 +54,10 @@ export const Leaderboard = ({ currentUserId }: LeaderboardProps) => {
         }
       } else {
         const periodDays = timeFilter === 'weekly' ? 7 : 30;
-        const { data } = await supabase.rpc('get_leaderboard_by_period', { period_days: periodDays });
+        const { data, error } = await supabase.rpc('get_leaderboard_by_period', { period_days: periodDays });
+        if (error) {
+          console.error('Leaderboard period fetch error:', error);
+        }
         if (data) {
           setEntries((data as any[]).map(d => ({
             id: d.id,

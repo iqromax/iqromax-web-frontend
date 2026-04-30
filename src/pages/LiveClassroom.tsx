@@ -35,7 +35,13 @@ const LiveClassroom = () => {
     if (!sessionId || !user) return;
     (async () => {
       // Fetch session
-      const { data: sess } = await supabase.from('live_sessions_safe' as any).select('*').eq('id', sessionId).single() as { data: any };
+      const { data: sess, error: sessErr } = await supabase.from('live_sessions_safe' as any).select('*').eq('id', sessionId).maybeSingle() as { data: any; error: any };
+      if (sessErr) {
+        console.error('Live session fetch error:', sessErr);
+        setError("Darsni yuklashda xatolik");
+        setLoading(false);
+        return;
+      }
       if (!sess) { setError("Dars topilmadi"); setLoading(false); return; }
       setSession(sess);
 
@@ -413,7 +419,12 @@ const ChatPanel = ({ sessionId }: { sessionId: string }) => {
       content: newMsg.trim(),
       message_type: 'text',
     });
-    if (!error) setNewMsg('');
+    if (error) {
+      console.error('Chat send error:', error);
+      toast.error("Xabar yuborilmadi");
+    } else {
+      setNewMsg('');
+    }
     setSending(false);
   };
 

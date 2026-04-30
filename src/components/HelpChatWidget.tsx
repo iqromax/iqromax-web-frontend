@@ -185,7 +185,7 @@ export const HelpChatWidget = () => {
             eq('role', 'user').
             order('created_at', { ascending: true }).
             limit(1).
-            single();
+            maybeSingle();
 
             return {
               session_id: session.session_id,

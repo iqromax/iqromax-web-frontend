@@ -134,14 +134,16 @@ export const CompetitionsManager = () => {
       const weekStart = startOfWeek(new Date(newChallenge.challenge_date), { weekStartsOn: 1 });
       const weekEnd = endOfWeek(new Date(newChallenge.challenge_date), { weekStartsOn: 1 });
       
-      console.log("Creating weekly challenge:", {
-        week_start: format(weekStart, "yyyy-MM-dd"),
-        week_end: format(weekEnd, "yyyy-MM-dd"),
-        formula_type: newChallenge.formula_type,
-        digit_count: newChallenge.digit_count,
-        speed: newChallenge.speed,
-        problem_count: newChallenge.problem_count,
-      });
+      if (import.meta.env.DEV) {
+        console.log("Creating weekly challenge:", {
+          week_start: format(weekStart, "yyyy-MM-dd"),
+          week_end: format(weekEnd, "yyyy-MM-dd"),
+          formula_type: newChallenge.formula_type,
+          digit_count: newChallenge.digit_count,
+          speed: newChallenge.speed,
+          problem_count: newChallenge.problem_count,
+        });
+      }
       
       const { data, error } = await supabase
         .from("weekly_challenges")

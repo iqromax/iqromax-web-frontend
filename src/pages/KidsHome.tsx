@@ -82,7 +82,7 @@ const KidsHome = () => {
         const solved = Number(row.today_solved) || 0;
         setTodaySolved(solved);
 
-        const goal = Number(row.daily_goal) || 20;
+        const goal = Math.max(1, Number(row.daily_goal) || 20);
         const progress = (solved / goal) * 100;
         if (progress >= 100) {
           triggerConfetti('stars');
@@ -92,8 +92,8 @@ const KidsHome = () => {
         console.warn('Dashboard RPC failed, using fallback:', rpcError?.message);
         
         const [profileRes, gamificationRes, todayRes] = await Promise.all([
-          supabase.from('profiles').select('*').eq('user_id', user.id).single(),
-          supabase.from('user_gamification').select('*').eq('user_id', user.id).single(),
+          supabase.from('profiles').select('*').eq('user_id', user.id).maybeSingle(),
+          supabase.from('user_gamification').select('*').eq('user_id', user.id).maybeSingle(),
           supabase.from('game_sessions')
             .select('correct')
             .eq('user_id', user.id)

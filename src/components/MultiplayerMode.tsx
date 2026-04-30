@@ -106,6 +106,7 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
   const countRef = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startTimeRef = useRef<number>(0);
 
   // Profilni yuklash
@@ -143,25 +144,30 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
           filter: `id=eq.${room.id}`,
         },
         (payload) => {
-          console.log('Room update:', payload);
+          if (import.meta.env.DEV) {
+            console.log('Room update:', payload);
+          }
           if (payload.eventType === 'UPDATE') {
             const newRoom = payload.new as Room;
             setRoom(newRoom);
             
             if (newRoom.status === 'playing' && view === 'lobby') {
               setView('countdown');
-              // Start countdown animation
               let count = 3;
               setCountdown(count);
               playSound('countdown');
-              
-              const countdownInterval = setInterval(() => {
+
+              if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+              countdownIntervalRef.current = setInterval(() => {
                 count--;
                 setCountdown(count);
                 if (count > 0) playSound('countdown');
-                
+
                 if (count <= 0) {
-                  clearInterval(countdownInterval);
+                  if (countdownIntervalRef.current) {
+                    clearInterval(countdownIntervalRef.current);
+                    countdownIntervalRef.current = null;
+                  }
                   playSound('start');
                   setView('playing');
                   startGameSequence(newRoom);
@@ -206,8 +212,59 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
     return () => {
       supabase.removeChannel(roomChannel);
       supabase.removeChannel(participantsChannel);
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+        countdownIntervalRef.current = null;
+      }
     };
   }, [room?.id, view]);
+
+  // Natija ekraniga o'tganda konfetti va tovush (Rules of Hooks bo'yicha top-level)
+  useEffect(() => {
+    if (view !== 'results') return;
+
+    const sorted = [...participants].sort((a, b) => {
+      if (a.is_correct && !b.is_correct) return -1;
+      if (!a.is_correct && b.is_correct) return 1;
+      return (a.answer_time || 999) - (b.answer_time || 999);
+    });
+    const winner = sorted[0]?.user_id === user?.id;
+
+    playSound(winner ? 'winner' : 'complete');
+
+    const duration = 4000;
+    const end = Date.now() + duration;
+    let rafId: number | null = null;
+    let cancelled = false;
+
+    const frame = () => {
+      if (cancelled) return;
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 65,
+        origin: { x: 0, y: 0.6 },
+        colors: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'],
+      });
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 65,
+        origin: { x: 1, y: 0.6 },
+        colors: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'],
+      });
+      if (Date.now() < end) {
+        rafId = requestAnimationFrame(frame);
+      }
+    };
+
+    frame();
+
+    return () => {
+      cancelled = true;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [view, participants, user?.id, playSound]);
 
   const generateRoomCode = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -224,6 +281,10 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
     setHasAnswered(false);
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (timerRef.current) clearInterval(timerRef.current);
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = null;
+    }
   };
 
   // Xona yaratish
@@ -889,7 +950,7 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
             
             {/* Progress Bar */}
             <div className="mt-4 space-y-2">
-              <Progress value={(answeredCount / participants.length) * 100} className="h-2" />
+              <Progress value={participants.length > 0 ? (answeredCount / participants.length) * 100 : 0} className="h-2" />
               <p className="text-xs text-muted-foreground">
                 <span className="font-bold text-foreground">{answeredCount}</span> / {participants.length} javob berdi
               </p>
@@ -989,7 +1050,7 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
             
             {/* Progress */}
             <div className="mt-4 space-y-2">
-              <Progress value={(answeredCount / participants.length) * 100} className="h-3" />
+              <Progress value={participants.length > 0 ? (answeredCount / participants.length) * 100 : 0} className="h-3" />
               <p className="text-sm font-medium">
                 <span className="text-emerald-500">{answeredCount}</span> / {participants.length} o'yinchi tayyor
               </p>
@@ -1021,42 +1082,6 @@ export const MultiplayerMode = ({ onBack }: MultiplayerModeProps) => {
     const isWinner = sortedParticipants[0]?.user_id === user?.id;
     const myRank = sortedParticipants.findIndex(p => p.user_id === user?.id) + 1;
 
-    // Confetti animation on first render
-    useEffect(() => {
-      // Play winner or complete sound
-      if (isWinner) {
-        playSound('winner');
-      } else {
-        playSound('complete');
-      }
-
-      const duration = 4000;
-      const end = Date.now() + duration;
-
-      const frame = () => {
-        confetti({
-          particleCount: 4,
-          angle: 60,
-          spread: 65,
-          origin: { x: 0, y: 0.6 },
-          colors: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
-        });
-        confetti({
-          particleCount: 4,
-          angle: 120,
-          spread: 65,
-          origin: { x: 1, y: 0.6 },
-          colors: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
-        });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      };
-
-      frame();
-    }, []);
-    
     return (
       <div className="w-full max-w-2xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
         {/* Winner Banner */}

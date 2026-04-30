@@ -59,18 +59,13 @@ export const MobileBottomNav = () => {
       {/* Safe area for notched phones */}
       <div className="relative flex items-center justify-around px-2 pt-2" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path || 
+          const isActive = location.pathname === item.path ||
             (item.path !== '/' && location.pathname.startsWith(item.path));
-          
-          // If not logged in, show auth for protected routes
-          const href = !user && ['/mental-arithmetic', '/weekly-game'].includes(item.path) 
-            ? '/auth' 
-            : item.path;
 
           return (
             <Link
               key={item.path}
-              to={href}
+              to={item.path}
               className={cn(
                 "relative flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl transition-all duration-300",
                 isActive 
