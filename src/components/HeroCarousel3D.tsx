@@ -489,7 +489,7 @@ const TeachersSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Income card */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[270px]">
+        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[270px]">
           <div className="flex items-center justify-between mb-1">
             <p className="text-[10px] text-muted-foreground">Oylik daromad</p>
             <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-full">+18%</span>
