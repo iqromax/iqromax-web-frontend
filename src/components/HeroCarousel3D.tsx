@@ -331,13 +331,15 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                   } style={{ transitionDelay: current === index ? '240ms' : '0ms' }}>
 
                     <span className="text-white drop-shadow-2xl">
-                      {slide.title}
+                      {/* Mobile: short by default unless expanded; sm+: always full */}
+                      <span className="sm:hidden">{isExpanded(index) ? slide.title : slide.shortTitle}</span>
+                      <span className="hidden sm:inline">{slide.title}</span>
                     </span>
                   </h1>
 
                   {/* Description glass card */}
                   <div
-                  className={`mb-3 xs:mb-4 sm:mb-7 md:mb-8 flex justify-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  className={`mb-2 xs:mb-3 sm:mb-7 md:mb-8 flex flex-col items-center gap-2 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                   current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
                   } style={{ transitionDelay: current === index ? '360ms' : '0ms' }}>
 
@@ -349,10 +351,21 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                       }}>
 
                         <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                          {slide.description}
+                          <span className="sm:hidden">{isExpanded(index) ? slide.description : slide.shortDescription}</span>
+                          <span className="hidden sm:inline">{slide.description}</span>
                         </span>
                       </p>
                     </div>
+
+                    {/* Mobile-only toggle: short ↔ full */}
+                    <button
+                      type="button"
+                      onClick={() => toggleExpanded(index)}
+                      aria-expanded={isExpanded(index)}
+                      className="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 active:scale-95 text-white text-[11px] font-bold border border-white/25 backdrop-blur-sm transition-all"
+                    >
+                      {isExpanded(index) ? '▲ Yashirish' : '▼ Batafsil'}
+                    </button>
                   </div>
 
                   {/* CTA Buttons */}
