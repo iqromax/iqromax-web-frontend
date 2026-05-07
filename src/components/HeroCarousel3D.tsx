@@ -58,6 +58,10 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
   const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [expandedSlides, setExpandedSlides] = useState<Record<number, boolean>>({});
+  const isExpanded = (i: number) => expandedSlides[i] ?? false;
+  const toggleExpanded = (i: number) =>
+    setExpandedSlides((p) => ({ ...p, [i]: !isExpanded(i) }));
 
   // 4 separate slides - one per audience
   const slides: HeroSlide[] = useMemo(() => [
