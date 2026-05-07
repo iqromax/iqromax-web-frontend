@@ -57,91 +57,111 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
-  // Memoized slides - only 3 slides for performance
+  // 4 separate slides - one per audience
   const slides: HeroSlide[] = useMemo(() => [
   {
-    id: 'kids',
+    id: 'main',
     image: heroSlideKids,
-    gradientOverlay: 'from-black/60 via-black/20 to-transparent',
+    gradientOverlay: 'from-black/70 via-black/30 to-transparent',
     badge: {
       icon: Rocket,
-      text: "Bolalar uchun #1 mental arifmetika",
-      bgColor: 'bg-kid-yellow/90 text-gray-900'
+      text: "Bolalar • Trenerlar • Ota-onalar uchun",
+      bgColor: 'bg-primary/90 text-white'
     },
     title:
     <>
-          <span className="block text-kid-yellow drop-shadow-[0_2px_8px_rgba(255,200,0,0.4)]">🎮 O'ynab o'rganamiz!</span>
-          <span className="block mt-1 text-white/95">🎯 Har kuni yangi topshiriqlar!</span>
+          <span className="block text-primary drop-shadow-[0_2px_8px_rgba(34,197,94,0.4)]">IQROMAX —</span>
+          <span className="block mt-1 text-white/95">tez hisoblashni o'rgatuvchi platforma</span>
         </>,
 
     description:
     <>
-          🎯 O'yin orqali tez va aniq hisoblashni o'rganing!{' '}
-          ⭐ XP to'plang, Level oshiring va yutuqlarga erishing! 🏆
+          ⚡ Tez va samarali metodika · 🎮 O'yin tarzida o'qitish · 📊 Real natijani ko'rish
         </>,
 
     cta: {
       icon: Rocket,
-      text: 'Hozir bepul boshlash',
-      className: 'bg-white text-primary hover:bg-white/90'
+      text: 'Bepul boshlash',
+      className: 'bg-primary text-primary-foreground hover:bg-primary/90'
     },
-    showLogo: false,
-    secondaryCta: {
+    showLogo: true
+  },
+  {
+    id: 'kids',
+    image: heroSlideKids,
+    gradientOverlay: 'from-blue-900/60 via-blue-900/20 to-transparent',
+    badge: {
       icon: Gamepad2,
-      text: 'Demo sinab ko\'ring'
+      text: "Bolalar uchun",
+      bgColor: 'bg-blue-500 text-white'
+    },
+    title:
+    <>
+          <span className="block">O'ynab o'rganing,</span>
+          <span className="block text-kid-yellow">tez rivojlaning! 🚀</span>
+        </>,
+
+    description:
+    <>
+          🎯 Qiziqarli mashqlar · ⭐ XP va level tizimi · 🏆 Reyting va musobaqalar · 🎖️ Badges va mukofotlar
+        </>,
+
+    cta: {
+      icon: Rocket,
+      text: 'Boshlash',
+      className: 'bg-blue-500 text-white hover:bg-blue-600'
     }
   },
   {
     id: 'parents',
     image: heroSlideParents,
-    gradientOverlay: 'from-blue-900/60 via-blue-900/20 to-transparent',
+    gradientOverlay: 'from-orange-900/60 via-orange-900/20 to-transparent',
     badge: {
       icon: Eye,
-      text: 'Ota-onalar nazorati',
-      bgColor: 'bg-blue-500 text-white'
+      text: 'Ota-onalar uchun',
+      bgColor: 'bg-orange-500 text-white'
     },
     title:
     <>
-          <span className="block">Farzandingiz qanday</span>
-          <span className="block text-kid-yellow">rivojlanayotganini kuzating 📊</span>
+          <span className="block">Farzandingiz rivojini</span>
+          <span className="block text-kid-yellow">nazorat qiling 📊</span>
         </>,
 
     description:
     <>
-          📊 Real vaqtda natijalarni ko'ring · 📋 Har kuni aniq hisobot oling · 💡 Farzandingizga mos tavsiyalarni oling
+          ✅ Real vaqtda natijalar · 📋 Kunlik mashqlar va progress · 💡 Tavsiyalar va tahlillar · 🎯 Motivatsiya va maqsadlar
         </>,
 
     cta: {
       icon: BarChart3,
-      text: "Farzandim natijalari",
-      className: 'bg-blue-500 text-white hover:bg-blue-600'
+      text: "Natijalarni ko'rish",
+      className: 'bg-orange-500 text-white hover:bg-orange-600'
     }
   },
   {
     id: 'teachers',
     image: heroSlideTeachers,
-    gradientOverlay: 'from-amber-900/60 via-amber-900/20 to-transparent',
+    gradientOverlay: 'from-emerald-900/60 via-emerald-900/20 to-transparent',
     badge: {
       icon: GraduationCap,
-      text: "O'qituvchilar paneli",
-      bgColor: 'bg-amber-500 text-white',
-      extraBadge: 'Beta'
+      text: "Trenerlar uchun",
+      bgColor: 'bg-emerald-500 text-white'
     },
     title:
     <>
-          <span className="block">📊 Sinf natijalarini oson</span>
-          <span className="block text-kid-yellow">va aniq boshqaring ✨</span>
+          <span className="block">Trener bo'lib</span>
+          <span className="block text-kid-yellow">daromad toping! 💰</span>
         </>,
 
     description:
     <>
-          📊 Har bir guruh bo'yicha aniq statistika · 📄 Hisobotlarni PDF/Excelda yuklab oling · 🏅 Avtomatik sertifikatlar tizimi
+          ✅ 1 oyda professional trener · 👥 O'z guruhingizni ochasiz · 🌐 Onlayn va oflayn o'qitish · 📈 Barqaror daromad manbai
         </>,
 
     cta: {
       icon: FileText,
-      text: 'Panelga kirish',
-      className: 'bg-amber-500 text-white hover:bg-amber-600'
+      text: "Trener bo'lish",
+      className: 'bg-emerald-500 text-white hover:bg-emerald-600'
     }
   }],
   []);
