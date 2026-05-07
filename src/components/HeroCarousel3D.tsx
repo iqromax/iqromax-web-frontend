@@ -160,11 +160,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block">Trener bo'lib</span>
           <span className="block text-kid-yellow">daromad toping! 💰</span>
         </>,
+    shortTitle: <span className="block text-kid-yellow">Daromad toping 💰</span>,
 
     description:
     <>
           ✅ 1 oyda professional trener · 👥 O'z guruhingizni ochasiz · 🌐 Onlayn va oflayn o'qitish · 📈 Barqaror daromad manbai
         </>,
+    shortDescription: <>✅ 1 oyda · 👥 Guruh · 📈 Daromad</>,
 
     cta: {
       icon: FileText,
