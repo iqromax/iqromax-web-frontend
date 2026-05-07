@@ -83,11 +83,7 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
         </>,
     shortDescription: <>⚡ Tez · 🎮 O'yin · 📊 Natija</>,
 
-    cta: {
-      icon: Rocket,
-      text: 'Bepul boshlash',
-      className: 'bg-primary text-primary-foreground hover:bg-primary/90'
-    },
+    cta: { icon: Rocket, text: 'Bepul boshlash', route: '/auth' },
     showLogo: true
   },
   {
