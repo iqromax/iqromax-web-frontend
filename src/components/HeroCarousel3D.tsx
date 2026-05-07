@@ -41,13 +41,9 @@ interface HeroSlide {
   cta: {
     icon: React.ElementType;
     text: string;
-    className: string;
+    route: string;
   };
   showLogo?: boolean;
-  secondaryCta?: {
-    icon: React.ElementType;
-    text: string;
-  };
 }
 
 interface HeroCarousel3DProps {
