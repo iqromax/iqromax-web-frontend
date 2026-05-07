@@ -166,6 +166,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
   }],
   []);
 
+  const slideLabels: Record<string, string> = {
+    main: 'IQROMAX',
+    kids: 'Bolalar',
+    parents: 'Ota-onalar',
+    teachers: 'Trenerlar'
+  };
+
   useEffect(() => {
     if (!api) return;
 
@@ -184,6 +191,21 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
   const scrollTo = useCallback((index: number) => {
     api?.scrollTo(index);
   }, [api]);
+
+  // Keyboard navigation: ←/→ arrows, Home/End
+  useEffect(() => {
+    if (!api) return;
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); api.scrollNext(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); api.scrollPrev(); }
+      else if (e.key === 'Home') { e.preventDefault(); api.scrollTo(0); }
+      else if (e.key === 'End') { e.preventDefault(); api.scrollTo(slides.length - 1); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [api, slides.length]);
 
   // Autoplay plugin with touch-friendly settings
   const autoplayPlugin = useMemo(() =>
