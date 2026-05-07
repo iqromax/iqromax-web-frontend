@@ -258,56 +258,56 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                 )}
                 </div>
 
-                {/* Content - optimized padding for mobile */}
+                {/* Content */}
                 <div
-                className={`absolute inset-0 flex flex-col items-center justify-end p-4 xs:p-5 sm:p-8 md:p-10 text-white text-center ${
-                current === index ? 'opacity-100' : 'opacity-0'}`
+                className={`absolute inset-0 flex flex-col items-center justify-end p-4 xs:p-5 sm:p-8 md:p-10 text-white text-center [transform-style:preserve-3d] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                current === index ? 'opacity-100 [transform:translateZ(40px)]' : 'opacity-0 [transform:translateZ(0px)]'}`
                 }>
 
-                  {/* Badge Row - Simplified for mobile performance */}
+                  {/* Badge Row */}
                 <div
-                  className={`flex flex-wrap items-center justify-center gap-1.5 xs:gap-2 sm:gap-3 mb-2 xs:mb-3 sm:mb-5 ${
-                  current === index ? 'opacity-100' : 'opacity-0'}`
-                  }>
+                  className={`flex flex-wrap items-center justify-center gap-1.5 xs:gap-2 sm:gap-3 mb-2 xs:mb-3 sm:mb-5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
+                  } style={{ transitionDelay: current === index ? '120ms' : '0ms' }}>
 
                     {slide.showLogo &&
-                  <div className="bg-white/95 rounded-xl xs:rounded-2xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-3 shadow-2xl ring-2 ring-white/30">
+                  <div className="bg-white/95 rounded-xl xs:rounded-2xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-3 shadow-2xl ring-2 ring-white/30 transition-transform duration-500 hover:scale-110 hover:rotate-2">
                         <img src={iqromaxLogo} alt="IQROMAX" className="h-7 xs:h-8 sm:h-10 md:h-12 w-auto" />
                       </div>
                   }
                     <div className="relative">
-                      <span className={`relative inline-flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 sm:py-2.5 ${slide.badge.bgColor} rounded-full text-[11px] xs:text-xs sm:text-sm font-black shadow-2xl border border-white/20`}>
+                      <span className={`relative inline-flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 sm:py-2.5 ${slide.badge.bgColor} rounded-full text-[11px] xs:text-xs sm:text-sm font-black shadow-2xl border border-white/20 transition-transform duration-300 hover:scale-105`}>
                         <slide.badge.icon className="h-3.5 w-3.5 xs:h-4 xs:w-4 sm:h-5 sm:w-5" />
                         <span className="tracking-wide">{slide.badge.text}</span>
                       </span>
                     </div>
                     {slide.badge.extraBadge &&
-                  <span className="px-2.5 xs:px-3 py-1 xs:py-1.5 bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 text-amber-900 rounded-full text-[10px] xs:text-xs sm:text-sm font-black shadow-xl border border-amber-200/50">
+                  <span className="px-2.5 xs:px-3 py-1 xs:py-1.5 bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 text-amber-900 rounded-full text-[10px] xs:text-xs sm:text-sm font-black shadow-xl border border-amber-200/50 animate-pulse">
                         ✨ {slide.badge.extraBadge}
                       </span>
                   }
                   </div>
 
-                  {/* Title - Simplified for mobile performance */}
+                  {/* Title with staggered slide-up */}
                   <h1
-                  className={`text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black leading-[1.05] mb-2 xs:mb-3 sm:mb-5 md:mb-6 ${
-                  current === index ? 'opacity-100' : 'opacity-0'}`
-                  }>
+                  className={`text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black leading-[1.05] mb-2 xs:mb-3 sm:mb-5 md:mb-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  current === index ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-6 blur-sm'}`
+                  } style={{ transitionDelay: current === index ? '240ms' : '0ms' }}>
 
                     <span className="text-white drop-shadow-2xl">
                       {slide.title}
                     </span>
                   </h1>
 
-                  {/* Description - Simplified glass card */}
+                  {/* Description glass card */}
                   <div
-                  className={`mb-3 xs:mb-4 sm:mb-7 md:mb-8 flex justify-center ${
-                  current === index ? 'opacity-100' : 'opacity-0'}`
-                  }>
+                  className={`mb-3 xs:mb-4 sm:mb-7 md:mb-8 flex justify-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
+                  } style={{ transitionDelay: current === index ? '360ms' : '0ms' }}>
 
                     <div className="relative">
                       <p
-                      className="relative text-center text-xs xs:text-sm sm:text-xl md:text-2xl lg:text-3xl text-white max-w-xs xs:max-w-sm sm:max-w-xl md:max-w-2xl leading-snug xs:leading-relaxed sm:leading-loose font-semibold tracking-wide px-2.5 py-1.5 xs:px-3 xs:py-2 sm:px-6 sm:py-4 bg-black/30 rounded-xl sm:rounded-2xl border border-white/20"
+                      className="relative text-center text-xs xs:text-sm sm:text-xl md:text-2xl lg:text-3xl text-white max-w-xs xs:max-w-sm sm:max-w-xl md:max-w-2xl leading-snug xs:leading-relaxed sm:leading-loose font-semibold tracking-wide px-2.5 py-1.5 xs:px-3 xs:py-2 sm:px-6 sm:py-4 bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 transition-all duration-500 hover:bg-black/40 hover:border-white/30"
                       style={{
                         textShadow: '0 2px 4px rgba(0,0,0,1), 0 4px 20px rgba(0,0,0,0.9)'
                       }}>
@@ -319,16 +319,16 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                     </div>
                   </div>
 
-                  {/* CTA Buttons - Simplified for mobile performance */}
+                  {/* CTA Buttons */}
                   <div
-                  className={`flex flex-row items-center justify-center gap-3 xs:gap-3.5 sm:gap-4 md:gap-5 ${
-                  current === index ? 'opacity-100' : 'opacity-0'}`
-                  }>
+                  className={`flex flex-row items-center justify-center gap-3 xs:gap-3.5 sm:gap-4 md:gap-5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`
+                  } style={{ transitionDelay: current === index ? '480ms' : '0ms' }}>
 
                     <Button
                     size="lg"
                     onClick={() => navigate('/auth')}
-                    className={`gap-2 xs:gap-2.5 sm:gap-4 ${slide.cta.className} font-black active:scale-95 h-10 xs:h-12 sm:h-16 md:h-[72px] text-sm xs:text-base sm:text-xl md:text-2xl px-5 xs:px-6 sm:px-10 md:px-14 rounded-xl sm:rounded-3xl border-2 border-white/40 shadow-xl`}>
+                    className={`gap-2 xs:gap-2.5 sm:gap-4 ${slide.cta.className} font-black active:scale-95 h-10 xs:h-12 sm:h-16 md:h-[72px] text-sm xs:text-base sm:text-xl md:text-2xl px-5 xs:px-6 sm:px-10 md:px-14 rounded-xl sm:rounded-3xl border-2 border-white/40 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:-translate-y-0.5`}>
 
                       <slide.cta.icon className="h-4 w-4 xs:h-5 xs:w-5 sm:h-8 sm:w-8" />
                       <span className="truncate font-black tracking-wide">{slide.cta.text}</span>
