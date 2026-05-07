@@ -192,20 +192,6 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
               </Button>
             )}
 
-            {/* Sound toggle - Always visible */}
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={onToggleSound}
-              aria-label={soundEnabled ? "Ovozni o'chirish" : "Ovozni yoqish"}
-              className="h-8 w-8 xs:h-9 xs:w-9 rounded-full hover:bg-secondary/80 active:scale-95 transition-all"
-            >
-              {soundEnabled ? (
-                <Volume2 className="h-4 w-4 text-primary" />
-              ) : (
-                <VolumeX className="h-4 w-4 text-muted-foreground" />
-              )}
-            </Button>
 
             {/* User menu - Desktop */}
             {user ? (
