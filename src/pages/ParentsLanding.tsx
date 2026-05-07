@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Header } from '@/components/Header';
+import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import {
   TrendingUp, BarChart3, MessageCircle, ClipboardCheck, Shield, Brain,
