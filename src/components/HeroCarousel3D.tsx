@@ -213,21 +213,18 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
 
         <CarouselContent className="ml-0" style={{ touchAction: 'pan-y pinch-zoom' }}>
           {slides.map((slide, index) =>
-          <CarouselItem key={slide.id} className="touch-manipulation cursor-grab active:cursor-grabbing pl-0">
+          <CarouselItem key={slide.id} className="touch-manipulation cursor-grab active:cursor-grabbing pl-0 [perspective:1400px]">
               {/* Mobile-optimized height - simplified for performance */}
               <div
-              className="relative h-[320px] xs:h-[360px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden">
+              className={`group relative h-[320px] xs:h-[360px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d] hover:[transform:rotateY(-3deg)_rotateX(2deg)_scale(1.01)] ${current === index ? '[transform:rotateY(0deg)_scale(1)]' : '[transform:rotateY(2deg)_scale(0.97)] opacity-80'}`}>
 
-                {/* Image Background - no parallax on mobile for performance */}
+                {/* Image Background with Ken Burns + parallax */}
                 <img
                 src={slide.image}
                 alt={slide.id}
                 loading={index === 0 ? 'eager' : 'lazy'}
                 decoding="async"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{
-                  transform: 'scale(1.02)'
-                }} />
+                className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110 ${current === index ? 'scale-105' : 'scale-100'}`} />
 
 
                 {/* Simple gradient overlay - no animation on mobile */}
