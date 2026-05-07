@@ -396,7 +396,7 @@ const ParentsSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Profile + stats card */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[260px]">
+        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[260px]">
           <div className="flex items-center gap-2 mb-3">
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-[11px] font-black">A</div>
             <div className="flex-1 min-w-0">
