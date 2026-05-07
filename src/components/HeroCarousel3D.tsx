@@ -156,11 +156,7 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
         </>,
     shortDescription: <>✅ 1 oyda · 👥 Guruh · 📈 Daromad</>,
 
-    cta: {
-      icon: FileText,
-      text: "Trener bo'lish",
-      className: 'bg-emerald-500 text-white hover:bg-emerald-600'
-    }
+    cta: { icon: GraduationCap, text: "Trener bo'lish", route: '/lms' }
   }],
   []);
 
