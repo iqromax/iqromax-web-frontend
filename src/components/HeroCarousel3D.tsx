@@ -474,12 +474,6 @@ const TeachersSlide = ({ navigate }: any) => (
     secondaryCta={{ text: "Qanday ishlashini ko'rish", icon: Play, onClick: () => navigate('/about') }}
     image={heroTeachers}
     imageMaskShape="circle"
-    bottomStats={[
-      { icon: Users, value: '500+', label: 'Faol trenerlar', color: 'text-emerald-500' },
-      { icon: Users, value: '10 000+', label: "O'quvchilar", color: 'text-emerald-500' },
-      { icon: Play, value: '200+', label: 'Kurslar', color: 'text-amber-500' },
-      { icon: TrendingUp, value: '12.4 mln+', label: 'Topilgan daromad', color: 'text-emerald-500' },
-    ]}
     sideContent={
       <>
         {/* Income card */}
