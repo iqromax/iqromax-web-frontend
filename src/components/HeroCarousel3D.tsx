@@ -396,49 +396,49 @@ const ParentsSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Profile + stats card */}
-        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[260px]">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-[11px] font-black">A</div>
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl border border-border/40 w-[150px] sm:w-[260px]">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-3">
+            <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-[9px] sm:text-[11px] font-black">A</div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold truncate">Asadbek Abduazizov</p>
-              <p className="text-[10px] text-orange-600 font-semibold">Level 7</p>
+              <p className="text-[10px] sm:text-xs font-bold truncate">Asadbek</p>
+              <p className="text-[8px] sm:text-[10px] text-orange-600 font-semibold">Level 7</p>
             </div>
-            <Award className="h-4 w-4 text-violet-600" />
+            <Award className="h-3 w-3 sm:h-4 sm:w-4 text-violet-600" />
           </div>
-          <div className="h-1 bg-muted rounded-full mb-3">
+          <div className="h-0.5 sm:h-1 bg-muted rounded-full mb-1.5 sm:mb-3">
             <div className="h-full bg-violet-600 rounded-full" style={{ width: '70%' }} />
           </div>
-          <div className="grid grid-cols-4 gap-1 text-center">
+          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 text-center">
             {[
-              { v: '12', l: 'Kurslar' },
+              { v: '12', l: 'Kurs' },
               { v: '2350', l: 'XP' },
-              { v: '75%', l: 'Progress' },
-              { v: '15', l: 'Seriya 🔥' },
+              { v: '75%', l: 'Prog' },
+              { v: '15', l: '🔥' },
             ].map((s) => (
               <div key={s.l}>
-                <p className="text-xs font-black">{s.v}</p>
-                <p className="text-[8px] text-muted-foreground">{s.l}</p>
+                <p className="text-[10px] sm:text-xs font-black">{s.v}</p>
+                <p className="text-[7px] sm:text-[8px] text-muted-foreground">{s.l}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Weekly progress chart */}
-        <div className="absolute top-[150px] right-3 sm:top-[170px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[260px]">
-          <p className="text-xs font-bold mb-1">Haftalik progress</p>
-          <svg viewBox="0 0 200 60" className="w-full h-14">
+        <div className="absolute top-2 right-2 sm:top-[170px] sm:right-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl border border-border/40 w-[140px] sm:w-[260px]">
+          <p className="text-[10px] sm:text-xs font-bold mb-1">Haftalik progress</p>
+          <svg viewBox="0 0 200 60" className="w-full h-9 sm:h-14">
             <polyline points="0,50 33,42 66,32 99,25 132,18 165,12 200,5" fill="none" stroke="rgb(249,115,22)" strokeWidth="2.5" strokeLinecap="round" />
             {[[0,50],[33,42],[66,32],[99,25],[132,18],[165,12],[200,5]].map(([x,y],i)=>(
               <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(249,115,22)" />
             ))}
           </svg>
-          <div className="flex justify-between text-[9px] text-muted-foreground">
+          <div className="flex justify-between text-[8px] sm:text-[9px] text-muted-foreground">
             {['Du','Se','Ch','Pa','Ju','Sh','Ya'].map((d)=><span key={d}>{d}</span>)}
           </div>
         </div>
 
         {/* So'nggi faoliyat */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[260px]">
+        <div className="hidden sm:block absolute bottom-4 right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[260px]">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-bold">So'nggi faoliyat</p>
             <span className="text-[9px] text-orange-600 font-bold">Barchasi</span>
