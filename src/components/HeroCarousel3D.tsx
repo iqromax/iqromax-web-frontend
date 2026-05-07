@@ -310,34 +310,34 @@ const KidsSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Level card (purple) */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-3 sm:p-4 shadow-2xl w-[160px] sm:w-[200px] text-white">
-          <div className="flex items-center justify-between mb-2">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl w-[120px] sm:w-[200px] text-white">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <div>
-              <p className="text-base sm:text-lg font-black leading-none">Level 7</p>
-              <p className="text-[10px] text-white/70 mt-1">XP 900 / 1200</p>
+              <p className="text-xs sm:text-lg font-black leading-none">Level 7</p>
+              <p className="text-[8px] sm:text-[10px] text-white/70 mt-0.5 sm:mt-1">XP 900 / 1200</p>
             </div>
-            <Trophy className="h-4 w-4 text-amber-300" />
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-amber-300" />
           </div>
-          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+          <div className="h-1 sm:h-1.5 bg-white/20 rounded-full overflow-hidden">
             <div className="h-full bg-amber-300 rounded-full" style={{ width: '75%' }} />
           </div>
-          <p className="text-[10px] text-amber-200 text-right mt-1 font-bold">Zo'r!</p>
+          <p className="text-[8px] sm:text-[10px] text-amber-200 text-right mt-0.5 sm:mt-1 font-bold">Zo'r!</p>
         </div>
 
         {/* Reyting card */}
-        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-bold">Reyting</p>
-            <Trophy className="h-3.5 w-3.5 text-amber-500" />
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl border border-border/40 w-[130px] sm:w-[200px]">
+          <div className="flex items-center justify-between mb-1 sm:mb-2">
+            <p className="text-[10px] sm:text-xs font-bold">Reyting</p>
+            <Trophy className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-500" />
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-0.5 sm:space-y-1">
             {[
               { n: 'Asadbek', s: '15 300' },
               { n: 'Zarina', s: '12 450' },
               { n: 'Jahongir', s: '11 200' },
               { n: 'Sarvar', s: '10 150' },
             ].map((p, i) => (
-              <li key={i} className="flex items-center justify-between text-[10px]">
+              <li key={i} className={`items-center justify-between text-[9px] sm:text-[10px] ${i >= 2 ? 'hidden sm:flex' : 'flex'}`}>
                 <span className="flex items-center gap-1">
                   <span className="font-bold text-muted-foreground w-3">{i + 1}</span>
                   <span className="font-semibold">{p.n}</span>
@@ -349,7 +349,7 @@ const KidsSlide = ({ navigate }: any) => (
         </div>
 
         {/* Daily goal */}
-        <div className="absolute bottom-[110px] right-3 sm:bottom-[120px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
+        <div className="hidden sm:block absolute bottom-[120px] right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[200px]">
           <p className="text-xs font-bold mb-2 flex items-center gap-1">Kunlik maqsad <Target className="h-3 w-3 text-emerald-500" /></p>
           <div className="h-1.5 bg-muted rounded-full overflow-hidden mb-1.5">
             <div className="h-full bg-emerald-500 rounded-full" style={{ width: '60%' }} />
@@ -361,13 +361,13 @@ const KidsSlide = ({ navigate }: any) => (
         </div>
 
         {/* Badges */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-3 shadow-xl w-[160px] sm:w-[200px] text-white flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-amber-400 flex items-center justify-center">
-            <Star className="h-5 w-5 text-amber-700 fill-amber-600" />
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl w-[110px] sm:w-[200px] text-white flex items-center gap-2 sm:gap-3">
+          <div className="h-7 w-7 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-amber-400 flex items-center justify-center shrink-0">
+            <Star className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-amber-700 fill-amber-600" />
           </div>
           <div>
-            <p className="text-[10px] text-white/70">Badges</p>
-            <p className="text-lg font-black"><span>12</span> <span className="text-sm font-bold text-white/60">/ 24</span></p>
+            <p className="text-[8px] sm:text-[10px] text-white/70">Badges</p>
+            <p className="text-sm sm:text-lg font-black"><span>12</span> <span className="text-[10px] sm:text-sm font-bold text-white/60">/ 24</span></p>
           </div>
         </div>
       </>
