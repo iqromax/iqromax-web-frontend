@@ -57,7 +57,7 @@ const ParentsLanding = () => {
 
   return (
     <div className="min-h-screen bg-[#fafaf7] dark:bg-background">
-      <Header />
+      <Navbar />
 
       <main className="pt-4 pb-16">
         {/* HERO */}
