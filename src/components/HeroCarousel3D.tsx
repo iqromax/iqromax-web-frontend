@@ -325,7 +325,7 @@ const KidsSlide = ({ navigate }: any) => (
         </div>
 
         {/* Reyting card */}
-        <div className="absolute top-[110px] right-3 sm:top-[120px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
+        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-bold">Reyting</p>
             <Trophy className="h-3.5 w-3.5 text-amber-500" />
