@@ -250,12 +250,6 @@ const MainSlide = ({ totalUsers, navigate }: any) => (
     primaryCta={{ text: 'Bepul boshlash', icon: Play, onClick: () => navigate('/auth'), className: 'bg-emerald-500 hover:bg-emerald-400 text-white' }}
     secondaryCta={{ text: 'Nima uchun IQROMAX?', icon: ChevronRight, onClick: () => navigate('/about') }}
     image={heroKids}
-    bottomStats={[
-      { icon: Users, value: fmt(totalUsers || 10000), label: "O'quvchilar", color: 'text-emerald-400' },
-      { icon: GraduationCap, value: '500+', label: 'Trenerlar', color: 'text-emerald-400' },
-      { icon: Play, value: '200+', label: 'Kurslar', color: 'text-emerald-400' },
-      { icon: Award, value: '20+', label: 'Mamlakat', color: 'text-emerald-400' },
-    ]}
     sideContent={
       <>
         {/* Level card */}
