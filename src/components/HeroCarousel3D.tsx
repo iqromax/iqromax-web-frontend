@@ -197,14 +197,14 @@ const SlideShell = ({
           </ul>
         )}
 
-        <div className="flex flex-wrap gap-3">
-          <Button size="lg" onClick={primaryCta.onClick} className={`h-12 px-6 rounded-full font-bold gap-2 shadow-lg ${primaryCta.className}`}>
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Button size="lg" onClick={primaryCta.onClick} className={`h-10 sm:h-12 px-4 sm:px-6 text-sm rounded-full font-bold gap-2 shadow-lg ${primaryCta.className}`}>
             <primaryCta.icon className="h-4 w-4" />
             {primaryCta.text}
             <ChevronRight className="h-4 w-4" />
           </Button>
           {secondaryCta && (
-            <Button size="lg" variant="outline" onClick={secondaryCta.onClick} className={`h-12 px-6 rounded-full font-bold gap-2 ${textOnDark ? 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white' : ''}`}>
+            <Button size="lg" variant="outline" onClick={secondaryCta.onClick} className={`hidden sm:inline-flex h-12 px-6 rounded-full font-bold gap-2 ${textOnDark ? 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white' : ''}`}>
               <secondaryCta.icon className="h-4 w-4" />
               {secondaryCta.text}
             </Button>
