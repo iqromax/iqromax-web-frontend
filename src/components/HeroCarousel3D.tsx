@@ -259,30 +259,30 @@ const MainSlide = ({ totalUsers, navigate }: any) => (
     sideContent={
       <>
         {/* Level card */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl w-[150px] sm:w-[180px]">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl w-[110px] sm:w-[180px]">
+          <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
             <div>
-              <p className="text-base sm:text-lg font-black text-white leading-none">Level 7</p>
-              <p className="text-[10px] text-emerald-300/70 mt-1">XP 650 / 1200</p>
+              <p className="text-xs sm:text-lg font-black text-white leading-none">Level 7</p>
+              <p className="text-[8px] sm:text-[10px] text-emerald-300/70 mt-0.5 sm:mt-1">XP 650 / 1200</p>
             </div>
-            <Trophy className="h-4 w-4 text-amber-400 ml-auto" />
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-amber-400 ml-auto" />
           </div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-1 sm:h-1.5 bg-white/10 rounded-full overflow-hidden">
             <div className="h-full bg-emerald-400 rounded-full" style={{ width: '54%' }} />
           </div>
-          <p className="text-[10px] text-emerald-300/70 text-right mt-1">54%</p>
+          <p className="text-[8px] sm:text-[10px] text-emerald-300/70 text-right mt-0.5 sm:mt-1">54%</p>
         </div>
         {/* Progress card */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl w-[200px] sm:w-[230px]">
-          <p className="text-xs font-bold text-white mb-2">Progress</p>
-          <svg viewBox="0 0 200 70" className="w-full h-14">
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl w-[140px] sm:w-[230px]">
+          <p className="text-[10px] sm:text-xs font-bold text-white mb-1 sm:mb-2">Progress</p>
+          <svg viewBox="0 0 200 70" className="w-full h-10 sm:h-14">
             <polyline points="0,55 33,48 66,40 99,30 132,22 165,16 200,8" fill="none" stroke="rgb(52,211,153)" strokeWidth="2.5" strokeLinecap="round" />
             {[[0,55],[33,48],[66,40],[99,30],[132,22],[165,16],[200,8]].map(([x,y],i)=>(
               <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(52,211,153)" />
             ))}
           </svg>
-          <div className="flex justify-between text-[8px] text-emerald-300/60 mt-1">
-            {['1-hafta','2-hafta','3-hafta','4-hafta'].map((d) => <span key={d}>{d}</span>)}
+          <div className="flex justify-between text-[7px] sm:text-[8px] text-emerald-300/60 mt-1">
+            {['1-h','2-h','3-h','4-h'].map((d) => <span key={d}>{d}</span>)}
           </div>
         </div>
       </>
