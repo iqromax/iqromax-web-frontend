@@ -132,11 +132,7 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
         </>,
     shortDescription: <>✅ Natijalar · 📋 Progress · 💡 Tavsiyalar</>,
 
-    cta: {
-      icon: BarChart3,
-      text: "Natijalarni ko'rish",
-      className: 'bg-orange-500 text-white hover:bg-orange-600'
-    }
+    cta: { icon: BarChart3, text: "Natijalarni ko'rish", route: '/parent-dashboard' }
   },
   {
     id: 'teachers',
