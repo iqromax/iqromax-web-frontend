@@ -7,7 +7,7 @@ import {
   BookOpen, BarChart3, Users, Calendar, Bell, ClipboardCheck, TrendingUp, Sparkles,
   Crown, Shield, Flame,
 } from 'lucide-react';
-import heroKids from '@/assets/hero-kids-learning.jpg';
+import heroKids from '@/assets/hero-student-tablet.jpg';
 
 const StudentsLanding = () => {
   const navigate = useNavigate();
