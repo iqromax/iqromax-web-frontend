@@ -355,25 +355,24 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                   } style={{ transitionDelay: current === index ? '480ms' : '0ms' }}>
 
                     <Button
-                    size="lg"
-                    onClick={() => navigate('/auth')}
-                    className={`gap-2 xs:gap-2.5 sm:gap-4 ${slide.cta.className} font-black active:scale-95 h-10 xs:h-12 sm:h-16 md:h-[72px] text-sm xs:text-base sm:text-xl md:text-2xl px-5 xs:px-6 sm:px-10 md:px-14 rounded-xl sm:rounded-3xl border-2 border-white/40 shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:-translate-y-0.5`}>
-
-                      <slide.cta.icon className="h-4 w-4 xs:h-5 xs:w-5 sm:h-8 sm:w-8" />
-                      <span className="truncate font-black tracking-wide">{slide.cta.text}</span>
+                      size="lg"
+                      onClick={() => navigate(slide.cta.route)}
+                      className="gap-2 sm:gap-3 font-black active:scale-95 h-12 sm:h-14 md:h-16 text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 rounded-full shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:-translate-y-0.5"
+                    >
+                      <slide.cta.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="truncate tracking-wide">{slide.cta.text}</span>
                     </Button>
-                    {slide.showLogo &&
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    onClick={() => navigate('/train')}
-                    className="gap-2.5 xs:gap-3 bg-white/25 border-2 border-white/50 text-white hover:bg-white/40 active:scale-95 h-12 xs:h-14 sm:h-16 md:h-[72px] text-base xs:text-lg sm:text-xl md:text-2xl px-6 xs:px-8 sm:px-10 md:px-14 rounded-2xl sm:rounded-3xl font-black shadow-xl">
-
-                        <Gamepad2 className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8" />
-                        <span className="hidden xs:inline font-black">Demo sinash</span>
-                        <span className="xs:hidden text-xl">🎮</span>
+                    {slide.showLogo && (
+                      <Button
+                        size="lg"
+                        variant="secondary"
+                        onClick={() => navigate('/train')}
+                        className="gap-2 sm:gap-3 font-black active:scale-95 h-12 sm:h-14 md:h-16 text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 rounded-full shadow-xl bg-white/90 text-foreground hover:bg-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+                      >
+                        <Gamepad2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <span className="tracking-wide">Demo sinash</span>
                       </Button>
-                  }
+                    )}
                   </div>
                 </div>
               </div>
