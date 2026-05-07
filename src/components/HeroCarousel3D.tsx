@@ -227,7 +227,7 @@ const SlideShell = ({
       </div>
 
       {/* RIGHT: image + overlay cards */}
-      <div className="relative min-h-[420px] sm:min-h-[480px] lg:min-h-[480px] order-1 lg:order-2">
+      <div className="relative min-h-[200px] sm:min-h-[480px] lg:min-h-[480px] order-1 lg:order-2">
         <div className={`absolute inset-0 ${imageMaskShape === 'circle' ? 'rounded-[40%_40%_40%_40%/30%_30%_30%_30%]' : 'rounded-2xl'} overflow-hidden`}>
           <img src={image} alt="" className="w-full h-full object-cover" />
         </div>
