@@ -57,7 +57,7 @@ const ParentsLanding = () => {
 
   return (
     <div className="min-h-screen bg-[#fafaf7] dark:bg-background">
-      <Navbar />
+      <Navbar soundEnabled={false} onToggleSound={() => {}} />
 
       <main className="pt-4 pb-16">
         {/* HERO */}
