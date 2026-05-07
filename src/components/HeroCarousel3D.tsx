@@ -156,16 +156,16 @@ const SlideShell = ({
           <badge.icon className="h-3.5 w-3.5" />
           {badge.text}
         </div>
-        <h1 className={`text-[26px] xs:text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] mb-4`}>
+        <h1 className={`text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-black leading-[1.1] mb-2 sm:mb-4`}>
           <span className="block">{titleLeft}</span>
           <span className={`block ${titleAccentColor}`}>{titleAccent}</span>
         </h1>
-        <p className={`text-sm sm:text-base mb-5 max-w-lg leading-relaxed ${textOnDark ? 'text-white/70' : 'text-muted-foreground'}`}>
+        <p className={`hidden sm:block text-sm sm:text-base mb-5 max-w-lg leading-relaxed ${textOnDark ? 'text-white/70' : 'text-muted-foreground'}`}>
           {description}
         </p>
 
         {features && (
-          <ul className="space-y-3 mb-6">
+          <ul className="hidden sm:block space-y-3 mb-6">
             {features.map((f, i) => (
               <li key={i} className="flex items-center gap-3">
                 <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-base ${textOnDark ? 'bg-white/10' : 'bg-primary/10'}`}>
@@ -181,9 +181,15 @@ const SlideShell = ({
         )}
 
         {bullets && (
-          <ul className="space-y-2 mb-6">
-            {bullets.map((b, i) => (
-              <li key={i} className="flex items-center gap-2.5 text-sm">
+          <ul className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-6">
+            {bullets.slice(0, 3).map((b, i) => (
+              <li key={i} className={`flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm ${i >= 2 ? 'hidden sm:flex' : ''}`}>
+                <CheckCircle2 className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${textOnDark ? 'text-emerald-400' : 'text-emerald-500'}`} />
+                <span>{b}</span>
+              </li>
+            ))}
+            {bullets.slice(3).map((b, i) => (
+              <li key={`d-${i}`} className="hidden sm:flex items-center gap-2.5 text-sm">
                 <CheckCircle2 className={`h-4 w-4 shrink-0 ${textOnDark ? 'text-emerald-400' : 'text-emerald-500'}`} />
                 <span>{b}</span>
               </li>
