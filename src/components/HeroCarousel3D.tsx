@@ -146,7 +146,7 @@ const SlideShell = ({
       }} />
     )}
 
-    <div className="relative grid lg:grid-cols-[1.05fr_1fr] gap-5 lg:gap-6 p-5 sm:p-8 lg:p-10 min-h-[480px] lg:min-h-[560px]">
+    <div className="relative grid lg:grid-cols-[1.05fr_1fr] gap-4 lg:gap-6 p-4 sm:p-8 lg:p-10 min-h-[380px] sm:min-h-[480px] lg:min-h-[560px]">
       {/* LEFT: text */}
       <div className="flex flex-col justify-center max-w-2xl order-2 lg:order-1">
         {showLogo && (
@@ -156,16 +156,16 @@ const SlideShell = ({
           <badge.icon className="h-3.5 w-3.5" />
           {badge.text}
         </div>
-        <h1 className={`text-[26px] xs:text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] mb-4`}>
+        <h1 className={`text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-black leading-[1.1] mb-2 sm:mb-4`}>
           <span className="block">{titleLeft}</span>
           <span className={`block ${titleAccentColor}`}>{titleAccent}</span>
         </h1>
-        <p className={`text-sm sm:text-base mb-5 max-w-lg leading-relaxed ${textOnDark ? 'text-white/70' : 'text-muted-foreground'}`}>
+        <p className={`hidden sm:block text-sm sm:text-base mb-5 max-w-lg leading-relaxed ${textOnDark ? 'text-white/70' : 'text-muted-foreground'}`}>
           {description}
         </p>
 
         {features && (
-          <ul className="space-y-3 mb-6">
+          <ul className="hidden sm:block space-y-3 mb-6">
             {features.map((f, i) => (
               <li key={i} className="flex items-center gap-3">
                 <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-base ${textOnDark ? 'bg-white/10' : 'bg-primary/10'}`}>
@@ -181,9 +181,15 @@ const SlideShell = ({
         )}
 
         {bullets && (
-          <ul className="space-y-2 mb-6">
-            {bullets.map((b, i) => (
-              <li key={i} className="flex items-center gap-2.5 text-sm">
+          <ul className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-6">
+            {bullets.slice(0, 3).map((b, i) => (
+              <li key={i} className={`flex items-center gap-2 sm:gap-2.5 text-xs sm:text-sm ${i >= 2 ? 'hidden sm:flex' : ''}`}>
+                <CheckCircle2 className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${textOnDark ? 'text-emerald-400' : 'text-emerald-500'}`} />
+                <span>{b}</span>
+              </li>
+            ))}
+            {bullets.slice(3).map((b, i) => (
+              <li key={`d-${i}`} className="hidden sm:flex items-center gap-2.5 text-sm">
                 <CheckCircle2 className={`h-4 w-4 shrink-0 ${textOnDark ? 'text-emerald-400' : 'text-emerald-500'}`} />
                 <span>{b}</span>
               </li>
@@ -191,14 +197,14 @@ const SlideShell = ({
           </ul>
         )}
 
-        <div className="flex flex-wrap gap-3">
-          <Button size="lg" onClick={primaryCta.onClick} className={`h-12 px-6 rounded-full font-bold gap-2 shadow-lg ${primaryCta.className}`}>
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Button size="lg" onClick={primaryCta.onClick} className={`h-10 sm:h-12 px-4 sm:px-6 text-sm rounded-full font-bold gap-2 shadow-lg ${primaryCta.className}`}>
             <primaryCta.icon className="h-4 w-4" />
             {primaryCta.text}
             <ChevronRight className="h-4 w-4" />
           </Button>
           {secondaryCta && (
-            <Button size="lg" variant="outline" onClick={secondaryCta.onClick} className={`h-12 px-6 rounded-full font-bold gap-2 ${textOnDark ? 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white' : ''}`}>
+            <Button size="lg" variant="outline" onClick={secondaryCta.onClick} className={`hidden sm:inline-flex h-12 px-6 rounded-full font-bold gap-2 ${textOnDark ? 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white' : ''}`}>
               <secondaryCta.icon className="h-4 w-4" />
               {secondaryCta.text}
             </Button>
@@ -221,7 +227,7 @@ const SlideShell = ({
       </div>
 
       {/* RIGHT: image + overlay cards */}
-      <div className="relative min-h-[420px] sm:min-h-[480px] lg:min-h-[480px] order-1 lg:order-2">
+      <div className="relative min-h-[200px] sm:min-h-[480px] lg:min-h-[480px] order-1 lg:order-2">
         <div className={`absolute inset-0 ${imageMaskShape === 'circle' ? 'rounded-[40%_40%_40%_40%/30%_30%_30%_30%]' : 'rounded-2xl'} overflow-hidden`}>
           <img src={image} alt="" className="w-full h-full object-cover" />
         </div>
