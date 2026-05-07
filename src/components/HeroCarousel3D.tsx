@@ -385,7 +385,7 @@ const ParentsSlide = ({ navigate }: any) => (
       'Motivatsiya va yutuqlar tizimi',
       'Xavfsiz va ishonchli muhit',
     ]}
-    primaryCta={{ text: "Natijalarni ko'rish", icon: BarChart3, onClick: () => navigate('/parent-dashboard'), className: 'bg-orange-500 hover:bg-orange-600 text-white' }}
+    primaryCta={{ text: "Natijalarni ko'rish", icon: BarChart3, onClick: () => navigate('/ota-onalar'), className: 'bg-orange-500 hover:bg-orange-600 text-white' }}
     image={heroParents}
     sideContent={
       <>
