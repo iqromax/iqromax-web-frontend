@@ -172,6 +172,11 @@ const KidsHome = () => {
     );
   }
 
+  // Student role → render the dedicated landing-style page
+  if (isStudent) {
+    return <StudentsLanding />;
+  }
+
   // Calculate progress
   const dailyGoal = profile?.daily_goal || 20;
   const dailyProgress = Math.min((todaySolved / dailyGoal) * 100, 100);
