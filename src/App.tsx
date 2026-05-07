@@ -48,6 +48,7 @@ const KidsCourses = lazy(() => import("@/pages/KidsCourses"));
 const KidsLeaderboard = lazy(() => import("@/pages/KidsLeaderboard"));
 const ParentDashboard = lazy(() => import("@/pages/ParentDashboard"));
 const ParentsLanding = lazy(() => import("@/pages/ParentsLanding"));
+const StudentsLanding = lazy(() => import("@/pages/StudentsLanding"));
 const LessonStats = lazy(() => import("@/pages/LessonStats"));
 
 const Privacy = lazy(() => import("@/pages/Privacy"));
@@ -125,6 +126,7 @@ const App = () => (
                       <Route path="/leaderboard" element={<KidsLeaderboard />} />
                       <Route path="/parent-dashboard" element={<ProtectedRoute><ParentDashboard /></ProtectedRoute>} />
                       <Route path="/ota-onalar" element={<ParentsLanding />} />
+                      <Route path="/oquvchilar" element={<StudentsLanding />} />
                       <Route path="/lesson-stats" element={<ProtectedRoute><LessonStats /></ProtectedRoute>} />
                       <Route path="/courses/:courseId" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
                       <Route path="/lessons/:lessonId" element={<ProtectedRoute><LessonDetail /></ProtectedRoute>} />

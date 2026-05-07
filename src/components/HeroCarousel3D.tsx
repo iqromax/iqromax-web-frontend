@@ -305,7 +305,7 @@ const KidsSlide = ({ navigate }: any) => (
       { icon: '🏆', title: 'Reyting va musobaqalar', desc: "Do'stlaringiz bilan bellashing va g'alaba qozoning" },
       { icon: '🎖️', title: 'Badges va mukofotlar', desc: 'Yutuqlaringiz uchun maxsus nishonlar oling' },
     ]}
-    primaryCta={{ text: 'Boshlash', icon: Play, onClick: () => navigate('/courses'), className: 'bg-sky-500 hover:bg-sky-600 text-white' }}
+    primaryCta={{ text: 'Boshlash', icon: Play, onClick: () => navigate('/oquvchilar'), className: 'bg-sky-500 hover:bg-sky-600 text-white' }}
     image={heroKids}
     sideContent={
       <>
