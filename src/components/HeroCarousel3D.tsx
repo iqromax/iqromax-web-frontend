@@ -35,7 +35,9 @@ interface HeroSlide {
     extraBadge?: string;
   };
   title: React.ReactNode;
+  shortTitle: React.ReactNode;
   description: React.ReactNode;
+  shortDescription: React.ReactNode;
   cta: {
     icon: React.ElementType;
     text: string;
@@ -56,6 +58,10 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
   const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [expandedSlides, setExpandedSlides] = useState<Record<number, boolean>>({});
+  const isExpanded = (i: number) => expandedSlides[i] ?? false;
+  const toggleExpanded = (i: number) =>
+    setExpandedSlides((p) => ({ ...p, [i]: !isExpanded(i) }));
 
   // 4 separate slides - one per audience
   const slides: HeroSlide[] = useMemo(() => [
@@ -73,11 +79,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block text-primary drop-shadow-[0_2px_8px_rgba(34,197,94,0.4)]">IQROMAX —</span>
           <span className="block mt-1 text-white/95">tez hisoblashni o'rgatuvchi platforma</span>
         </>,
+    shortTitle: <span className="block text-primary">IQROMAX</span>,
 
     description:
     <>
           ⚡ Tez va samarali metodika · 🎮 O'yin tarzida o'qitish · 📊 Real natijani ko'rish
         </>,
+    shortDescription: <>⚡ Tez · 🎮 O'yin · 📊 Natija</>,
 
     cta: {
       icon: Rocket,
@@ -100,11 +108,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block">O'ynab o'rganing,</span>
           <span className="block text-kid-yellow">tez rivojlaning! 🚀</span>
         </>,
+    shortTitle: <span className="block text-kid-yellow">O'ynab o'rganing 🚀</span>,
 
     description:
     <>
           🎯 Qiziqarli mashqlar · ⭐ XP va level tizimi · 🏆 Reyting va musobaqalar · 🎖️ Badges va mukofotlar
         </>,
+    shortDescription: <>🎯 Mashqlar · ⭐ XP · 🏆 Reyting</>,
 
     cta: {
       icon: Rocket,
@@ -126,11 +136,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block">Farzandingiz rivojini</span>
           <span className="block text-kid-yellow">nazorat qiling 📊</span>
         </>,
+    shortTitle: <span className="block text-kid-yellow">Nazorat qiling 📊</span>,
 
     description:
     <>
           ✅ Real vaqtda natijalar · 📋 Kunlik mashqlar va progress · 💡 Tavsiyalar va tahlillar · 🎯 Motivatsiya va maqsadlar
         </>,
+    shortDescription: <>✅ Natijalar · 📋 Progress · 💡 Tavsiyalar</>,
 
     cta: {
       icon: BarChart3,
@@ -152,11 +164,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block">Trener bo'lib</span>
           <span className="block text-kid-yellow">daromad toping! 💰</span>
         </>,
+    shortTitle: <span className="block text-kid-yellow">Daromad toping 💰</span>,
 
     description:
     <>
           ✅ 1 oyda professional trener · 👥 O'z guruhingizni ochasiz · 🌐 Onlayn va oflayn o'qitish · 📈 Barqaror daromad manbai
         </>,
+    shortDescription: <>✅ 1 oyda · 👥 Guruh · 📈 Daromad</>,
 
     cta: {
       icon: FileText,
@@ -317,13 +331,15 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                   } style={{ transitionDelay: current === index ? '240ms' : '0ms' }}>
 
                     <span className="text-white drop-shadow-2xl">
-                      {slide.title}
+                      {/* Mobile: short by default unless expanded; sm+: always full */}
+                      <span className="sm:hidden">{isExpanded(index) ? slide.title : slide.shortTitle}</span>
+                      <span className="hidden sm:inline">{slide.title}</span>
                     </span>
                   </h1>
 
                   {/* Description glass card */}
                   <div
-                  className={`mb-3 xs:mb-4 sm:mb-7 md:mb-8 flex justify-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  className={`mb-2 xs:mb-3 sm:mb-7 md:mb-8 flex flex-col items-center gap-2 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                   current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
                   } style={{ transitionDelay: current === index ? '360ms' : '0ms' }}>
 
@@ -335,10 +351,21 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
                       }}>
 
                         <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                          {slide.description}
+                          <span className="sm:hidden">{isExpanded(index) ? slide.description : slide.shortDescription}</span>
+                          <span className="hidden sm:inline">{slide.description}</span>
                         </span>
                       </p>
                     </div>
+
+                    {/* Mobile-only toggle: short ↔ full */}
+                    <button
+                      type="button"
+                      onClick={() => toggleExpanded(index)}
+                      aria-expanded={isExpanded(index)}
+                      className="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 active:scale-95 text-white text-[11px] font-bold border border-white/25 backdrop-blur-sm transition-all"
+                    >
+                      {isExpanded(index) ? '▲ Yashirish' : '▼ Batafsil'}
+                    </button>
                   </div>
 
                   {/* CTA Buttons */}
