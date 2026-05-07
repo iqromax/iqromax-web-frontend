@@ -104,11 +104,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block">O'ynab o'rganing,</span>
           <span className="block text-kid-yellow">tez rivojlaning! 🚀</span>
         </>,
+    shortTitle: <span className="block text-kid-yellow">O'ynab o'rganing 🚀</span>,
 
     description:
     <>
           🎯 Qiziqarli mashqlar · ⭐ XP va level tizimi · 🏆 Reyting va musobaqalar · 🎖️ Badges va mukofotlar
         </>,
+    shortDescription: <>🎯 Mashqlar · ⭐ XP · 🏆 Reyting</>,
 
     cta: {
       icon: Rocket,
