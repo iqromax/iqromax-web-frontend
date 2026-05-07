@@ -259,30 +259,30 @@ const MainSlide = ({ totalUsers, navigate }: any) => (
     sideContent={
       <>
         {/* Level card */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl w-[150px] sm:w-[180px]">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl w-[110px] sm:w-[180px]">
+          <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
             <div>
-              <p className="text-base sm:text-lg font-black text-white leading-none">Level 7</p>
-              <p className="text-[10px] text-emerald-300/70 mt-1">XP 650 / 1200</p>
+              <p className="text-xs sm:text-lg font-black text-white leading-none">Level 7</p>
+              <p className="text-[8px] sm:text-[10px] text-emerald-300/70 mt-0.5 sm:mt-1">XP 650 / 1200</p>
             </div>
-            <Trophy className="h-4 w-4 text-amber-400 ml-auto" />
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-amber-400 ml-auto" />
           </div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-1 sm:h-1.5 bg-white/10 rounded-full overflow-hidden">
             <div className="h-full bg-emerald-400 rounded-full" style={{ width: '54%' }} />
           </div>
-          <p className="text-[10px] text-emerald-300/70 text-right mt-1">54%</p>
+          <p className="text-[8px] sm:text-[10px] text-emerald-300/70 text-right mt-0.5 sm:mt-1">54%</p>
         </div>
         {/* Progress card */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl w-[200px] sm:w-[230px]">
-          <p className="text-xs font-bold text-white mb-2">Progress</p>
-          <svg viewBox="0 0 200 70" className="w-full h-14">
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl w-[140px] sm:w-[230px]">
+          <p className="text-[10px] sm:text-xs font-bold text-white mb-1 sm:mb-2">Progress</p>
+          <svg viewBox="0 0 200 70" className="w-full h-10 sm:h-14">
             <polyline points="0,55 33,48 66,40 99,30 132,22 165,16 200,8" fill="none" stroke="rgb(52,211,153)" strokeWidth="2.5" strokeLinecap="round" />
             {[[0,55],[33,48],[66,40],[99,30],[132,22],[165,16],[200,8]].map(([x,y],i)=>(
               <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(52,211,153)" />
             ))}
           </svg>
-          <div className="flex justify-between text-[8px] text-emerald-300/60 mt-1">
-            {['1-hafta','2-hafta','3-hafta','4-hafta'].map((d) => <span key={d}>{d}</span>)}
+          <div className="flex justify-between text-[7px] sm:text-[8px] text-emerald-300/60 mt-1">
+            {['1-h','2-h','3-h','4-h'].map((d) => <span key={d}>{d}</span>)}
           </div>
         </div>
       </>
@@ -310,34 +310,34 @@ const KidsSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Level card (purple) */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-3 sm:p-4 shadow-2xl w-[160px] sm:w-[200px] text-white">
-          <div className="flex items-center justify-between mb-2">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl w-[120px] sm:w-[200px] text-white">
+          <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <div>
-              <p className="text-base sm:text-lg font-black leading-none">Level 7</p>
-              <p className="text-[10px] text-white/70 mt-1">XP 900 / 1200</p>
+              <p className="text-xs sm:text-lg font-black leading-none">Level 7</p>
+              <p className="text-[8px] sm:text-[10px] text-white/70 mt-0.5 sm:mt-1">XP 900 / 1200</p>
             </div>
-            <Trophy className="h-4 w-4 text-amber-300" />
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-amber-300" />
           </div>
-          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+          <div className="h-1 sm:h-1.5 bg-white/20 rounded-full overflow-hidden">
             <div className="h-full bg-amber-300 rounded-full" style={{ width: '75%' }} />
           </div>
-          <p className="text-[10px] text-amber-200 text-right mt-1 font-bold">Zo'r!</p>
+          <p className="text-[8px] sm:text-[10px] text-amber-200 text-right mt-0.5 sm:mt-1 font-bold">Zo'r!</p>
         </div>
 
         {/* Reyting card */}
-        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-bold">Reyting</p>
-            <Trophy className="h-3.5 w-3.5 text-amber-500" />
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl border border-border/40 w-[130px] sm:w-[200px]">
+          <div className="flex items-center justify-between mb-1 sm:mb-2">
+            <p className="text-[10px] sm:text-xs font-bold">Reyting</p>
+            <Trophy className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-500" />
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-0.5 sm:space-y-1">
             {[
               { n: 'Asadbek', s: '15 300' },
               { n: 'Zarina', s: '12 450' },
               { n: 'Jahongir', s: '11 200' },
               { n: 'Sarvar', s: '10 150' },
             ].map((p, i) => (
-              <li key={i} className="flex items-center justify-between text-[10px]">
+              <li key={i} className={`items-center justify-between text-[9px] sm:text-[10px] ${i >= 2 ? 'hidden sm:flex' : 'flex'}`}>
                 <span className="flex items-center gap-1">
                   <span className="font-bold text-muted-foreground w-3">{i + 1}</span>
                   <span className="font-semibold">{p.n}</span>
@@ -349,7 +349,7 @@ const KidsSlide = ({ navigate }: any) => (
         </div>
 
         {/* Daily goal */}
-        <div className="absolute bottom-[110px] right-3 sm:bottom-[120px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
+        <div className="hidden sm:block absolute bottom-[120px] right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[200px]">
           <p className="text-xs font-bold mb-2 flex items-center gap-1">Kunlik maqsad <Target className="h-3 w-3 text-emerald-500" /></p>
           <div className="h-1.5 bg-muted rounded-full overflow-hidden mb-1.5">
             <div className="h-full bg-emerald-500 rounded-full" style={{ width: '60%' }} />
@@ -361,13 +361,13 @@ const KidsSlide = ({ navigate }: any) => (
         </div>
 
         {/* Badges */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-3 shadow-xl w-[160px] sm:w-[200px] text-white flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-amber-400 flex items-center justify-center">
-            <Star className="h-5 w-5 text-amber-700 fill-amber-600" />
+        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl w-[110px] sm:w-[200px] text-white flex items-center gap-2 sm:gap-3">
+          <div className="h-7 w-7 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl bg-amber-400 flex items-center justify-center shrink-0">
+            <Star className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-amber-700 fill-amber-600" />
           </div>
           <div>
-            <p className="text-[10px] text-white/70">Badges</p>
-            <p className="text-lg font-black"><span>12</span> <span className="text-sm font-bold text-white/60">/ 24</span></p>
+            <p className="text-[8px] sm:text-[10px] text-white/70">Badges</p>
+            <p className="text-sm sm:text-lg font-black"><span>12</span> <span className="text-[10px] sm:text-sm font-bold text-white/60">/ 24</span></p>
           </div>
         </div>
       </>
@@ -396,49 +396,49 @@ const ParentsSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Profile + stats card */}
-        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[260px]">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-[11px] font-black">A</div>
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl border border-border/40 w-[150px] sm:w-[260px]">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-3">
+            <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-[9px] sm:text-[11px] font-black">A</div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold truncate">Asadbek Abduazizov</p>
-              <p className="text-[10px] text-orange-600 font-semibold">Level 7</p>
+              <p className="text-[10px] sm:text-xs font-bold truncate">Asadbek</p>
+              <p className="text-[8px] sm:text-[10px] text-orange-600 font-semibold">Level 7</p>
             </div>
-            <Award className="h-4 w-4 text-violet-600" />
+            <Award className="h-3 w-3 sm:h-4 sm:w-4 text-violet-600" />
           </div>
-          <div className="h-1 bg-muted rounded-full mb-3">
+          <div className="h-0.5 sm:h-1 bg-muted rounded-full mb-1.5 sm:mb-3">
             <div className="h-full bg-violet-600 rounded-full" style={{ width: '70%' }} />
           </div>
-          <div className="grid grid-cols-4 gap-1 text-center">
+          <div className="grid grid-cols-4 gap-0.5 sm:gap-1 text-center">
             {[
-              { v: '12', l: 'Kurslar' },
+              { v: '12', l: 'Kurs' },
               { v: '2350', l: 'XP' },
-              { v: '75%', l: 'Progress' },
-              { v: '15', l: 'Seriya 🔥' },
+              { v: '75%', l: 'Prog' },
+              { v: '15', l: '🔥' },
             ].map((s) => (
               <div key={s.l}>
-                <p className="text-xs font-black">{s.v}</p>
-                <p className="text-[8px] text-muted-foreground">{s.l}</p>
+                <p className="text-[10px] sm:text-xs font-black">{s.v}</p>
+                <p className="text-[7px] sm:text-[8px] text-muted-foreground">{s.l}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Weekly progress chart */}
-        <div className="absolute top-[150px] right-3 sm:top-[170px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[260px]">
-          <p className="text-xs font-bold mb-1">Haftalik progress</p>
-          <svg viewBox="0 0 200 60" className="w-full h-14">
+        <div className="absolute top-2 right-2 sm:top-[170px] sm:right-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl border border-border/40 w-[140px] sm:w-[260px]">
+          <p className="text-[10px] sm:text-xs font-bold mb-1">Haftalik progress</p>
+          <svg viewBox="0 0 200 60" className="w-full h-9 sm:h-14">
             <polyline points="0,50 33,42 66,32 99,25 132,18 165,12 200,5" fill="none" stroke="rgb(249,115,22)" strokeWidth="2.5" strokeLinecap="round" />
             {[[0,50],[33,42],[66,32],[99,25],[132,18],[165,12],[200,5]].map(([x,y],i)=>(
               <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(249,115,22)" />
             ))}
           </svg>
-          <div className="flex justify-between text-[9px] text-muted-foreground">
+          <div className="flex justify-between text-[8px] sm:text-[9px] text-muted-foreground">
             {['Du','Se','Ch','Pa','Ju','Sh','Ya'].map((d)=><span key={d}>{d}</span>)}
           </div>
         </div>
 
         {/* So'nggi faoliyat */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[260px]">
+        <div className="hidden sm:block absolute bottom-4 right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[260px]">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-bold">So'nggi faoliyat</p>
             <span className="text-[9px] text-orange-600 font-bold">Barchasi</span>
@@ -483,39 +483,39 @@ const TeachersSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Income card */}
-        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[270px]">
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl border border-border/40 w-[150px] sm:w-[270px]">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] text-muted-foreground">Oylik daromad</p>
-            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-full">+18%</span>
+            <p className="text-[9px] sm:text-[10px] text-muted-foreground">Oylik daromad</p>
+            <span className="text-[8px] sm:text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1 sm:px-1.5 py-0.5 rounded-full">+18%</span>
           </div>
-          <p className="text-base sm:text-lg font-black mb-2">12 450 000 <span className="text-xs font-bold">so'm</span></p>
-          <svg viewBox="0 0 200 50" className="w-full h-12">
+          <p className="text-xs sm:text-lg font-black mb-1.5 sm:mb-2">12 450 000 <span className="text-[9px] sm:text-xs font-bold">so'm</span></p>
+          <svg viewBox="0 0 200 50" className="w-full h-8 sm:h-12">
             <polyline points="0,40 50,32 100,22 150,14 200,5" fill="none" stroke="rgb(16,185,129)" strokeWidth="2.5" strokeLinecap="round" />
             {[[0,40],[50,32],[100,22],[150,14],[200,5]].map(([x,y],i)=>(
               <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(16,185,129)" />
             ))}
           </svg>
-          <div className="flex justify-between text-[9px] text-muted-foreground">
+          <div className="flex justify-between text-[8px] sm:text-[9px] text-muted-foreground">
             {['1-h','2-h','3-h','4-h'].map((d)=><span key={d}>{d}</span>)}
           </div>
         </div>
 
         {/* Students */}
-        <div className="absolute top-[170px] right-3 sm:top-[200px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[270px] flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center">
-            <Users className="h-5 w-5 text-violet-600" />
+        <div className="absolute top-2 right-2 sm:top-[200px] sm:right-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl border border-border/40 w-[140px] sm:w-[270px] flex items-center gap-2 sm:gap-3">
+          <div className="h-7 w-7 sm:h-10 sm:w-10 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center shrink-0">
+            <Users className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-violet-600" />
           </div>
-          <div className="flex-1">
-            <p className="text-[10px] text-muted-foreground">O'quvchilar</p>
-            <p className="text-lg font-black">56</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-[8px] sm:text-[10px] text-muted-foreground">O'quvchilar</p>
+            <p className="text-sm sm:text-lg font-black">56</p>
           </div>
-          <span className="text-[10px] text-emerald-600 font-semibold">Batafsil ›</span>
+          <span className="hidden sm:inline text-[10px] text-emerald-600 font-semibold">Batafsil ›</span>
         </div>
 
         {/* Quote */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[230px] sm:w-[300px]">
+        <div className="hidden sm:block absolute bottom-4 right-4 bg-white dark:bg-card rounded-2xl p-4 shadow-2xl border border-border/40 w-[300px]">
           <Quote className="h-4 w-4 text-emerald-500 mb-1" />
-          <p className="text-[11px] sm:text-xs leading-snug mb-2">IQROMAX bilan trenerlikni boshladim va 3 oy ichida o'zim orzu qilgan daromadga erishdim!</p>
+          <p className="text-xs leading-snug mb-2">IQROMAX bilan trenerlikni boshladim va 3 oy ichida o'zim orzu qilgan daromadga erishdim!</p>
           <div className="flex items-center gap-2 pt-2 border-t border-border/40">
             <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[10px] font-black">N</div>
             <div>
