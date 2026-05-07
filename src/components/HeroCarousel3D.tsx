@@ -35,7 +35,9 @@ interface HeroSlide {
     extraBadge?: string;
   };
   title: React.ReactNode;
+  shortTitle: React.ReactNode;
   description: React.ReactNode;
+  shortDescription: React.ReactNode;
   cta: {
     icon: React.ElementType;
     text: string;
