@@ -483,39 +483,39 @@ const TeachersSlide = ({ navigate }: any) => (
     sideContent={
       <>
         {/* Income card */}
-        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[270px]">
+        <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-4 shadow-2xl border border-border/40 w-[150px] sm:w-[270px]">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] text-muted-foreground">Oylik daromad</p>
-            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-full">+18%</span>
+            <p className="text-[9px] sm:text-[10px] text-muted-foreground">Oylik daromad</p>
+            <span className="text-[8px] sm:text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1 sm:px-1.5 py-0.5 rounded-full">+18%</span>
           </div>
-          <p className="text-base sm:text-lg font-black mb-2">12 450 000 <span className="text-xs font-bold">so'm</span></p>
-          <svg viewBox="0 0 200 50" className="w-full h-12">
+          <p className="text-xs sm:text-lg font-black mb-1.5 sm:mb-2">12 450 000 <span className="text-[9px] sm:text-xs font-bold">so'm</span></p>
+          <svg viewBox="0 0 200 50" className="w-full h-8 sm:h-12">
             <polyline points="0,40 50,32 100,22 150,14 200,5" fill="none" stroke="rgb(16,185,129)" strokeWidth="2.5" strokeLinecap="round" />
             {[[0,40],[50,32],[100,22],[150,14],[200,5]].map(([x,y],i)=>(
               <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(16,185,129)" />
             ))}
           </svg>
-          <div className="flex justify-between text-[9px] text-muted-foreground">
+          <div className="flex justify-between text-[8px] sm:text-[9px] text-muted-foreground">
             {['1-h','2-h','3-h','4-h'].map((d)=><span key={d}>{d}</span>)}
           </div>
         </div>
 
         {/* Students */}
-        <div className="absolute top-[170px] right-3 sm:top-[200px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[270px] flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center">
-            <Users className="h-5 w-5 text-violet-600" />
+        <div className="absolute top-2 right-2 sm:top-[200px] sm:right-4 bg-white dark:bg-card rounded-xl sm:rounded-2xl p-2 sm:p-3 shadow-xl border border-border/40 w-[140px] sm:w-[270px] flex items-center gap-2 sm:gap-3">
+          <div className="h-7 w-7 sm:h-10 sm:w-10 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center shrink-0">
+            <Users className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-violet-600" />
           </div>
-          <div className="flex-1">
-            <p className="text-[10px] text-muted-foreground">O'quvchilar</p>
-            <p className="text-lg font-black">56</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-[8px] sm:text-[10px] text-muted-foreground">O'quvchilar</p>
+            <p className="text-sm sm:text-lg font-black">56</p>
           </div>
-          <span className="text-[10px] text-emerald-600 font-semibold">Batafsil ›</span>
+          <span className="hidden sm:inline text-[10px] text-emerald-600 font-semibold">Batafsil ›</span>
         </div>
 
         {/* Quote */}
-        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[230px] sm:w-[300px]">
+        <div className="hidden sm:block absolute bottom-4 right-4 bg-white dark:bg-card rounded-2xl p-4 shadow-2xl border border-border/40 w-[300px]">
           <Quote className="h-4 w-4 text-emerald-500 mb-1" />
-          <p className="text-[11px] sm:text-xs leading-snug mb-2">IQROMAX bilan trenerlikni boshladim va 3 oy ichida o'zim orzu qilgan daromadga erishdim!</p>
+          <p className="text-xs leading-snug mb-2">IQROMAX bilan trenerlikni boshladim va 3 oy ichida o'zim orzu qilgan daromadga erishdim!</p>
           <div className="flex items-center gap-2 pt-2 border-t border-border/40">
             <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[10px] font-black">N</div>
             <div>
