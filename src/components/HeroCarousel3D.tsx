@@ -387,12 +387,6 @@ const ParentsSlide = ({ navigate }: any) => (
     ]}
     primaryCta={{ text: "Natijalarni ko'rish", icon: BarChart3, onClick: () => navigate('/parent-dashboard'), className: 'bg-orange-500 hover:bg-orange-600 text-white' }}
     image={heroParents}
-    bottomStats={[
-      { icon: Users, value: '10 000+', label: 'Ota-onalar', color: 'text-orange-500' },
-      { icon: Eye, value: '20 000+', label: 'Bolalar', color: 'text-emerald-500' },
-      { icon: TrendingUp, value: '96%', label: 'Faol ota-ona', color: 'text-orange-500' },
-      { icon: Star, value: '4.9/5', label: 'Bahosi', color: 'text-amber-500' },
-    ]}
     sideContent={
       <>
         {/* Profile + stats card */}
