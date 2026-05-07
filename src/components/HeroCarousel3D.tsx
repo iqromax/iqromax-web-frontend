@@ -407,6 +407,42 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
 
 
 
+      {/* Slide Indicators - numbers + section labels */}
+      <div
+        role="tablist"
+        aria-label="Hero slaydlar"
+        className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/45 backdrop-blur-md rounded-full border border-white/15 shadow-xl"
+      >
+        {slides.map((slide, index) => {
+          const active = current === index;
+          return (
+            <button
+              key={slide.id}
+              role="tab"
+              aria-selected={active}
+              aria-label={`${index + 1}. ${slideLabels[slide.id] ?? slide.id}`}
+              onClick={() => scrollTo(index)}
+              className={`group flex items-center gap-1.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                active
+                  ? 'bg-white text-gray-900 px-3 sm:px-3.5 py-1 sm:py-1.5 shadow-lg'
+                  : 'bg-white/10 text-white hover:bg-white/25 px-2 sm:px-2.5 py-1 sm:py-1.5'
+              }`}
+            >
+              <span className={`flex items-center justify-center text-[10px] sm:text-xs font-black rounded-full transition-all ${
+                active ? 'bg-primary text-primary-foreground w-4 h-4 sm:w-5 sm:h-5' : 'bg-white/20 w-4 h-4 sm:w-5 sm:h-5'
+              }`}>
+                {index + 1}
+              </span>
+              <span className={`text-[11px] sm:text-xs font-bold tracking-wide whitespace-nowrap transition-all ${
+                active ? 'inline opacity-100' : 'hidden sm:inline opacity-80 group-hover:opacity-100'
+              }`}>
+                {slideLabels[slide.id] ?? slide.id}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Social Proof Overlay - Compact on mobile */}
       <div className="absolute top-2 right-2 xs:top-3 xs:right-3 sm:top-4 sm:right-4 z-10">
         <div className="flex items-center gap-1.5 xs:gap-2 px-2 xs:px-3 py-1 xs:py-1.5 bg-black/50 backdrop-blur-sm rounded-full text-[10px] xs:text-xs text-white border border-white/20">
