@@ -146,9 +146,9 @@ const SlideShell = ({
       }} />
     )}
 
-    <div className="relative grid lg:grid-cols-[1.05fr_1fr] gap-4 lg:gap-6 p-5 sm:p-8 lg:p-10 min-h-[480px] lg:min-h-[560px]">
+    <div className="relative grid lg:grid-cols-[1.05fr_1fr] gap-5 lg:gap-6 p-5 sm:p-8 lg:p-10 min-h-[480px] lg:min-h-[560px]">
       {/* LEFT: text */}
-      <div className="flex flex-col justify-center max-w-2xl">
+      <div className="flex flex-col justify-center max-w-2xl order-2 lg:order-1">
         {showLogo && (
           <img src={iqromaxLogo} alt="IQROMAX" className="h-7 w-auto mb-3 object-contain self-start" />
         )}
