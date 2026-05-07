@@ -91,7 +91,7 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
       </Carousel>
 
       {/* Indicators */}
-      <div role="tablist" aria-label="Hero slaydlar" className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 backdrop-blur-md border border-border/50 shadow-lg">
+      <div role="tablist" aria-label="Hero slaydlar" className="mt-4 mx-auto w-fit flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 backdrop-blur-md border border-border/50 shadow-lg">
         {slides.map((s, i) => (
           <button
             key={s.id}
