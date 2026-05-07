@@ -108,11 +108,7 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
         </>,
     shortDescription: <>🎯 Mashqlar · ⭐ XP · 🏆 Reyting</>,
 
-    cta: {
-      icon: Rocket,
-      text: 'Boshlash',
-      className: 'bg-blue-500 text-white hover:bg-blue-600'
-    }
+    cta: { icon: Gamepad2, text: 'Boshlash', route: '/courses' }
   },
   {
     id: 'parents',
