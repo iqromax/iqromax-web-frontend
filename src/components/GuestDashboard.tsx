@@ -29,6 +29,7 @@ import {
   Coins,
 } from 'lucide-react';
 import { TestimonialForm } from './TestimonialForm';
+import { HeroCarousel3D } from './HeroCarousel3D';
 import heroKids from '@/assets/hero-kids-learning.jpg';
 import heroParents from '@/assets/hero-parents-child.jpg';
 import heroTeachers from '@/assets/hero-teacher-class.jpg';
