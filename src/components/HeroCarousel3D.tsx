@@ -1,466 +1,542 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  CarouselApi } from
-'./ui/carousel';
+  CarouselApi,
+} from './ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import {
   Play,
+  ChevronRight,
+  Star,
+  Trophy,
+  Target,
+  Award,
+  ShieldCheck,
+  TrendingUp,
+  Users,
+  CalendarCheck,
+  CheckCircle2,
+  Quote,
+  Zap,
   GraduationCap,
   BarChart3,
   Gamepad2,
-  Rocket,
   Eye,
-  FileText } from
-'lucide-react';
-import iqromaxLogo from '@/assets/iqromax-logo-full.png';
-import heroSlideKids from '@/assets/hero-slide-kids.jpg';
-import heroSlideParents from '@/assets/hero-slide-parents.jpg';
-import heroSlideTeachers from '@/assets/hero-slide-teachers.jpg';
-
-interface HeroSlide {
-  id: string;
-  image: string;
-  gradientOverlay: string;
-  badge: {
-    icon: React.ElementType;
-    text: string;
-    bgColor: string;
-    extraBadge?: string;
-  };
-  title: React.ReactNode;
-  shortTitle: React.ReactNode;
-  description: React.ReactNode;
-  shortDescription: React.ReactNode;
-  cta: {
-    icon: React.ElementType;
-    text: string;
-    route: string;
-  };
-  showLogo?: boolean;
-}
+} from 'lucide-react';
+import iqromaxLogo from '@/assets/iqromax-logo.png';
+import heroKids from '@/assets/hero-kids-learning.jpg';
+import heroParents from '@/assets/hero-parents-child.jpg';
+import heroTeachers from '@/assets/hero-teacher-class.jpg';
 
 interface HeroCarousel3DProps {
   totalUsers: number;
 }
 
+const fmt = (n: number) => (n >= 10000 ? `${Math.round(n / 1000)}K+` : `${n.toLocaleString()}+`);
+
 export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
   const navigate = useNavigate();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [expandedSlides, setExpandedSlides] = useState<Record<number, boolean>>({});
-  const isExpanded = (i: number) => expandedSlides[i] ?? false;
-  const toggleExpanded = (i: number) =>
-    setExpandedSlides((p) => ({ ...p, [i]: !isExpanded(i) }));
-
-  // 4 separate slides - one per audience
-  const slides: HeroSlide[] = useMemo(() => [
-  {
-    id: 'main',
-    image: heroSlideKids,
-    gradientOverlay: 'from-black/70 via-black/30 to-transparent',
-    badge: {
-      icon: Rocket,
-      text: "Bolalar • Trenerlar • Ota-onalar uchun",
-      bgColor: 'bg-primary/90 text-white'
-    },
-    title:
-    <>
-          <span className="block text-primary drop-shadow-[0_2px_8px_rgba(34,197,94,0.4)]">IQROMAX —</span>
-          <span className="block mt-1 text-white/95">tez hisoblashni o'rgatuvchi platforma</span>
-        </>,
-    shortTitle: <span className="block text-primary">IQROMAX</span>,
-
-    description:
-    <>
-          ⚡ Tez va samarali metodika · 🎮 O'yin tarzida o'qitish · 📊 Real natijani ko'rish
-        </>,
-    shortDescription: <>⚡ Tez · 🎮 O'yin · 📊 Natija</>,
-
-    cta: { icon: Rocket, text: 'Bepul boshlash', route: '/auth' },
-    showLogo: true
-  },
-  {
-    id: 'kids',
-    image: heroSlideKids,
-    gradientOverlay: 'from-blue-900/60 via-blue-900/20 to-transparent',
-    badge: {
-      icon: Gamepad2,
-      text: "Bolalar uchun",
-      bgColor: 'bg-blue-500 text-white'
-    },
-    title:
-    <>
-          <span className="block">O'ynab o'rganing,</span>
-          <span className="block text-kid-yellow">tez rivojlaning! 🚀</span>
-        </>,
-    shortTitle: <span className="block text-kid-yellow">O'ynab o'rganing 🚀</span>,
-
-    description:
-    <>
-          🎯 Qiziqarli mashqlar · ⭐ XP va level tizimi · 🏆 Reyting va musobaqalar · 🎖️ Badges va mukofotlar
-        </>,
-    shortDescription: <>🎯 Mashqlar · ⭐ XP · 🏆 Reyting</>,
-
-    cta: { icon: Gamepad2, text: 'Boshlash', route: '/courses' }
-  },
-  {
-    id: 'parents',
-    image: heroSlideParents,
-    gradientOverlay: 'from-orange-900/60 via-orange-900/20 to-transparent',
-    badge: {
-      icon: Eye,
-      text: 'Ota-onalar uchun',
-      bgColor: 'bg-orange-500 text-white'
-    },
-    title:
-    <>
-          <span className="block">Farzandingiz rivojini</span>
-          <span className="block text-kid-yellow">nazorat qiling 📊</span>
-        </>,
-    shortTitle: <span className="block text-kid-yellow">Nazorat qiling 📊</span>,
-
-    description:
-    <>
-          ✅ Real vaqtda natijalar · 📋 Kunlik mashqlar va progress · 💡 Tavsiyalar va tahlillar · 🎯 Motivatsiya va maqsadlar
-        </>,
-    shortDescription: <>✅ Natijalar · 📋 Progress · 💡 Tavsiyalar</>,
-
-    cta: { icon: BarChart3, text: "Natijalarni ko'rish", route: '/parent-dashboard' }
-  },
-  {
-    id: 'teachers',
-    image: heroSlideTeachers,
-    gradientOverlay: 'from-emerald-900/60 via-emerald-900/20 to-transparent',
-    badge: {
-      icon: GraduationCap,
-      text: "Trenerlar uchun",
-      bgColor: 'bg-emerald-500 text-white'
-    },
-    title:
-    <>
-          <span className="block">Trener bo'lib</span>
-          <span className="block text-kid-yellow">daromad toping! 💰</span>
-        </>,
-    shortTitle: <span className="block text-kid-yellow">Daromad toping 💰</span>,
-
-    description:
-    <>
-          ✅ 1 oyda professional trener · 👥 O'z guruhingizni ochasiz · 🌐 Onlayn va oflayn o'qitish · 📈 Barqaror daromad manbai
-        </>,
-    shortDescription: <>✅ 1 oyda · 👥 Guruh · 📈 Daromad</>,
-
-    cta: { icon: GraduationCap, text: "Trener bo'lish", route: '/lms' }
-  }],
-  []);
-
-  const slideLabels: Record<string, string> = {
-    main: 'IQROMAX',
-    kids: 'Bolalar',
-    parents: 'Ota-onalar',
-    teachers: 'Trenerlar'
-  };
 
   useEffect(() => {
     if (!api) return;
-
     setCurrent(api.selectedScrollSnap());
-
-    const onSelect = () => {
-      setCurrent(api.selectedScrollSnap());
-    };
-
+    const onSelect = () => setCurrent(api.selectedScrollSnap());
     api.on('select', onSelect);
-    return () => {
-      api.off('select', onSelect);
-    };
+    return () => { api.off('select', onSelect); };
   }, [api]);
 
-  const scrollTo = useCallback((index: number) => {
-    api?.scrollTo(index);
-  }, [api]);
-
-  // Keyboard navigation: ←/→ arrows, Home/End
   useEffect(() => {
     if (!api) return;
     const onKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable) return;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       if (e.key === 'ArrowRight') { e.preventDefault(); api.scrollNext(); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); api.scrollPrev(); }
-      else if (e.key === 'Home') { e.preventDefault(); api.scrollTo(0); }
-      else if (e.key === 'End') { e.preventDefault(); api.scrollTo(slides.length - 1); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [api, slides.length]);
+  }, [api]);
 
-  // Autoplay plugin with touch-friendly settings
-  const autoplayPlugin = useMemo(() =>
-  Autoplay({
-    delay: 4000,
-    stopOnInteraction: false,
-    stopOnMouseEnter: true
-  }),
-  []);
+  const autoplay = useMemo(() => Autoplay({ delay: 6000, stopOnInteraction: false, stopOnMouseEnter: true }), []);
+
+  const slides = [
+    { id: 'main', label: 'IQROMAX' },
+    { id: 'kids', label: 'Bolalar' },
+    { id: 'parents', label: 'Ota-onalar' },
+    { id: 'teachers', label: 'Trenerlar' },
+  ];
+
+  const scrollTo = useCallback((i: number) => api?.scrollTo(i), [api]);
 
   return (
-    <div
-      className="relative overflow-hidden rounded-none sm:rounded-2xl md:rounded-3xl shadow-2xl -mx-4 sm:mx-0">
-
+    <div className="relative">
       <Carousel
         setApi={setApi}
-        opts={{
-          loop: true,
-          dragFree: false,
-          containScroll: 'trimSnaps',
-          skipSnaps: false,
-          duration: 15,
-          dragThreshold: 3
-        }}
-        plugins={[autoplayPlugin]}
-        className="w-full touch-pan-y select-none">
-
-        <CarouselContent className="ml-0" style={{ touchAction: 'pan-y pinch-zoom' }}>
-          {slides.map((slide, index) =>
-          <CarouselItem key={slide.id} className="touch-manipulation cursor-grab active:cursor-grabbing pl-0 [perspective:1400px]">
-              {/* Mobile-optimized height - simplified for performance */}
-              <div
-              className={`group relative h-[320px] xs:h-[360px] sm:h-[480px] md:h-[560px] lg:h-[640px] overflow-hidden transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d] hover:[transform:rotateY(-3deg)_rotateX(2deg)_scale(1.01)] ${current === index ? '[transform:rotateY(0deg)_scale(1)]' : '[transform:rotateY(2deg)_scale(0.97)] opacity-80'}`}>
-
-                {/* Image Background with Ken Burns + parallax */}
-                <img
-                src={slide.image}
-                alt={slide.id}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-                className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110 ${current === index ? 'scale-105' : 'scale-100'}`} />
-
-
-                {/* Simple gradient overlay - no animation on mobile */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-kid-yellow/20 opacity-60 hidden sm:block" />
-                
-                {/* Stronger gradient for mobile readability - simplified */}
-                <div className={`absolute inset-0 bg-gradient-to-t ${slide.gradientOverlay}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 sm:from-black/60 sm:via-transparent sm:to-transparent" />
-                
-                {/* Vignette effect - static, no hover */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.3)_100%)]" />
-                
-                {/* Animated glow spots - only on desktop */}
-                <div className="hidden sm:block absolute top-1/4 left-1/4 w-48 md:w-64 h-48 md:h-64 bg-kid-yellow/20 rounded-full blur-3xl opacity-50" />
-                <div className="hidden sm:block absolute bottom-1/3 right-1/4 w-36 md:w-48 h-36 md:h-48 bg-primary/20 rounded-full blur-3xl opacity-40" />
-
-                {/* Floating particles - only on desktop */}
-                <div className="hidden sm:block absolute inset-0 overflow-hidden pointer-events-none">
-                  {[...Array(6)].map((_, i) =>
-                <div
-                  key={i}
-                  className="absolute w-1.5 h-1.5 bg-white rounded-full opacity-60"
-                  style={{
-                    left: `${10 + i * 12 % 80}%`,
-                    top: `${20 + i * 11 % 60}%`,
-                    animation: `float ${4 + i % 3}s ease-in-out infinite`,
-                    animationDelay: `${i * 0.4}s`,
-                    boxShadow: '0 0 6px 2px rgba(255,255,255,0.6)'
-                  }} />
-
-                )}
-                </div>
-
-                {/* Content */}
-                <div
-                className={`absolute inset-0 flex flex-col items-center justify-end p-4 xs:p-5 sm:p-8 md:p-10 text-white text-center [transform-style:preserve-3d] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                current === index ? 'opacity-100 [transform:translateZ(40px)]' : 'opacity-0 [transform:translateZ(0px)]'}`
-                }>
-
-                  {/* Badge Row */}
-                <div
-                  className={`flex flex-wrap items-center justify-center gap-1.5 xs:gap-2 sm:gap-3 mb-2 xs:mb-3 sm:mb-5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
-                  } style={{ transitionDelay: current === index ? '120ms' : '0ms' }}>
-
-                    {slide.showLogo &&
-                  <div className="bg-white/95 rounded-xl xs:rounded-2xl sm:rounded-2xl p-2 xs:p-2.5 sm:p-3 shadow-2xl ring-2 ring-white/30 transition-transform duration-500 hover:scale-110 hover:rotate-2">
-                        <img src={iqromaxLogo} alt="IQROMAX" className="h-7 xs:h-8 sm:h-10 md:h-12 w-auto" />
-                      </div>
-                  }
-                    <div className="relative">
-                      <span className={`relative inline-flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 sm:py-2.5 ${slide.badge.bgColor} rounded-full text-[11px] xs:text-xs sm:text-sm font-black shadow-2xl border border-white/20 transition-transform duration-300 hover:scale-105`}>
-                        <slide.badge.icon className="h-3.5 w-3.5 xs:h-4 xs:w-4 sm:h-5 sm:w-5" />
-                        <span className="tracking-wide">{slide.badge.text}</span>
-                      </span>
-                    </div>
-                    {slide.badge.extraBadge &&
-                  <span className="px-2.5 xs:px-3 py-1 xs:py-1.5 bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 text-amber-900 rounded-full text-[10px] xs:text-xs sm:text-sm font-black shadow-xl border border-amber-200/50 animate-pulse">
-                        ✨ {slide.badge.extraBadge}
-                      </span>
-                  }
-                  </div>
-
-                  {/* Title with staggered slide-up */}
-                  <h1
-                  className={`text-xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black leading-[1.05] mb-2 xs:mb-3 sm:mb-5 md:mb-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  current === index ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-6 blur-sm'}`
-                  } style={{ transitionDelay: current === index ? '240ms' : '0ms' }}>
-
-                    <span className="text-white drop-shadow-2xl">
-                      {/* Mobile: short by default unless expanded; sm+: always full */}
-                      <span className="sm:hidden">{isExpanded(index) ? slide.title : slide.shortTitle}</span>
-                      <span className="hidden sm:inline">{slide.title}</span>
-                    </span>
-                  </h1>
-
-                  {/* Description glass card */}
-                  <div
-                  className={`mb-2 xs:mb-3 sm:mb-7 md:mb-8 flex flex-col items-center gap-2 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
-                  } style={{ transitionDelay: current === index ? '360ms' : '0ms' }}>
-
-                    <div className="relative">
-                      <p
-                      className="relative text-center text-xs xs:text-sm sm:text-xl md:text-2xl lg:text-3xl text-white max-w-xs xs:max-w-sm sm:max-w-xl md:max-w-2xl leading-snug xs:leading-relaxed sm:leading-loose font-semibold tracking-wide px-2.5 py-1.5 xs:px-3 xs:py-2 sm:px-6 sm:py-4 bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-white/20 transition-all duration-500 hover:bg-black/40 hover:border-white/30"
-                      style={{
-                        textShadow: '0 2px 4px rgba(0,0,0,1), 0 4px 20px rgba(0,0,0,0.9)'
-                      }}>
-
-                        <span className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                          <span className="sm:hidden">{isExpanded(index) ? slide.description : slide.shortDescription}</span>
-                          <span className="hidden sm:inline">{slide.description}</span>
-                        </span>
-                      </p>
-                    </div>
-
-                    {/* Mobile-only toggle: short ↔ full */}
-                    <button
-                      type="button"
-                      onClick={() => toggleExpanded(index)}
-                      aria-expanded={isExpanded(index)}
-                      className="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 active:scale-95 text-white text-[11px] font-bold border border-white/25 backdrop-blur-sm transition-all"
-                    >
-                      {isExpanded(index) ? '▲ Yashirish' : '▼ Batafsil'}
-                    </button>
-                  </div>
-
-                  {/* CTA Buttons */}
-                  <div
-                  className={`flex flex-row items-center justify-center gap-3 xs:gap-3.5 sm:gap-4 md:gap-5 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  current === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`
-                  } style={{ transitionDelay: current === index ? '480ms' : '0ms' }}>
-
-                    <Button
-                      size="lg"
-                      onClick={() => navigate(slide.cta.route)}
-                      className="gap-2 sm:gap-3 font-black active:scale-95 h-12 sm:h-14 md:h-16 text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 rounded-full shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:-translate-y-0.5"
-                    >
-                      <slide.cta.icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                      <span className="truncate tracking-wide">{slide.cta.text}</span>
-                    </Button>
-                    {slide.showLogo && (
-                      <Button
-                        size="lg"
-                        variant="secondary"
-                        onClick={() => navigate('/train')}
-                        className="gap-2 sm:gap-3 font-black active:scale-95 h-12 sm:h-14 md:h-16 text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 rounded-full shadow-xl bg-white/90 text-foreground hover:bg-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
-                      >
-                        <Gamepad2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                        <span className="tracking-wide">Demo sinash</span>
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </CarouselItem>
-          )}
+        opts={{ loop: true, duration: 25 }}
+        plugins={[autoplay]}
+        className="w-full"
+      >
+        <CarouselContent className="ml-0">
+          <CarouselItem className="pl-0"><MainSlide totalUsers={totalUsers} navigate={navigate} /></CarouselItem>
+          <CarouselItem className="pl-0"><KidsSlide navigate={navigate} /></CarouselItem>
+          <CarouselItem className="pl-0"><ParentsSlide navigate={navigate} /></CarouselItem>
+          <CarouselItem className="pl-0"><TeachersSlide navigate={navigate} /></CarouselItem>
         </CarouselContent>
-        
-        {/* Navigation Arrows - Hidden on mobile */}
-        <CarouselPrevious className="hidden sm:flex left-2 md:left-3 bg-white/20 border-white/30 text-white hover:bg-white/40 active:scale-90 sm:h-10 sm:w-10 md:h-12 md:w-12 shadow-xl" />
-        <CarouselNext className="hidden sm:flex right-2 md:right-3 bg-white/20 border-white/30 text-white hover:bg-white/40 active:scale-90 sm:h-10 sm:w-10 md:h-12 md:w-12 shadow-xl" />
       </Carousel>
 
-      {/* Dot Indicators - Simplified */}
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      {/* Slide Indicators - numbers + section labels */}
-      <div
-        role="tablist"
-        aria-label="Hero slaydlar"
-        className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/45 backdrop-blur-md rounded-full border border-white/15 shadow-xl"
-      >
-        {slides.map((slide, index) => {
-          const active = current === index;
-          return (
-            <button
-              key={slide.id}
-              role="tab"
-              aria-selected={active}
-              aria-label={`${index + 1}. ${slideLabels[slide.id] ?? slide.id}`}
-              onClick={() => scrollTo(index)}
-              className={`group flex items-center gap-1.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                active
-                  ? 'bg-white text-gray-900 px-3 sm:px-3.5 py-1 sm:py-1.5 shadow-lg'
-                  : 'bg-white/10 text-white hover:bg-white/25 px-2 sm:px-2.5 py-1 sm:py-1.5'
-              }`}
-            >
-              <span className={`flex items-center justify-center text-[10px] sm:text-xs font-black rounded-full transition-all ${
-                active ? 'bg-primary text-primary-foreground w-4 h-4 sm:w-5 sm:h-5' : 'bg-white/20 w-4 h-4 sm:w-5 sm:h-5'
-              }`}>
-                {index + 1}
-              </span>
-              <span className={`text-[11px] sm:text-xs font-bold tracking-wide whitespace-nowrap transition-all ${
-                active ? 'inline opacity-100' : 'hidden sm:inline opacity-80 group-hover:opacity-100'
-              }`}>
-                {slideLabels[slide.id] ?? slide.id}
-              </span>
-            </button>
-          );
-        })}
+      {/* Indicators */}
+      <div role="tablist" aria-label="Hero slaydlar" className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-2 rounded-full bg-background/80 backdrop-blur-md border border-border/50 shadow-lg">
+        {slides.map((s, i) => (
+          <button
+            key={s.id}
+            role="tab"
+            aria-selected={current === i}
+            aria-label={`Slayd ${i + 1}: ${s.label}`}
+            onClick={() => scrollTo(i)}
+            className={`group flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-all ${
+              current === i ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-muted-foreground'
+            }`}
+          >
+            <span className={`text-[10px] font-black ${current === i ? 'text-primary-foreground' : 'text-foreground'}`}>{i + 1}</span>
+            <span className="text-[10px] font-semibold hidden xs:inline">{s.label}</span>
+          </button>
+        ))}
       </div>
-
-      {/* Social Proof Overlay - Compact on mobile */}
-      <div className="absolute top-2 right-2 xs:top-3 xs:right-3 sm:top-4 sm:right-4 z-10">
-        <div className="flex items-center gap-1.5 xs:gap-2 px-2 xs:px-3 py-1 xs:py-1.5 bg-black/50 backdrop-blur-sm rounded-full text-[10px] xs:text-xs text-white border border-white/20">
-          <div className="flex -space-x-1 xs:-space-x-1.5">
-            <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gradient-to-br from-kid-green to-emerald-600 border border-white/50 flex items-center justify-center text-[7px] xs:text-[8px]">👦</div>
-            <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gradient-to-br from-kid-pink to-pink-600 border border-white/50 flex items-center justify-center text-[7px] xs:text-[8px]">👧</div>
-            <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gradient-to-br from-kid-yellow to-amber-600 border border-white/50 flex items-center justify-center text-[7px] xs:text-[8px]">🧒</div>
-          </div>
-          <span className="font-semibold whitespace-nowrap">{totalUsers > 0 ? totalUsers.toLocaleString() : '500'}+</span>
-        </div>
-      </div>
-
-    </div>);
-
+    </div>
+  );
 };
+
+/* ─────────────── Shared shell ─────────────── */
+type ShellProps = {
+  badge: { text: string; icon: React.ElementType; className: string };
+  titleLeft: React.ReactNode;
+  titleAccent: React.ReactNode;
+  titleAccentColor: string;
+  description: string;
+  features?: { icon: string; title: string; desc?: string }[];
+  bullets?: string[];
+  primaryCta: { text: string; icon: React.ElementType; onClick: () => void; className: string };
+  secondaryCta?: { text: string; icon: React.ElementType; onClick: () => void };
+  image: string;
+  imageMaskShape?: 'circle' | 'rect';
+  bg: string;
+  textOnDark?: boolean;
+  sideContent: React.ReactNode;
+  bottomStats?: { icon: React.ElementType; value: string; label: string; color: string }[];
+  showLogo?: boolean;
+  navTopLeft?: React.ReactNode;
+};
+
+const SlideShell = ({
+  badge, titleLeft, titleAccent, titleAccentColor, description, features, bullets,
+  primaryCta, secondaryCta, image, imageMaskShape = 'rect', bg, textOnDark, sideContent, bottomStats, showLogo, navTopLeft,
+}: ShellProps) => (
+  <div className={`relative overflow-hidden rounded-3xl ${bg} ${textOnDark ? 'text-white' : 'text-foreground'}`}>
+    {/* Optional grid pattern for dark slides */}
+    {textOnDark && (
+      <div className="absolute inset-0 opacity-[0.06] pointer-events-none" style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+      }} />
+    )}
+
+    <div className="relative grid lg:grid-cols-[1.05fr_1fr] gap-4 lg:gap-6 p-5 sm:p-8 lg:p-10 min-h-[480px] lg:min-h-[560px]">
+      {/* LEFT: text */}
+      <div className="flex flex-col justify-center max-w-2xl">
+        {showLogo && (
+          <img src={iqromaxLogo} alt="IQROMAX" className="h-7 w-auto mb-3 object-contain self-start" />
+        )}
+        <div className={`inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full font-bold text-xs mb-4 ${badge.className}`}>
+          <badge.icon className="h-3.5 w-3.5" />
+          {badge.text}
+        </div>
+        <h1 className={`text-[26px] xs:text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] mb-4`}>
+          <span className="block">{titleLeft}</span>
+          <span className={`block ${titleAccentColor}`}>{titleAccent}</span>
+        </h1>
+        <p className={`text-sm sm:text-base mb-5 max-w-lg leading-relaxed ${textOnDark ? 'text-white/70' : 'text-muted-foreground'}`}>
+          {description}
+        </p>
+
+        {features && (
+          <ul className="space-y-3 mb-6">
+            {features.map((f, i) => (
+              <li key={i} className="flex items-center gap-3">
+                <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-base ${textOnDark ? 'bg-white/10' : 'bg-primary/10'}`}>
+                  <span>{f.icon}</span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold">{f.title}</p>
+                  {f.desc && <p className={`text-xs ${textOnDark ? 'text-white/60' : 'text-muted-foreground'}`}>{f.desc}</p>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {bullets && (
+          <ul className="space-y-2 mb-6">
+            {bullets.map((b, i) => (
+              <li key={i} className="flex items-center gap-2.5 text-sm">
+                <CheckCircle2 className={`h-4 w-4 shrink-0 ${textOnDark ? 'text-emerald-400' : 'text-emerald-500'}`} />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="flex flex-wrap gap-3">
+          <Button size="lg" onClick={primaryCta.onClick} className={`h-12 px-6 rounded-full font-bold gap-2 shadow-lg ${primaryCta.className}`}>
+            <primaryCta.icon className="h-4 w-4" />
+            {primaryCta.text}
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          {secondaryCta && (
+            <Button size="lg" variant="outline" onClick={secondaryCta.onClick} className={`h-12 px-6 rounded-full font-bold gap-2 ${textOnDark ? 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white' : ''}`}>
+              <secondaryCta.icon className="h-4 w-4" />
+              {secondaryCta.text}
+            </Button>
+          )}
+        </div>
+
+        {bottomStats && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-current/10">
+            {bottomStats.map((s, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <s.icon className={`h-4 w-4 ${s.color}`} />
+                <div>
+                  <p className="text-sm font-black leading-none">{s.value}</p>
+                  <p className={`text-[10px] ${textOnDark ? 'text-white/60' : 'text-muted-foreground'}`}>{s.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* RIGHT: image + overlay cards */}
+      <div className="relative min-h-[280px] lg:min-h-[480px]">
+        <div className={`absolute inset-0 ${imageMaskShape === 'circle' ? 'rounded-[40%_40%_40%_40%/30%_30%_30%_30%]' : 'rounded-2xl'} overflow-hidden`}>
+          <img src={image} alt="" className="w-full h-full object-cover" />
+        </div>
+        {sideContent}
+      </div>
+    </div>
+  </div>
+);
+
+/* ─────────────── Slide 1: MAIN (dark green) ─────────────── */
+const MainSlide = ({ totalUsers, navigate }: any) => (
+  <SlideShell
+    bg="bg-gradient-to-br from-[#06180e] via-[#0a2818] to-[#0f3a22]"
+    textOnDark
+    showLogo
+    badge={{ text: 'Bolalar • Trenerlar • Ota-onalar', icon: Star, className: 'bg-emerald-500/15 border border-emerald-400/30 text-emerald-300' }}
+    titleLeft={<span className="text-emerald-400">IQROMAX —</span>}
+    titleAccent="tez hisoblashni o'rgatuvchi platforma"
+    titleAccentColor="text-white"
+    description="5–15 yoshdagi bolalar uchun yapon abakus metodikasi asosida ishlab chiqilgan zamonaviy ta'lim platformasi."
+    features={[
+      { icon: '⚡', title: 'Tez va samarali metodika', desc: 'Yapon abakus metodiga asoslangan' },
+      { icon: '🏆', title: "O'yin tarzida o'qitish", desc: 'XP, level, reyting va badges tizimi' },
+      { icon: '📊', title: "Real natijani ko'rish", desc: 'Har kuni progress va tahlillar' },
+    ]}
+    primaryCta={{ text: 'Bepul boshlash', icon: Play, onClick: () => navigate('/auth'), className: 'bg-emerald-500 hover:bg-emerald-400 text-white' }}
+    secondaryCta={{ text: 'Nima uchun IQROMAX?', icon: ChevronRight, onClick: () => navigate('/about') }}
+    image={heroKids}
+    bottomStats={[
+      { icon: Users, value: fmt(totalUsers || 10000), label: "O'quvchilar", color: 'text-emerald-400' },
+      { icon: GraduationCap, value: '500+', label: 'Trenerlar', color: 'text-emerald-400' },
+      { icon: Play, value: '200+', label: 'Kurslar', color: 'text-emerald-400' },
+      { icon: Award, value: '20+', label: 'Mamlakat', color: 'text-emerald-400' },
+    ]}
+    sideContent={
+      <>
+        {/* Level card */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl w-[150px] sm:w-[180px]">
+          <div className="flex items-center gap-2 mb-2">
+            <div>
+              <p className="text-base sm:text-lg font-black text-white leading-none">Level 7</p>
+              <p className="text-[10px] text-emerald-300/70 mt-1">XP 650 / 1200</p>
+            </div>
+            <Trophy className="h-4 w-4 text-amber-400 ml-auto" />
+          </div>
+          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-emerald-400 rounded-full" style={{ width: '54%' }} />
+          </div>
+          <p className="text-[10px] text-emerald-300/70 text-right mt-1">54%</p>
+        </div>
+        {/* Progress card */}
+        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-[#0a2818]/90 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-3 sm:p-4 shadow-2xl w-[200px] sm:w-[230px]">
+          <p className="text-xs font-bold text-white mb-2">Progress</p>
+          <svg viewBox="0 0 200 70" className="w-full h-14">
+            <polyline points="0,55 33,48 66,40 99,30 132,22 165,16 200,8" fill="none" stroke="rgb(52,211,153)" strokeWidth="2.5" strokeLinecap="round" />
+            {[[0,55],[33,48],[66,40],[99,30],[132,22],[165,16],[200,8]].map(([x,y],i)=>(
+              <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(52,211,153)" />
+            ))}
+          </svg>
+          <div className="flex justify-between text-[8px] text-emerald-300/60 mt-1">
+            {['1-hafta','2-hafta','3-hafta','4-hafta'].map((d) => <span key={d}>{d}</span>)}
+          </div>
+        </div>
+      </>
+    }
+  />
+);
+
+/* ─────────────── Slide 2: KIDS (light blue) ─────────────── */
+const KidsSlide = ({ navigate }: any) => (
+  <SlideShell
+    bg="bg-gradient-to-br from-sky-50 via-white to-blue-50 dark:from-sky-950/30 dark:via-card dark:to-blue-950/20"
+    badge={{ text: 'BOLALAR UCHUN', icon: Gamepad2, className: 'bg-sky-500 text-white' }}
+    titleLeft="O'ynab o'rganing,"
+    titleAccent="tez rivojlaning!"
+    titleAccentColor="text-sky-500"
+    description="Qiziqarli mashqlar, darajalar va o'yinlar bilan matematikani sevib o'rganing va do'stlaringiz orasida eng zo'r bo'ling!"
+    features={[
+      { icon: '🎮', title: 'Qiziqarli mashqlar', desc: "O'yin ko'rinishidagi mashqlar zeriktirmaydi" },
+      { icon: '⭐', title: 'XP va level tizimi', desc: "XP to'plang va yangi levelga o'ting" },
+      { icon: '🏆', title: 'Reyting va musobaqalar', desc: "Do'stlaringiz bilan bellashing va g'alaba qozoning" },
+      { icon: '🎖️', title: 'Badges va mukofotlar', desc: 'Yutuqlaringiz uchun maxsus nishonlar oling' },
+    ]}
+    primaryCta={{ text: 'Boshlash', icon: Play, onClick: () => navigate('/courses'), className: 'bg-sky-500 hover:bg-sky-600 text-white' }}
+    image={heroKids}
+    sideContent={
+      <>
+        {/* Level card (purple) */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-3 sm:p-4 shadow-2xl w-[160px] sm:w-[200px] text-white">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-base sm:text-lg font-black leading-none">Level 7</p>
+              <p className="text-[10px] text-white/70 mt-1">XP 900 / 1200</p>
+            </div>
+            <Trophy className="h-4 w-4 text-amber-300" />
+          </div>
+          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-300 rounded-full" style={{ width: '75%' }} />
+          </div>
+          <p className="text-[10px] text-amber-200 text-right mt-1 font-bold">Zo'r!</p>
+        </div>
+
+        {/* Reyting card */}
+        <div className="absolute top-[110px] right-3 sm:top-[120px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold">Reyting</p>
+            <Trophy className="h-3.5 w-3.5 text-amber-500" />
+          </div>
+          <ul className="space-y-1">
+            {[
+              { n: 'Asadbek', s: '15 300' },
+              { n: 'Zarina', s: '12 450' },
+              { n: 'Jahongir', s: '11 200' },
+              { n: 'Sarvar', s: '10 150' },
+            ].map((p, i) => (
+              <li key={i} className="flex items-center justify-between text-[10px]">
+                <span className="flex items-center gap-1">
+                  <span className="font-bold text-muted-foreground w-3">{i + 1}</span>
+                  <span className="font-semibold">{p.n}</span>
+                </span>
+                <span className="font-bold">{p.s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Daily goal */}
+        <div className="absolute bottom-[110px] right-3 sm:bottom-[120px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[160px] sm:w-[200px]">
+          <p className="text-xs font-bold mb-2 flex items-center gap-1">Kunlik maqsad <Target className="h-3 w-3 text-emerald-500" /></p>
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden mb-1.5">
+            <div className="h-full bg-emerald-500 rounded-full" style={{ width: '60%' }} />
+          </div>
+          <div className="flex justify-between text-[10px]">
+            <span className="text-muted-foreground">Yana 2 ta mashq</span>
+            <span className="font-bold">3/5</span>
+          </div>
+        </div>
+
+        {/* Badges */}
+        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-3 shadow-xl w-[160px] sm:w-[200px] text-white flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-amber-400 flex items-center justify-center">
+            <Star className="h-5 w-5 text-amber-700 fill-amber-600" />
+          </div>
+          <div>
+            <p className="text-[10px] text-white/70">Badges</p>
+            <p className="text-lg font-black"><span>12</span> <span className="text-sm font-bold text-white/60">/ 24</span></p>
+          </div>
+        </div>
+      </>
+    }
+  />
+);
+
+/* ─────────────── Slide 3: PARENTS (light orange) ─────────────── */
+const ParentsSlide = ({ navigate }: any) => (
+  <SlideShell
+    bg="bg-gradient-to-br from-orange-50 via-amber-50/50 to-white dark:from-orange-950/30 dark:to-card"
+    badge={{ text: 'OTA-ONALAR UCHUN', icon: Eye, className: 'bg-orange-500 text-white' }}
+    titleLeft="Farzandingiz rivojini"
+    titleAccent="nazorat qiling"
+    titleAccentColor="text-orange-500"
+    description="IQROMAX orqali farzandingizning o'quv jarayoni, natijalari va progressini real vaqtda kuzatib boring."
+    bullets={[
+      "Kunlik mashg'ulotlar va natijalarni kuzatish",
+      'Real vaqt rejimida progress va statistikalar',
+      "Tavsiyalar va rivojlantirish yo'nalishlari",
+      'Motivatsiya va yutuqlar tizimi',
+      'Xavfsiz va ishonchli muhit',
+    ]}
+    primaryCta={{ text: "Natijalarni ko'rish", icon: BarChart3, onClick: () => navigate('/parent-dashboard'), className: 'bg-orange-500 hover:bg-orange-600 text-white' }}
+    image={heroParents}
+    bottomStats={[
+      { icon: Users, value: '10 000+', label: 'Ota-onalar', color: 'text-orange-500' },
+      { icon: Eye, value: '20 000+', label: 'Bolalar', color: 'text-emerald-500' },
+      { icon: TrendingUp, value: '96%', label: 'Faol ota-ona', color: 'text-orange-500' },
+      { icon: Star, value: '4.9/5', label: 'Bahosi', color: 'text-amber-500' },
+    ]}
+    sideContent={
+      <>
+        {/* Profile + stats card */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[260px]">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-[11px] font-black">A</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold truncate">Asadbek Abduazizov</p>
+              <p className="text-[10px] text-orange-600 font-semibold">Level 7</p>
+            </div>
+            <Award className="h-4 w-4 text-violet-600" />
+          </div>
+          <div className="h-1 bg-muted rounded-full mb-3">
+            <div className="h-full bg-violet-600 rounded-full" style={{ width: '70%' }} />
+          </div>
+          <div className="grid grid-cols-4 gap-1 text-center">
+            {[
+              { v: '12', l: 'Kurslar' },
+              { v: '2350', l: 'XP' },
+              { v: '75%', l: 'Progress' },
+              { v: '15', l: 'Seriya 🔥' },
+            ].map((s) => (
+              <div key={s.l}>
+                <p className="text-xs font-black">{s.v}</p>
+                <p className="text-[8px] text-muted-foreground">{s.l}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Weekly progress chart */}
+        <div className="absolute top-[150px] right-3 sm:top-[170px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[260px]">
+          <p className="text-xs font-bold mb-1">Haftalik progress</p>
+          <svg viewBox="0 0 200 60" className="w-full h-14">
+            <polyline points="0,50 33,42 66,32 99,25 132,18 165,12 200,5" fill="none" stroke="rgb(249,115,22)" strokeWidth="2.5" strokeLinecap="round" />
+            {[[0,50],[33,42],[66,32],[99,25],[132,18],[165,12],[200,5]].map(([x,y],i)=>(
+              <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(249,115,22)" />
+            ))}
+          </svg>
+          <div className="flex justify-between text-[9px] text-muted-foreground">
+            {['Du','Se','Ch','Pa','Ju','Sh','Ya'].map((d)=><span key={d}>{d}</span>)}
+          </div>
+        </div>
+
+        {/* So'nggi faoliyat */}
+        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[260px]">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold">So'nggi faoliyat</p>
+            <span className="text-[9px] text-orange-600 font-bold">Barchasi</span>
+          </div>
+          <div className="space-y-1.5">
+            {[
+              { t: "4. Ko'paytirish qoidalari", s: '92%' },
+              { t: 'Tez hisoblash – 1-daraja', s: '85%' },
+            ].map((a, i) => (
+              <div key={i} className="flex items-center justify-between text-[10px]">
+                <span className="truncate flex-1 mr-2">{a.t}</span>
+                <span className="flex items-center gap-1 font-bold text-emerald-600">{a.s} <CheckCircle2 className="h-3 w-3" /></span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    }
+  />
+);
+
+/* ─────────────── Slide 4: TEACHERS (light green) ─────────────── */
+const TeachersSlide = ({ navigate }: any) => (
+  <SlideShell
+    bg="bg-gradient-to-br from-emerald-50 via-white to-green-50 dark:from-emerald-950/20 dark:to-card"
+    badge={{ text: 'TRENERLAR UCHUN', icon: GraduationCap, className: 'bg-violet-500 text-white' }}
+    titleLeft="Trener bo'lib"
+    titleAccent="daromad toping!"
+    titleAccentColor="text-emerald-600"
+    description="IQROMAX platformasi orqali o'z bilim va tajribangizni minglab bolalar bilan baham ko'ring va daromad qiling."
+    bullets={[
+      "1 oyda professional trener bo'lasiz",
+      "O'z guruhingizni ochasiz va boshqarasiz",
+      'Dars materiallari va mashqlar biz tomondan taqdim etiladi',
+      "O'quvchilaringiz natijasini kuzatib borasiz",
+      "Barqaror daromad manbaiga ega bo'lasiz",
+    ]}
+    primaryCta={{ text: "Trener bo'lish", icon: GraduationCap, onClick: () => navigate('/lms'), className: 'bg-emerald-500 hover:bg-emerald-600 text-white' }}
+    secondaryCta={{ text: "Qanday ishlashini ko'rish", icon: Play, onClick: () => navigate('/about') }}
+    image={heroTeachers}
+    imageMaskShape="circle"
+    bottomStats={[
+      { icon: Users, value: '500+', label: 'Faol trenerlar', color: 'text-emerald-500' },
+      { icon: Users, value: '10 000+', label: "O'quvchilar", color: 'text-emerald-500' },
+      { icon: Play, value: '200+', label: 'Kurslar', color: 'text-amber-500' },
+      { icon: TrendingUp, value: '12.4 mln+', label: 'Topilgan daromad', color: 'text-emerald-500' },
+    ]}
+    sideContent={
+      <>
+        {/* Income card */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[210px] sm:w-[270px]">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[10px] text-muted-foreground">Oylik daromad</p>
+            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-full">+18%</span>
+          </div>
+          <p className="text-base sm:text-lg font-black mb-2">12 450 000 <span className="text-xs font-bold">so'm</span></p>
+          <svg viewBox="0 0 200 50" className="w-full h-12">
+            <polyline points="0,40 50,32 100,22 150,14 200,5" fill="none" stroke="rgb(16,185,129)" strokeWidth="2.5" strokeLinecap="round" />
+            {[[0,40],[50,32],[100,22],[150,14],[200,5]].map(([x,y],i)=>(
+              <circle key={i} cx={x} cy={y} r="2.5" fill="rgb(16,185,129)" />
+            ))}
+          </svg>
+          <div className="flex justify-between text-[9px] text-muted-foreground">
+            {['1-h','2-h','3-h','4-h'].map((d)=><span key={d}>{d}</span>)}
+          </div>
+        </div>
+
+        {/* Students */}
+        <div className="absolute top-[170px] right-3 sm:top-[200px] sm:right-4 bg-white dark:bg-card rounded-2xl p-3 shadow-xl border border-border/40 w-[210px] sm:w-[270px] flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center">
+            <Users className="h-5 w-5 text-violet-600" />
+          </div>
+          <div className="flex-1">
+            <p className="text-[10px] text-muted-foreground">O'quvchilar</p>
+            <p className="text-lg font-black">56</p>
+          </div>
+          <span className="text-[10px] text-emerald-600 font-semibold">Batafsil ›</span>
+        </div>
+
+        {/* Quote */}
+        <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white dark:bg-card rounded-2xl p-3 sm:p-4 shadow-2xl border border-border/40 w-[230px] sm:w-[300px]">
+          <Quote className="h-4 w-4 text-emerald-500 mb-1" />
+          <p className="text-[11px] sm:text-xs leading-snug mb-2">IQROMAX bilan trenerlikni boshladim va 3 oy ichida o'zim orzu qilgan daromadga erishdim!</p>
+          <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+            <div className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-[10px] font-black">N</div>
+            <div>
+              <p className="text-[10px] font-bold">Nilufar Saidova</p>
+              <p className="text-[9px] text-muted-foreground">Trener, Toshkent shahri</p>
+            </div>
+          </div>
+        </div>
+      </>
+    }
+  />
+);
