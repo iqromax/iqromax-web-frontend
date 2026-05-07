@@ -132,11 +132,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block">Farzandingiz rivojini</span>
           <span className="block text-kid-yellow">nazorat qiling 📊</span>
         </>,
+    shortTitle: <span className="block text-kid-yellow">Nazorat qiling 📊</span>,
 
     description:
     <>
           ✅ Real vaqtda natijalar · 📋 Kunlik mashqlar va progress · 💡 Tavsiyalar va tahlillar · 🎯 Motivatsiya va maqsadlar
         </>,
+    shortDescription: <>✅ Natijalar · 📋 Progress · 💡 Tavsiyalar</>,
 
     cta: {
       icon: BarChart3,
