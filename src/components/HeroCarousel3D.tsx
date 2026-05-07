@@ -75,11 +75,13 @@ export const HeroCarousel3D = ({ totalUsers }: HeroCarousel3DProps) => {
           <span className="block text-primary drop-shadow-[0_2px_8px_rgba(34,197,94,0.4)]">IQROMAX —</span>
           <span className="block mt-1 text-white/95">tez hisoblashni o'rgatuvchi platforma</span>
         </>,
+    shortTitle: <span className="block text-primary">IQROMAX</span>,
 
     description:
     <>
           ⚡ Tez va samarali metodika · 🎮 O'yin tarzida o'qitish · 📊 Real natijani ko'rish
         </>,
+    shortDescription: <>⚡ Tez · 🎮 O'yin · 📊 Natija</>,
 
     cta: {
       icon: Rocket,
