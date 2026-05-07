@@ -18,6 +18,7 @@ import { SubscriptionPlans } from '@/components/SubscriptionPlans';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import { PageSkeleton } from '@/components/PageSkeleton';
 import { GuestDashboard } from '@/components/GuestDashboard';
+import StudentsLanding from '@/pages/StudentsLanding';
 
 interface Profile {
   username: string;
