@@ -3,10 +3,8 @@ import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
   Check,
-  Users,
   Eye,
   TrendingUp,
-  Star,
   BarChart3,
   Award,
   Shield,
@@ -172,26 +170,6 @@ export const ParentSlide = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-4 sm:bottom-5 left-5 right-5 sm:left-8 sm:right-8 md:left-12 md:right-12">
-        <div className="rounded-2xl bg-white/80 dark:bg-card/80 backdrop-blur-md border border-orange-200/50 dark:border-orange-700/30 grid grid-cols-2 sm:grid-cols-4 divide-x divide-orange-200/50 dark:divide-orange-700/30 shadow-sm">
-          {[
-            { icon: Users, value: '10 000+', label: 'Ota-onalar', color: 'text-orange-600 bg-orange-100 dark:bg-orange-900/40' },
-            { icon: Eye, value: '20 000+', label: 'Kuzatilayotgan bolalar', color: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40' },
-            { icon: BarChart3, value: '96%', label: 'Faol ota-onalar', color: 'text-purple-600 bg-purple-100 dark:bg-purple-900/40' },
-            { icon: Star, value: '4.9/5', label: 'Ota-onalar bahosi', color: 'text-amber-600 bg-amber-100 dark:bg-amber-900/40' },
-          ].map((s, i) => (
-            <div key={i} className="flex items-center gap-2.5 px-3 sm:px-4 py-2.5 sm:py-3">
-              <div className={`flex-shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-lg flex items-center justify-center ${s.color}`}>
-                <s.icon className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm sm:text-base font-display font-black leading-tight">{s.value}</div>
-                <div className="text-[10px] sm:text-xs text-muted-foreground leading-tight">{s.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
