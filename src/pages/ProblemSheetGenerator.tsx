@@ -248,111 +248,533 @@ const ProblemSheetGenerator = () => {
   const downloadPDF = useCallback(() => {
     if (!sheet) return;
     playClick();
+
+    // ============ BRAND COLORS ============
+    const ORANGE: [number, number, number] = [249, 115, 22];
+    const ORANGE_DEEP: [number, number, number] = [194, 65, 12];
+    const ORANGE_LIGHT: [number, number, number] = [254, 215, 170];
+    const ORANGE_VERY_LIGHT: [number, number, number] = [255, 247, 237];
+    const AMBER: [number, number, number] = [251, 191, 36];
+    const AMBER_LIGHT: [number, number, number] = [254, 243, 199];
+    const AMBER_VERY_LIGHT: [number, number, number] = [255, 251, 235];
+    const EMERALD: [number, number, number] = [16, 185, 129];
+    const EMERALD_DEEP: [number, number, number] = [4, 120, 87];
+    const EMERALD_LIGHT: [number, number, number] = [167, 243, 208];
+    const EMERALD_VERY_LIGHT: [number, number, number] = [236, 253, 245];
+    const PURPLE: [number, number, number] = [168, 85, 247];
+    const PURPLE_LIGHT: [number, number, number] = [243, 232, 255];
+    const SLATE_DARK: [number, number, number] = [15, 23, 42];
+    const SLATE: [number, number, number] = [100, 116, 139];
+    const SLATE_LIGHT: [number, number, number] = [241, 245, 249];
+    const ALT_ROW: [number, number, number] = [249, 250, 252];
+    const WHITE: [number, number, number] = [255, 255, 255];
+    const BORDER: [number, number, number] = [226, 232, 240];
+    const BORDER_LIGHT: [number, number, number] = [241, 245, 249];
+
     const formulaLabel = FORMULA_LABELS[formulaType]?.label || formulaType;
-    const title = `${sheet.settings.operationCount} ustun ${formulaLabel} ${sheet.settings.digitCount} xona`;
-    const fileName = `IqroMax_${title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    const title = `${sheet.settings.operationCount} ustun · ${formulaLabel} · ${sheet.settings.digitCount} xona`;
+    const dateStr = new Date().toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fileName = `IQROMAX_misollar_${sheet.settings.operationCount}u_${sheet.settings.digitCount}x_${new Date().toISOString().slice(0, 10)}.pdf`;
+
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 10;
-    let yPos = margin;
-    
-    doc.setFontSize(16); doc.setTextColor(33, 150, 243);
-    doc.text('IqroMax', pageWidth / 2, yPos + 5, { align: 'center' });
-    doc.setFontSize(12); doc.setTextColor(100);
-    doc.text(title, pageWidth / 2, yPos + 12, { align: 'center' });
-    doc.setFontSize(9);
-    doc.text(`${sheet.settings.problemCount} ta misol • ${new Date().toLocaleDateString('uz-UZ')}`, pageWidth / 2, yPos + 18, { align: 'center' });
-    yPos += 25;
-    doc.setDrawColor(33, 150, 243); doc.setLineWidth(0.5);
-    doc.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 8;
-    
-    const totalRows = Math.ceil(sheet.problems.length / columnsPerRow);
+    const margin = 12;
+
+    // ============ HELPER: Watermark math symbols background ============
+    const drawWatermark = () => {
+      doc.setFontSize(48);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(252, 211, 161); // very light orange
+      const symbols = [
+        { ch: '+', x: 28, y: 90, rot: -15 },
+        { ch: '×', x: pageWidth - 35, y: 120, rot: 12 },
+        { ch: '÷', x: 35, y: 200, rot: -8 },
+        { ch: '−', x: pageWidth - 30, y: 220, rot: 5 },
+        { ch: '=', x: pageWidth / 2, y: 260, rot: -3 },
+      ];
+      symbols.forEach((s) => {
+        // Set very faint
+        doc.setGState(doc.GState({ opacity: 0.06 }));
+        doc.text(s.ch, s.x, s.y, { angle: s.rot });
+      });
+      doc.setGState(doc.GState({ opacity: 1 }));
+    };
+
+    // ============ HELPER: Gradient simulation (multiple thin rectangles) ============
+    const drawGradientBar = (
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      from: [number, number, number],
+      to: [number, number, number]
+    ) => {
+      const steps = 30;
+      const stepW = w / steps;
+      for (let i = 0; i < steps; i++) {
+        const t = i / (steps - 1);
+        const r = Math.round(from[0] + (to[0] - from[0]) * t);
+        const g = Math.round(from[1] + (to[1] - from[1]) * t);
+        const b = Math.round(from[2] + (to[2] - from[2]) * t);
+        doc.setFillColor(r, g, b);
+        doc.rect(x + i * stepW, y, stepW + 0.2, h, 'F');
+      }
+    };
+
+    // ============ HELPER: Decorative dots pattern ============
+    const drawDecorativeDots = (cx: number, cy: number, color: [number, number, number]) => {
+      doc.setFillColor(...color);
+      const dots = [
+        { dx: -4, dy: -4, r: 0.8 },
+        { dx: 4, dy: -4, r: 0.6 },
+        { dx: -4, dy: 4, r: 0.6 },
+        { dx: 4, dy: 4, r: 0.8 },
+        { dx: 0, dy: -6, r: 0.4 },
+        { dx: 0, dy: 6, r: 0.4 },
+      ];
+      dots.forEach((d) => {
+        doc.circle(cx + d.dx, cy + d.dy, d.r, 'F');
+      });
+    };
+
+    // ============ HELPER: Brand header (gradient band + logo + decorations) ============
+    const drawBrandHeader = (pageTitle: string, accentColor: [number, number, number], accentDeep: [number, number, number]) => {
+      // ==== Top gradient banner (thin) ====
+      drawGradientBar(0, 0, pageWidth, 5, accentColor, accentDeep);
+
+      // ==== Logo card (rounded square with brand mark) ====
+      const logoX = margin;
+      const logoY = 11;
+      const logoSize = 11;
+
+      // Logo glow shadow
+      doc.setFillColor(...accentColor);
+      doc.setGState(doc.GState({ opacity: 0.2 }));
+      doc.roundedRect(logoX - 0.5, logoY - 0.5, logoSize + 1, logoSize + 1, 2.5, 2.5, 'F');
+      doc.setGState(doc.GState({ opacity: 1 }));
+
+      // Logo body
+      drawGradientBar(logoX, logoY, logoSize, logoSize, ORANGE, ORANGE_DEEP);
+      // Re-add rounded corners overlay (white triangles in corners are tricky in jsPDF, use rect)
+      doc.setFillColor(...accentColor);
+      doc.roundedRect(logoX, logoY, logoSize, logoSize, 2.5, 2.5, 'S'); // stroke only
+
+      doc.setTextColor(...WHITE);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text('IM', logoX + logoSize / 2, logoY + 7.5, { align: 'center' });
+
+      // ==== Brand name + tagline ====
+      doc.setTextColor(...SLATE_DARK);
+      doc.setFontSize(15);
+      doc.setFont('helvetica', 'bold');
+      doc.text('IQROMAX', logoX + logoSize + 3, logoY + 4.5);
+
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...accentColor);
+      doc.text("BILIM · NATIJA · DAROMAD", logoX + logoSize + 3, logoY + 9);
+
+      // ==== Right side info card (date + ID) ====
+      const sheetId = `№${Date.now().toString().slice(-5)}`;
+      const dateW = 42;
+      const infoX = pageWidth - margin - dateW;
+      const infoY = 11;
+
+      // Background
+      doc.setFillColor(...SLATE_LIGHT);
+      doc.roundedRect(infoX, infoY, dateW, 11, 2, 2, 'F');
+
+      // Date
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...SLATE);
+      doc.text("SANA", infoX + 3, infoY + 4);
+      doc.setFontSize(8);
+      doc.setTextColor(...SLATE_DARK);
+      doc.text(dateStr, infoX + dateW - 3, infoY + 4, { align: 'right' });
+
+      // Divider
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.2);
+      doc.line(infoX + 2, infoY + 5.5, infoX + dateW - 2, infoY + 5.5);
+
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...SLATE);
+      doc.text("VARAQ", infoX + 3, infoY + 9);
+      doc.setFontSize(8);
+      doc.setTextColor(...accentColor);
+      doc.text(sheetId, infoX + dateW - 3, infoY + 9, { align: 'right' });
+
+      // ==== Title section ====
+      const titleY = 31;
+
+      // Decorative line accent
+      doc.setFillColor(...accentColor);
+      doc.roundedRect(pageWidth / 2 - 18, titleY - 3, 36, 1.2, 0.6, 0.6, 'F');
+
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...accentDeep);
+      doc.text(pageTitle, pageWidth / 2, titleY + 4, { align: 'center' });
+
+      // Subtitle
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...SLATE);
+      doc.text(title, pageWidth / 2, titleY + 9, { align: 'center' });
+
+      // ==== Info pills row ====
+      const pillY = titleY + 13;
+      const pills = [
+        { label: `${sheet.settings.problemCount} misol`, color: ORANGE_DEEP, bg: ORANGE_VERY_LIGHT },
+        { label: `${sheet.settings.operationCount} ustun`, color: PURPLE, bg: PURPLE_LIGHT },
+        { label: `${sheet.settings.digitCount} xona`, color: EMERALD_DEEP, bg: EMERALD_VERY_LIGHT },
+        { label: formulaLabel, color: AMBER[0] - 50 > 0 ? [180, 120, 0] as [number, number, number] : AMBER, bg: AMBER_VERY_LIGHT },
+      ];
+      // Center the pills
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'bold');
+      const totalPillsW = pills.reduce((s, p) => s + doc.getTextWidth(p.label) + 7, 0) + (pills.length - 1) * 3;
+      let pillX = (pageWidth - totalPillsW) / 2;
+      pills.forEach((p) => {
+        const w = doc.getTextWidth(p.label) + 7;
+        doc.setFillColor(...p.bg);
+        doc.roundedRect(pillX, pillY, w, 5.5, 2.75, 2.75, 'F');
+        doc.setTextColor(...p.color);
+        doc.text(p.label, pillX + w / 2, pillY + 3.7, { align: 'center' });
+        pillX += w + 3;
+      });
+
+      // ==== Student info box (Ism / Sinf / Ball) ====
+      const studentY = pillY + 9;
+      const studentH = 11;
+
+      doc.setFillColor(...WHITE);
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(margin, studentY, pageWidth - 2 * margin, studentH, 2, 2, 'FD');
+
+      const fieldW = (pageWidth - 2 * margin - 6) / 4;
+      const fields = ['Ism', 'Sinf', 'Sana', 'Ball'];
+      fields.forEach((label, i) => {
+        const fx = margin + 3 + i * fieldW;
+        // Label
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...SLATE);
+        doc.text(label.toUpperCase(), fx + 2, studentY + 3.5);
+        // Underline (where student writes)
+        doc.setDrawColor(...BORDER);
+        doc.setLineWidth(0.4);
+        doc.line(fx + 2, studentY + studentH - 2.5, fx + fieldW - 4, studentY + studentH - 2.5);
+        // Vertical divider
+        if (i > 0) {
+          doc.setDrawColor(...BORDER_LIGHT);
+          doc.setLineWidth(0.2);
+          doc.line(fx - 1, studentY + 2, fx - 1, studentY + studentH - 2);
+        }
+      });
+
+      return studentY + studentH + 5;
+    };
+
+    // ============ HELPER: Footer with page number and decorative elements ============
+    const drawFooter = (pageNum: number, totalPages: number) => {
+      const footerY = pageHeight - 11;
+
+      // Decorative divider with center diamond
+      const lineY = footerY + 1;
+      doc.setDrawColor(...ORANGE_LIGHT);
+      doc.setLineWidth(0.4);
+      doc.line(margin, lineY, pageWidth / 2 - 6, lineY);
+      doc.line(pageWidth / 2 + 6, lineY, pageWidth - margin, lineY);
+
+      // Center diamond
+      doc.setFillColor(...ORANGE);
+      doc.setDrawColor(...ORANGE);
+      const diamondCX = pageWidth / 2;
+      const diamondCY = lineY;
+      const diamondR = 1.5;
+      doc.triangle(diamondCX, diamondCY - diamondR, diamondCX + diamondR, diamondCY, diamondCX, diamondCY + diamondR, 'F');
+      doc.triangle(diamondCX, diamondCY - diamondR, diamondCX - diamondR, diamondCY, diamondCX, diamondCY + diamondR, 'F');
+
+      // Footer text
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...SLATE);
+      doc.text("IQROMAX · iqromax.uz", margin, pageHeight - 5);
+
+      doc.setTextColor(...ORANGE_DEEP);
+      doc.setFont('helvetica', 'bold');
+      doc.text("Bilim · Natija · Daromad", pageWidth / 2, pageHeight - 5, { align: 'center' });
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...SLATE);
+      doc.text(`Sahifa ${pageNum} / ${totalPages}`, pageWidth - margin, pageHeight - 5, { align: 'right' });
+    };
+
+    // ============ HELPER: Decorative corner ornaments ============
+    const drawCornerOrnaments = (color: [number, number, number]) => {
+      const ornSize = 8;
+      doc.setDrawColor(...color);
+      doc.setLineWidth(0.6);
+      // Top-left corner
+      doc.line(margin - 3, 8, margin - 3 + ornSize, 8);
+      doc.line(margin - 3, 8, margin - 3, 8 + ornSize);
+      // Top-right corner
+      doc.line(pageWidth - margin + 3 - ornSize, 8, pageWidth - margin + 3, 8);
+      doc.line(pageWidth - margin + 3, 8, pageWidth - margin + 3, 8 + ornSize);
+      // Bottom-left corner
+      doc.line(margin - 3, pageHeight - 8, margin - 3 + ornSize, pageHeight - 8);
+      doc.line(margin - 3, pageHeight - 8 - ornSize, margin - 3, pageHeight - 8);
+      // Bottom-right corner
+      doc.line(pageWidth - margin + 3 - ornSize, pageHeight - 8, pageWidth - margin + 3, pageHeight - 8);
+      doc.line(pageWidth - margin + 3, pageHeight - 8 - ornSize, pageWidth - margin + 3, pageHeight - 8);
+    };
+
+    // ============ PAGE 1: PROBLEMS ============
+    drawWatermark();
+    let yPos = drawBrandHeader('Misollar', ORANGE, ORANGE_DEEP);
+
+    const totalGridRows = Math.ceil(sheet.problems.length / columnsPerRow);
     const cellWidth = (pageWidth - 2 * margin) / columnsPerRow;
-    const cellHeight = 6;
-    
-    for (let row = 0; row < totalRows; row++) {
+    const cellHeight = 7.5;
+
+    for (let row = 0; row < totalGridRows; row++) {
       const startIdx = row * columnsPerRow;
       const rowProblems = sheet.problems.slice(startIdx, startIdx + columnsPerRow);
       if (rowProblems.length === 0) continue;
-      const maxOps = Math.max(...rowProblems.map(p => p.sequence.length));
-      const tableHeight = (maxOps + 2) * cellHeight;
-      if (yPos + tableHeight > pageHeight - margin) { doc.addPage(); yPos = margin; }
-      
-      doc.setFillColor(99, 102, 241); doc.setTextColor(255, 255, 255); doc.setFontSize(9);
-      rowProblems.forEach((p, idx) => {
-        const x = margin + idx * cellWidth;
-        doc.rect(x, yPos, cellWidth, cellHeight, 'F');
-        doc.text(String(p.id), x + cellWidth / 2, yPos + cellHeight - 1.5, { align: 'center' });
-      });
-      yPos += cellHeight;
-      
-      doc.setTextColor(33, 33, 33); doc.setFontSize(10);
-      for (let opIdx = 0; opIdx < maxOps; opIdx++) {
-        const isEven = opIdx % 2 === 0;
-        rowProblems.forEach((p, idx) => {
-          const x = margin + idx * cellWidth;
-          if (isEven) { doc.setFillColor(248, 250, 252); doc.rect(x, yPos, cellWidth, cellHeight, 'F'); }
-          doc.setDrawColor(200, 200, 200); doc.rect(x, yPos, cellWidth, cellHeight);
-          const value = p.sequence[opIdx];
-          if (value !== undefined) doc.text(String(value), x + cellWidth / 2, yPos + cellHeight - 1.5, { align: 'center' });
-        });
-        yPos += cellHeight;
+      const maxOps = Math.max(...rowProblems.map((p) => p.sequence.length));
+      const tableHeight = (maxOps + 2) * cellHeight + 5;
+
+      if (yPos + tableHeight > pageHeight - 16) {
+        drawCornerOrnaments(ORANGE_LIGHT);
+        doc.addPage();
+        drawWatermark();
+        yPos = drawBrandHeader('Misollar (davomi)', ORANGE, ORANGE_DEEP);
       }
-      
-      doc.setFillColor(255, 249, 196);
-      rowProblems.forEach((_, idx) => {
-        const x = margin + idx * cellWidth;
-        doc.rect(x, yPos, cellWidth, cellHeight, 'F');
-        doc.setDrawColor(251, 192, 45); doc.rect(x, yPos, cellWidth, cellHeight);
+
+      const blockX = margin;
+      const blockY = yPos;
+      const blockW = pageWidth - 2 * margin;
+      const blockH = (maxOps + 2) * cellHeight;
+
+      // Drop shadow simulation (offset light gray)
+      doc.setFillColor(...BORDER_LIGHT);
+      doc.roundedRect(blockX + 0.6, blockY + 0.8, blockW, blockH, 3, 3, 'F');
+
+      // Block background with subtle border
+      doc.setFillColor(...WHITE);
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.4);
+      doc.roundedRect(blockX, blockY, blockW, blockH, 3, 3, 'FD');
+
+      // ===== Row header (orange gradient bar with problem numbers) =====
+      drawGradientBar(blockX, blockY, blockW, cellHeight, ORANGE, ORANGE_DEEP);
+      // Re-apply rounded top corners on top of gradient
+      doc.setFillColor(...ORANGE);
+      doc.setDrawColor(...ORANGE_DEEP);
+      doc.setLineWidth(0.2);
+
+      doc.setTextColor(...WHITE);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      rowProblems.forEach((p, idx) => {
+        const x = blockX + idx * cellWidth;
+        // Number circle
+        const circleX = x + cellWidth / 2;
+        const circleY = blockY + cellHeight / 2;
+        doc.setFillColor(...WHITE);
+        doc.setGState(doc.GState({ opacity: 0.2 }));
+        doc.circle(circleX, circleY, 2.6, 'F');
+        doc.setGState(doc.GState({ opacity: 1 }));
+        doc.setTextColor(...WHITE);
+        doc.text(`${p.id}`, circleX, blockY + cellHeight - 2.5, { align: 'center' });
+        // Vertical separator
+        if (idx > 0) {
+          doc.setDrawColor(255, 255, 255);
+          doc.setGState(doc.GState({ opacity: 0.3 }));
+          doc.setLineWidth(0.2);
+          doc.line(x, blockY + 1.5, x, blockY + cellHeight - 1.5);
+          doc.setGState(doc.GState({ opacity: 1 }));
+        }
       });
-      yPos += cellHeight + 8;
+
+      // ===== Sequence rows =====
+      doc.setTextColor(...SLATE_DARK);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+
+      for (let opIdx = 0; opIdx < maxOps; opIdx++) {
+        const rowY = blockY + cellHeight + opIdx * cellHeight;
+        const isEven = opIdx % 2 === 0;
+
+        if (isEven) {
+          doc.setFillColor(...ALT_ROW);
+          doc.rect(blockX + 0.4, rowY, blockW - 0.8, cellHeight, 'F');
+        }
+
+        rowProblems.forEach((p, idx) => {
+          const x = blockX + idx * cellWidth;
+          // Vertical separator
+          if (idx > 0) {
+            doc.setDrawColor(...BORDER_LIGHT);
+            doc.setLineWidth(0.25);
+            doc.line(x, rowY, x, rowY + cellHeight);
+          }
+          const value = p.sequence[opIdx];
+          if (value !== undefined && value !== null) {
+            const isFirstNum = opIdx === 0;
+            // Color: first = dark slate (start value); positive = dark slate; negative = orange (red-ish)
+            doc.setTextColor(...(isFirstNum ? SLATE_DARK : value >= 0 ? SLATE_DARK : ORANGE_DEEP));
+
+            // Show + or - prefix (skip for first number)
+            const display = isFirstNum
+              ? String(value)
+              : value >= 0
+              ? `+${value}`
+              : `${value}`;
+            doc.text(display, x + cellWidth / 2, rowY + cellHeight - 2, { align: 'center' });
+          }
+        });
+      }
+
+      // ===== Answer row (gradient amber bar with empty answer slots) =====
+      const answerY = blockY + cellHeight + maxOps * cellHeight;
+      drawGradientBar(blockX + 0.4, answerY, blockW - 0.8, cellHeight, AMBER_LIGHT, AMBER_VERY_LIGHT);
+
+      // Top edge of answer row (dashed amber)
+      doc.setDrawColor(...AMBER);
+      doc.setLineWidth(0.5);
+      doc.setLineDashPattern([1, 1], 0);
+      doc.line(blockX + 1, answerY, blockX + blockW - 1, answerY);
+      doc.setLineDashPattern([], 0);
+
+      // Answer line for student to write on
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      rowProblems.forEach((_, idx) => {
+        const x = blockX + idx * cellWidth;
+        // Vertical separator
+        if (idx > 0) {
+          doc.setDrawColor(...AMBER);
+          doc.setGState(doc.GState({ opacity: 0.3 }));
+          doc.setLineWidth(0.3);
+          doc.line(x, answerY + 1, x, answerY + cellHeight - 1);
+          doc.setGState(doc.GState({ opacity: 1 }));
+        }
+        // Equal sign
+        doc.setTextColor(180, 120, 0);
+        doc.setFontSize(10);
+        doc.text('=', x + 4, answerY + cellHeight - 2.5);
+        // Writing line for answer
+        doc.setDrawColor(180, 120, 0);
+        doc.setLineWidth(0.4);
+        doc.line(x + 7, answerY + cellHeight - 2, x + cellWidth - 2.5, answerY + cellHeight - 2);
+      });
+
+      yPos += blockH + 6;
     }
-    
-    doc.setFontSize(8); doc.setTextColor(150);
-    doc.text("IqroMax - Mental Arifmetika O'quv Platformasi", pageWidth / 2, pageHeight - 5, { align: 'center' });
-    
-    // Answers page
-    doc.addPage(); yPos = margin;
-    doc.setFontSize(16); doc.setTextColor(76, 175, 80);
-    doc.text('Javoblar', pageWidth / 2, yPos + 5, { align: 'center' });
-    doc.setFontSize(10); doc.setTextColor(100);
-    doc.text(title, pageWidth / 2, yPos + 12, { align: 'center' });
-    yPos += 20;
-    doc.setDrawColor(76, 175, 80); doc.setLineWidth(0.5);
-    doc.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 8;
-    
+
+    drawCornerOrnaments(ORANGE_LIGHT);
+
+    // ============ ANSWERS PAGE ============
+    doc.addPage();
+    drawWatermark();
+    let answersYPos = drawBrandHeader("Javoblar varag'i", EMERALD, EMERALD_DEEP);
+
+    // Decorative success banner
+    doc.setFillColor(...EMERALD_VERY_LIGHT);
+    doc.setDrawColor(...EMERALD_LIGHT);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(margin, answersYPos, pageWidth - 2 * margin, 9, 2, 2, 'FD');
+    doc.setTextColor(...EMERALD_DEEP);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Javoblarni tekshirib ko'ring va o'qituvchiga topshiring", pageWidth / 2, answersYPos + 5.5, { align: 'center' });
+    answersYPos += 13;
+
     const answersPerRow = 10;
     const answerCellWidth = (pageWidth - 2 * margin) / answersPerRow;
+    const answerCellHeight = 9;
     const answerRows = Math.ceil(sheet.problems.length / answersPerRow);
-    
+
     for (let row = 0; row < answerRows; row++) {
       const startIdx = row * answersPerRow;
       const rowProblems = sheet.problems.slice(startIdx, startIdx + answersPerRow);
-      if (yPos + 14 > pageHeight - margin) { doc.addPage(); yPos = margin; }
-      
-      doc.setFillColor(76, 175, 80); doc.setTextColor(255, 255, 255); doc.setFontSize(8);
+      const blockH = answerCellHeight * 2;
+
+      if (answersYPos + blockH + 4 > pageHeight - 16) {
+        drawCornerOrnaments(EMERALD_LIGHT);
+        doc.addPage();
+        drawWatermark();
+        answersYPos = drawBrandHeader("Javoblar (davomi)", EMERALD, EMERALD_DEEP);
+      }
+
+      const blockX = margin;
+      const blockW = pageWidth - 2 * margin;
+
+      // Drop shadow
+      doc.setFillColor(...BORDER_LIGHT);
+      doc.roundedRect(blockX + 0.6, answersYPos + 0.8, blockW, blockH, 3, 3, 'F');
+
+      // Outer block
+      doc.setFillColor(...WHITE);
+      doc.setDrawColor(...BORDER);
+      doc.setLineWidth(0.4);
+      doc.roundedRect(blockX, answersYPos, blockW, blockH, 3, 3, 'FD');
+
+      // Top: number row (emerald gradient)
+      drawGradientBar(blockX, answersYPos, blockW, answerCellHeight, EMERALD, EMERALD_DEEP);
+
+      doc.setTextColor(...WHITE);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
       rowProblems.forEach((p, idx) => {
-        const x = margin + idx * answerCellWidth;
-        doc.rect(x, yPos, answerCellWidth, cellHeight, 'F');
-        doc.text(String(p.id), x + answerCellWidth / 2, yPos + cellHeight - 1.5, { align: 'center' });
+        const x = blockX + idx * answerCellWidth;
+        doc.text(`${p.id}`, x + answerCellWidth / 2, answersYPos + answerCellHeight - 3, { align: 'center' });
+        if (idx > 0) {
+          doc.setDrawColor(255, 255, 255);
+          doc.setGState(doc.GState({ opacity: 0.3 }));
+          doc.setLineWidth(0.2);
+          doc.line(x, answersYPos + 1.5, x, answersYPos + answerCellHeight - 1.5);
+          doc.setGState(doc.GState({ opacity: 1 }));
+        }
       });
-      yPos += cellHeight;
-      
-      doc.setFillColor(232, 245, 233); doc.setTextColor(33, 33, 33); doc.setFontSize(10);
+
+      // Bottom: answer values (emerald light bg)
+      const valueY = answersYPos + answerCellHeight;
+      doc.setFillColor(...EMERALD_VERY_LIGHT);
+      doc.rect(blockX + 0.4, valueY, blockW - 0.8, answerCellHeight - 0.4, 'F');
+
+      doc.setTextColor(...EMERALD_DEEP);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
       rowProblems.forEach((p, idx) => {
-        const x = margin + idx * answerCellWidth;
-        doc.rect(x, yPos, answerCellWidth, cellHeight, 'F');
-        doc.setDrawColor(200, 200, 200); doc.rect(x, yPos, answerCellWidth, cellHeight);
-        doc.text(String(p.answer), x + answerCellWidth / 2, yPos + cellHeight - 1.5, { align: 'center' });
+        const x = blockX + idx * answerCellWidth;
+        if (idx > 0) {
+          doc.setDrawColor(...EMERALD_LIGHT);
+          doc.setLineWidth(0.3);
+          doc.line(x, valueY, x, valueY + answerCellHeight);
+        }
+        doc.text(String(p.answer), x + answerCellWidth / 2, valueY + answerCellHeight - 3, { align: 'center' });
       });
-      yPos += cellHeight + 4;
+
+      answersYPos += blockH + 5;
     }
-    
-    doc.setFontSize(8); doc.setTextColor(150);
-    doc.text("IqroMax - Mental Arifmetika O'quv Platformasi", pageWidth / 2, pageHeight - 5, { align: 'center' });
+
+    drawCornerOrnaments(EMERALD_LIGHT);
+
+    // ============ Add footers to all pages ============
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      drawFooter(i, totalPages);
+    }
+
     doc.save(fileName);
     toast.success("PDF muvaffaqiyatli yuklab olindi!");
   }, [sheet, formulaType, columnsPerRow, playClick]);
