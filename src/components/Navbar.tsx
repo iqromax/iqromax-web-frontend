@@ -213,7 +213,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
                     <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2 bg-card/98 backdrop-blur-xl border-border/50 shadow-xl rounded-xl">
+                <DropdownMenuContent align="end" className="w-56 p-2 bg-popover text-popover-foreground border border-border shadow-xl rounded-xl">
                   {/* User info header */}
                   <div className="flex items-center gap-3 p-2 mb-2 rounded-lg bg-secondary/50">
                     <Avatar className="h-10 w-10 border border-primary/30">
@@ -238,8 +238,8 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
                         onClick={() => navigate(item.path)} 
                         className="gap-2.5 py-2 px-2.5 rounded-lg cursor-pointer"
                       >
-                        <item.icon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{item.label}</span>
+                        <item.icon className="h-4 w-4 text-foreground/70" />
+                        <span className="text-sm text-foreground">{item.label}</span>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuGroup>
@@ -247,8 +247,8 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
                   <DropdownMenuSeparator className="my-1.5" />
                   
                   <DropdownMenuItem onClick={() => navigate('/settings')} className="gap-2.5 py-2 px-2.5 rounded-lg cursor-pointer">
-                    <Settings className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Sozlamalar</span>
+                    <Settings className="h-4 w-4 text-foreground/70" />
+                    <span className="text-sm text-foreground">Sozlamalar</span>
                   </DropdownMenuItem>
                   
                   {isAdmin && (
