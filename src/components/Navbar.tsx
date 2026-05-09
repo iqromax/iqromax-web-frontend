@@ -247,8 +247,8 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
                   <DropdownMenuSeparator className="my-1.5" />
                   
                   <DropdownMenuItem onClick={() => navigate('/settings')} className="gap-2.5 py-2 px-2.5 rounded-lg cursor-pointer">
-                    <Settings className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Sozlamalar</span>
+                    <Settings className="h-4 w-4 text-foreground/70" />
+                    <span className="text-sm text-foreground">Sozlamalar</span>
                   </DropdownMenuItem>
                   
                   {isAdmin && (
