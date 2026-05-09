@@ -4,7 +4,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import {
   Gamepad2, Trophy, Target, Zap, Award, Star, Play, ChevronRight, CheckCircle2,
-  BookOpen, BarChart3, Users, Calendar, Bell, ClipboardCheck, TrendingUp, Sparkles,
+  BookOpen, BarChart3, Users, Calendar, Bell, ClipboardCheck, Sparkles,
   Crown, Shield, Flame,
 } from 'lucide-react';
 import heroKids from '@/assets/hero-student-tablet.jpg';
