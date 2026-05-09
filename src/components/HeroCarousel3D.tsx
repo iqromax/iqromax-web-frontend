@@ -91,7 +91,7 @@ export const HeroCarousel3D = ({ totalUsers: _totalUsers }: HeroCarousel3DProps 
               key={slide.id}
               className="touch-manipulation pl-0 basis-full"
             >
-              <div className="relative w-full min-h-[560px] h-[640px] sm:h-[620px] md:h-[660px] lg:h-[700px] overflow-hidden">
+              <div className="relative w-full min-h-[560px] h-[600px] sm:h-[640px] md:h-[680px] lg:h-[720px] overflow-hidden">
                 {slide.component}
               </div>
             </CarouselItem>
