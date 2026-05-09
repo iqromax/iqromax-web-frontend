@@ -238,8 +238,8 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
                         onClick={() => navigate(item.path)} 
                         className="gap-2.5 py-2 px-2.5 rounded-lg cursor-pointer"
                       >
-                        <item.icon className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{item.label}</span>
+                        <item.icon className="h-4 w-4 text-foreground/70" />
+                        <span className="text-sm text-foreground">{item.label}</span>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuGroup>
