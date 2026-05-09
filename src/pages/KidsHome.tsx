@@ -190,72 +190,54 @@ const KidsHome = () => {
       <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
 
       <PullToRefresh onRefresh={handleRefresh}>
-        {/* User Stats Card - Only for students and teachers */}
+        {/* Minimal stats header */}
         {!isParent && (
-        <div className="container px-3 xs:px-4 py-3 sm:py-4">
-          <Card className="p-3 sm:p-4 bg-gradient-to-br from-card via-card to-primary/5 border-primary/20">
-            <div className="flex items-center gap-3 sm:gap-4">
-              {/* Level Badge */}
-              <div className="relative">
-                <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                  <span className="text-lg sm:text-xl font-black text-white">{level}</span>
-                </div>
-                <div className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-kid-yellow rounded-full flex items-center justify-center shadow-md">
-                  <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-yellow-800 fill-yellow-600" />
-                </div>
+        <div className="container px-4 sm:px-6 pt-6 sm:pt-8">
+          <div className="flex items-end justify-between mb-4">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Salom 👋</p>
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight mt-1">
+                {profile?.username || 'Player'}
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border/60">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-xs font-medium">Bosqich {level}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="p-4 rounded-2xl bg-card border border-border/60">
+              <div className="flex items-center gap-1.5 text-muted-foreground mb-2">
+                <Zap className="w-3.5 h-3.5" />
+                <span className="text-[10px] uppercase tracking-wide font-medium">XP</span>
               </div>
-
-              {/* Stats Grid */}
-              <div className="flex-1 grid grid-cols-3 gap-2 sm:gap-3">
-                {/* XP with Level Progress */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-kids-yellow">
-                    <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
-                    <span className="text-sm sm:text-base font-bold">{currentXP}/{requiredXP}</span>
-                  </div>
-                  <div className="h-1.5 bg-secondary/80 rounded-full overflow-hidden mt-1">
-                    <div 
-                      className="h-full bg-gradient-to-r from-kids-yellow to-kids-orange rounded-full transition-all"
-                      style={{ width: `${xpProgress}%` }}
-                    />
-                  </div>
-                  <span className="text-[9px] sm:text-[10px] text-muted-foreground">
-                    {requiredXP - currentXP} XP qoldi
-                  </span>
-                </div>
-
-                {/* Daily Goal */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-primary">
-                    <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="text-sm sm:text-base font-bold">{todaySolved}/{dailyGoal}</span>
-                  </div>
-                  <div className="h-1.5 bg-secondary/80 rounded-full overflow-hidden mt-1">
-                    <div 
-                      className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full transition-all"
-                      style={{ width: `${dailyProgress}%` }}
-                    />
-                  </div>
-                  <span className="text-[9px] sm:text-[10px] text-muted-foreground">Bugun</span>
-                </div>
-
-                {/* Streak/Combo */}
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 text-kid-orange">
-                    <Flame className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    <span className="text-sm sm:text-base font-bold">{profile?.current_streak || 0}</span>
-                  </div>
-                  <div className="h-1.5 bg-secondary/80 rounded-full overflow-hidden mt-1">
-                    <div 
-                      className="h-full bg-gradient-to-r from-kid-orange to-kid-red rounded-full"
-                      style={{ width: `${Math.min((profile?.current_streak || 0) * 10, 100)}%` }}
-                    />
-                  </div>
-                  <span className="text-[9px] sm:text-[10px] text-muted-foreground">Streak</span>
-                </div>
+              <p className="text-xl font-semibold tracking-tight">{currentXP}<span className="text-sm text-muted-foreground font-normal">/{requiredXP}</span></p>
+              <div className="h-1 bg-secondary rounded-full overflow-hidden mt-2.5">
+                <div className="h-full bg-foreground rounded-full transition-all" style={{ width: `${xpProgress}%` }} />
               </div>
             </div>
-          </Card>
+            <div className="p-4 rounded-2xl bg-card border border-border/60">
+              <div className="flex items-center gap-1.5 text-muted-foreground mb-2">
+                <Target className="w-3.5 h-3.5" />
+                <span className="text-[10px] uppercase tracking-wide font-medium">Bugun</span>
+              </div>
+              <p className="text-xl font-semibold tracking-tight">{todaySolved}<span className="text-sm text-muted-foreground font-normal">/{dailyGoal}</span></p>
+              <div className="h-1 bg-secondary rounded-full overflow-hidden mt-2.5">
+                <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${dailyProgress}%` }} />
+              </div>
+            </div>
+            <div className="p-4 rounded-2xl bg-card border border-border/60">
+              <div className="flex items-center gap-1.5 text-muted-foreground mb-2">
+                <Flame className="w-3.5 h-3.5" />
+                <span className="text-[10px] uppercase tracking-wide font-medium">Streak</span>
+              </div>
+              <p className="text-xl font-semibold tracking-tight">{profile?.current_streak || 0}<span className="text-sm text-muted-foreground font-normal"> kun</span></p>
+              <div className="h-1 bg-secondary rounded-full overflow-hidden mt-2.5">
+                <div className="h-full bg-foreground rounded-full" style={{ width: `${Math.min((profile?.current_streak || 0) * 10, 100)}%` }} />
+              </div>
+            </div>
+          </div>
         </div>
         )}
 
