@@ -3,10 +3,8 @@ import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
   Check,
-  Users,
   Eye,
   TrendingUp,
-  Star,
   BarChart3,
   Award,
   Shield,
