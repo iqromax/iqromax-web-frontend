@@ -169,23 +169,6 @@ const StudentsLanding = () => {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mt-6 sm:mt-10">
-            {[
-              { i: Gamepad2, v: '1000+', l: "Qiziqarli mashqlar", c: 'text-emerald-500' },
-              { i: TrendingUp, v: '50+', l: 'Darajalar', c: 'text-amber-500' },
-              { i: Users, v: '20K+', l: "Bolalar o'rganmoqda", c: 'text-orange-500' },
-              { i: Award, v: '100+', l: 'Mukofotlar', c: 'text-rose-500' },
-            ].map((s, i) => (
-              <div key={i} className="flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-card rounded-2xl px-3 sm:px-5 py-3 sm:py-4 shadow-sm border border-border/40">
-                <s.i className={`h-5 w-5 sm:h-7 sm:w-7 ${s.c}`} />
-                <div className="text-left">
-                  <p className="text-base sm:text-xl font-black leading-none">{s.v}</p>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5">{s.l}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* FEATURES */}
