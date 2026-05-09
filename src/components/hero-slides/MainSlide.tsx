@@ -6,10 +6,6 @@ import {
   Zap,
   Trophy,
   BarChart3,
-  Users,
-  GraduationCap,
-  BookOpen,
-  Globe,
   TrendingUp,
 } from 'lucide-react';
 import { MathSymbolsBg } from './MathSymbolsBg';
