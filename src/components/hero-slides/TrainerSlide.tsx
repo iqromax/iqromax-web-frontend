@@ -6,10 +6,7 @@ import {
   PlayCircle,
   Users2,
   FolderKanban,
-  TrendingUp,
   Briefcase,
-  GraduationCap,
-  BookOpen,
   Quote,
 } from 'lucide-react';
 import photoTrainerHijab from '@/assets/photo-trainer-hijab.jpg';
