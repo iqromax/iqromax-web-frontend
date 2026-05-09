@@ -97,7 +97,7 @@ const StudentsLanding = () => {
                 </ul>
 
                 <div className="flex flex-wrap gap-2 sm:gap-3">
-                  <Button size="lg" onClick={() => navigate('/courses')} className="h-10 sm:h-12 px-4 sm:px-6 rounded-full font-bold gap-2 bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg">
+                  <Button size="lg" onClick={() => navigate('/train')} className="h-10 sm:h-12 px-4 sm:px-6 rounded-full font-bold gap-2 bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg">
                     <Play className="h-4 w-4" /> Boshlash <ChevronRight className="h-4 w-4" />
                   </Button>
                   <Button size="lg" variant="outline" onClick={() => navigate('/about')} className="hidden sm:inline-flex h-12 px-6 rounded-full font-bold gap-2 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white">
