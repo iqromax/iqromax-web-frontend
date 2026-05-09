@@ -7,8 +7,6 @@ import {
   Star,
   Shield,
   Rocket,
-  BarChart3,
-  Users,
   Gift,
   Award,
 } from 'lucide-react';
