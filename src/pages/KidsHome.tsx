@@ -19,6 +19,13 @@ import { PullToRefresh } from '@/components/PullToRefresh';
 import { PageSkeleton } from '@/components/PageSkeleton';
 import { GuestDashboard } from '@/components/GuestDashboard';
 import StudentsLanding from '@/pages/StudentsLanding';
+import { ParentHero } from '@/components/parent/ParentHero';
+import { ParentControlMenu } from '@/components/parent/ParentControlMenu';
+import { ParentLiveActivity } from '@/components/parent/ParentLiveActivity';
+import { ParentDashboardPanel } from '@/components/parent/ParentDashboardPanel';
+import { ParentQuickControls } from '@/components/parent/ParentQuickControls';
+import { ParentRecommendations } from '@/components/parent/ParentRecommendations';
+import { ParentAlerts } from '@/components/parent/ParentAlerts';
 
 interface Profile {
   username: string;
@@ -190,8 +197,8 @@ const KidsHome = () => {
       <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
 
       <PullToRefresh onRefresh={handleRefresh}>
-        {/* Minimal stats header */}
-        {!isParent && (
+        {/* Minimal stats header — faqat student uchun (teacher/parent o'z layoutiga ega) */}
+        {!isParent && !isTeacher && (
         <div className="container px-4 sm:px-6 pt-6 sm:pt-8">
           <div className="flex items-end justify-between mb-4">
             <div>
@@ -243,35 +250,61 @@ const KidsHome = () => {
 
         {/* Role-specific content */}
         {isParent ? (
-          /* PARENT HOME - Nazorat & Xotirjamlik */
-          <div className="container px-3 xs:px-4 space-y-3 py-2">
-            <h2 className="text-lg font-bold px-1">👨‍👩‍👧 Ota-ona paneli</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => navigate('/parent-dashboard')} className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 text-center active:scale-95 transition-all">
-                <div className="text-3xl mb-2">📊</div>
-                <p className="text-sm font-bold">Nazorat paneli</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Farzand rivojlanishi</p>
-              </button>
-              <button onClick={() => navigate('/lesson-stats')} className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20 text-center active:scale-95 transition-all">
-                <div className="text-3xl mb-2">📋</div>
-                <p className="text-sm font-bold">Kunlik hisobot</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Bugungi natijalar</p>
-              </button>
-              <button onClick={() => navigate('/statistics')} className="p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 text-center active:scale-95 transition-all">
-                <div className="text-3xl mb-2">📈</div>
-                <p className="text-sm font-bold">Rivojlanish</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Grafik va tahlil</p>
-              </button>
-              <button onClick={() => navigate('/settings')} className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 text-center active:scale-95 transition-all">
-                <div className="text-3xl mb-2">💡</div>
-                <p className="text-sm font-bold">Tavsiyalar</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Yaxshilash yo'llari</p>
-              </button>
-            </div>
+          /* PARENT HOME — o'quvchini nazorat qiladigan menyu va boshqaruv paneli */
+          <div className="container px-3 xs:px-4 py-4 sm:py-6 space-y-8 sm:space-y-10">
+            {/* 1) Header — Hero with child profile */}
+            <ParentHero
+              childName={profile?.username || 'Asadbek'}
+              level={level}
+              totalXp={gamification?.total_xp || 0}
+              weeklyAccuracy={Math.round(dailyProgress)}
+              coursesCount={profile?.total_problems_solved ? Math.min(profile.total_problems_solved, 12) : 12}
+              todayProgressPct={Math.round(dailyProgress)}
+              streak={profile?.current_streak || 0}
+            />
+
+            {/* 2) Live faoliyat — hozir nima qilayapti */}
+            <ParentLiveActivity
+              childName={profile?.username || 'Asadbek'}
+              isOnline={true}
+              todaySolved={todaySolved}
+              dailyGoal={dailyGoal}
+              todayMinutes={Math.round(todaySolved * 1.8)}
+            />
+
+            {/* 3) Nazorat menyusi — 8 ta funksional kartochka */}
+            <ParentControlMenu
+              isChildOnline={true}
+              pendingHomework={2}
+              unreadMessages={3}
+              newAchievements={1}
+            />
+
+            {/* 4) Katta dashboard paneli — sidebar + chart + ro'yxatlar */}
+            <ParentDashboardPanel
+              childName={profile?.username || 'Asadbek'}
+              level={level}
+              totalXp={gamification?.total_xp || 0}
+              weeklyAccuracy={Math.round(dailyProgress)}
+              totalCorrect={profile?.total_problems_solved || 0}
+              improvement={14}
+            />
+
+            {/* 5) Tezkor nazorat — kunlik maqsad, vaqt cheklovi, qulflash */}
+            <ParentQuickControls
+              initialDailyGoal={dailyGoal}
+              initialTimeLimitMinutes={60}
+            />
+
+            {/* 6) Bildirishnomalar va eslatmalar */}
+            <ParentAlerts />
+
+            {/* 7) Shaxsiy tavsiyalar — zaif mavzular va yutuqlar */}
+            <ParentRecommendations />
           </div>
         ) : isTeacher ? (
-          /* TEACHER HOME - Boshqaruv & Rivojlanish */
-          <div className="container px-3 xs:px-4 py-2">
+          /* TEACHER HOME — reference dizaynga moslangan to'liq landing */
+          <div className="container px-3 sm:px-6">
             <TeacherDashboard />
           </div>
         ) : (

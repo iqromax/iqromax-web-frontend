@@ -38,6 +38,7 @@ const Install = lazy(() => import("@/pages/Install"));
 const Achievements = lazy(() => import("@/pages/Achievements"));
 const ChallengeStats = lazy(() => import("@/pages/ChallengeStats"));
 const Statistics = lazy(() => import("@/pages/Statistics"));
+const Messages = lazy(() => import("@/pages/Messages"));
 const Records = lazy(() => import("@/pages/Records"));
 const ProblemSheetGenerator = lazy(() => import("@/pages/ProblemSheetGenerator"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -134,6 +135,7 @@ const App = () => (
                       
                       <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
                       <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
+                      <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                       <Route path="/records" element={<ProtectedRoute><Records /></ProtectedRoute>} />
                       <Route path="/problem-sheet" element={<ProtectedRoute><ProblemSheetGenerator /></ProtectedRoute>} />
                       <Route path="/challenge-stats" element={<ChallengeStats />} />

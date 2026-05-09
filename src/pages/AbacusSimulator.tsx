@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, RotateCcw, Calculator, Settings2, Volume2, VolumeX, Smartphone, Monitor, Maximize2, Minus, Plus, Columns3 } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Calculator, Settings2, Volume2, VolumeX, Smartphone, Monitor, Maximize2, Minus, Plus, Columns3, Sparkles, Star, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
@@ -16,100 +16,242 @@ import { cn } from '@/lib/utils';
 
 export type BeadSoundType = 'pop' | 'bead' | 'beadHigh' | 'tick' | 'correct' | 'incorrect' | 'start' | 'countdown' | 'combo' | 'levelUp' | 'complete' | 'winner' | 'whoosh' | 'sparkle' | 'bounce';
 
-const COLUMN_OPTIONS = [
-  { value: 3, label: '3', description: "Yuzlikgacha", gradient: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/30', activeGradient: 'from-emerald-500 to-teal-600' },
-  { value: 5, label: '5', description: "O'n minglikgacha", gradient: 'from-blue-500/20 to-indigo-500/20', border: 'border-blue-500/30', activeGradient: 'from-blue-500 to-indigo-600' },
-  { value: 7, label: '7', description: "Milliongacha", gradient: 'from-amber-500/20 to-orange-500/20', border: 'border-amber-500/30', activeGradient: 'from-amber-500 to-orange-600' },
-  { value: 10, label: '10', description: "Milliardgacha", gradient: 'from-rose-500/20 to-pink-500/20', border: 'border-rose-500/30', activeGradient: 'from-rose-500 to-pink-600' },
+interface ColumnOption {
+  value: number;
+  label: string;
+  description: string;
+  level: string;
+  iconBg: string;
+  iconFg: string;
+  cardGradient: string;
+  cardBorder: string;
+  cardHoverBorder: string;
+  numberColor: string;
+  recommended?: boolean;
+  maxNumber: string;
+}
+
+const COLUMN_OPTIONS: ColumnOption[] = [
+  {
+    value: 3,
+    label: '3',
+    description: 'Yuzlikgacha',
+    level: 'Boshlovchi',
+    iconBg: 'bg-emerald-100 dark:bg-emerald-900/40',
+    iconFg: 'text-emerald-600',
+    cardGradient: 'from-emerald-50/80 to-green-50/30 dark:from-emerald-950/30 dark:to-green-950/20',
+    cardBorder: 'border-emerald-200/60 dark:border-emerald-800/40',
+    cardHoverBorder: 'hover:border-emerald-400 dark:hover:border-emerald-600',
+    numberColor: 'text-emerald-600',
+    maxNumber: 'Maks: 999',
+  },
+  {
+    value: 5,
+    label: '5',
+    description: "O'n minglikgacha",
+    level: "O'rta daraja",
+    iconBg: 'bg-orange-100 dark:bg-orange-900/40',
+    iconFg: 'text-orange-600',
+    cardGradient: 'from-orange-50/80 to-amber-50/30 dark:from-orange-950/30 dark:to-amber-950/20',
+    cardBorder: 'border-orange-200/60 dark:border-orange-800/40',
+    cardHoverBorder: 'hover:border-orange-400 dark:hover:border-orange-600',
+    numberColor: 'text-orange-600',
+    recommended: true,
+    maxNumber: 'Maks: 99 999',
+  },
+  {
+    value: 7,
+    label: '7',
+    description: 'Milliongacha',
+    level: 'Murakkab',
+    iconBg: 'bg-purple-100 dark:bg-purple-900/40',
+    iconFg: 'text-purple-600',
+    cardGradient: 'from-purple-50/80 to-fuchsia-50/30 dark:from-purple-950/30 dark:to-fuchsia-950/20',
+    cardBorder: 'border-purple-200/60 dark:border-purple-800/40',
+    cardHoverBorder: 'hover:border-purple-400 dark:hover:border-purple-600',
+    numberColor: 'text-purple-600',
+    maxNumber: 'Maks: 9 999 999',
+  },
+  {
+    value: 10,
+    label: '10',
+    description: 'Milliardgacha',
+    level: 'Pro',
+    iconBg: 'bg-rose-100 dark:bg-rose-900/40',
+    iconFg: 'text-rose-600',
+    cardGradient: 'from-rose-50/80 to-pink-50/30 dark:from-rose-950/30 dark:to-pink-950/20',
+    cardBorder: 'border-rose-200/60 dark:border-rose-800/40',
+    cardHoverBorder: 'hover:border-rose-400 dark:hover:border-rose-600',
+    numberColor: 'text-rose-600',
+    maxNumber: 'Maks: 9 999 999 999',
+  },
 ];
+
+/**
+ * Mini abakus preview — vertical sticks with one bead above and beads below the bar.
+ */
+const AbacusPreview = ({ columns, color }: { columns: number; color: string }) => {
+  return (
+    <div className="flex items-end justify-center gap-1 h-16 px-2">
+      {Array.from({ length: columns }).map((_, i) => (
+        <div key={i} className="flex flex-col items-center gap-0.5 h-full justify-end">
+          {/* Top bead (one) */}
+          <div className={cn('w-2 h-2 rounded-full', color)} />
+          {/* Vertical line / bar */}
+          <div className="w-px h-1 bg-current opacity-30" />
+          {/* Bottom 4 beads */}
+          {[...Array(4)].map((_, j) => (
+            <div key={j} className={cn('w-2 h-2 rounded-full', color, j === 3 ? 'opacity-100' : 'opacity-90')} />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const ColumnSelector = ({ onSelect }: { onSelect: (cols: number) => void }) => {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-50/40 via-background to-amber-50/30 dark:from-emerald-950/20 dark:via-background dark:to-amber-950/20">
       {/* Decorative background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px]" />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -right-24 w-96 h-96 rounded-full bg-emerald-300/20 dark:bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -bottom-32 -left-20 w-80 h-80 rounded-full bg-amber-200/20 dark:bg-amber-400/5 blur-3xl" />
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border/30">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group">
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border/40">
+        <div className="container mx-auto px-3 sm:px-6 py-3 flex items-center gap-3">
+          <Link
+            to="/"
+            className="h-10 w-10 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors group"
+            aria-label="Orqaga"
+          >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="text-sm font-medium hidden sm:inline">Orqaga</span>
           </Link>
-          <h1 className="text-lg font-bold flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-foreground/20 flex items-center justify-center">
-              <Calculator className="w-4.5 h-4.5 text-primary-foreground" />
-            </div>
-            Abakus Simulator
-          </h1>
-          <div className="w-10" />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-base sm:text-lg font-display font-black flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-sm">
+                <Calculator className="w-4 h-4 text-white" />
+              </div>
+              <span>Abakus simulator</span>
+            </h1>
+          </div>
         </div>
       </header>
 
-      {/* Selection screen */}
-      <div className="flex-1 flex items-center justify-center px-4 py-12 relative z-10">
+      {/* Main */}
+      <div className="flex-1 flex items-start justify-center px-3 sm:px-6 py-6 sm:py-10 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, type: 'spring' }}
-          className="w-full max-w-md space-y-10"
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-5xl space-y-8"
         >
-          {/* Title */}
-          <div className="text-center space-y-3">
-            <motion.div
-              initial={{ scale: 0, rotate: -20 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 0.15, type: 'spring', stiffness: 200 }}
-              className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/10"
-            >
-              <Columns3 className="w-9 h-9 text-primary" />
-            </motion.div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              Ustunlar soni
-            </h2>
-            <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-              Nechta ustunli abakusda mashq qilmoqchisiz?
-            </p>
-          </div>
+          {/* HERO */}
+          <section className="rounded-3xl bg-gradient-to-br from-emerald-50/80 via-amber-50/40 to-white dark:from-emerald-950/30 dark:via-amber-950/20 dark:to-card border border-emerald-200/60 dark:border-emerald-800/40 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 px-5 sm:px-7 py-6 sm:py-7">
+              <div className="min-w-0">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500 text-white shadow-sm mb-3">
+                  <Columns3 className="h-3 w-3" />
+                  ABAKUS SOZLAMALARI
+                </span>
+                <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl leading-tight">
+                  Nechta <span className="text-emerald-600">ustunli abakus</span>?
+                </h2>
+                <p className="text-sm text-muted-foreground mt-2 max-w-xl">
+                  Mashqlaringiz uchun mos ustunlar sonini tanlang. Boshlovchilar uchun 3 yoki 5 ustunli, malakaliroqlar uchun esa 7 yoki 10 ustunli abakus tavsiya qilinadi.
+                </p>
+              </div>
 
-          {/* Options grid */}
-          <div className="grid grid-cols-2 gap-3">
+              {/* Quick info */}
+              <div className="hidden lg:flex flex-col gap-2 text-xs">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-semibold">
+                  <Sparkles className="h-3 w-3" /> Tavsiya: 5 ustun
+                </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 font-semibold">
+                  <Star className="h-3 w-3" /> Keyin o'zgartirish mumkin
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* OPTIONS GRID */}
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {COLUMN_OPTIONS.map((option, index) => (
               <motion.button
                 key={option.value}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 + index * 0.07, type: 'spring', stiffness: 300 }}
-                whileHover={{ scale: 1.03, y: -3 }}
-                whileTap={{ scale: 0.97 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + index * 0.06 }}
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onSelect(option.value)}
                 className={cn(
-                  "relative group rounded-2xl p-5 text-center transition-all duration-300",
-                  "bg-card/80 backdrop-blur-sm border-2",
-                  option.border,
-                  "hover:shadow-xl hover:shadow-primary/5",
-                  "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background",
-                  "overflow-hidden"
+                  'relative group text-left rounded-2xl bg-gradient-to-br border-2 p-5 transition-all duration-300',
+                  'shadow-sm hover:shadow-xl',
+                  option.cardGradient,
+                  option.cardBorder,
+                  option.cardHoverBorder,
+                  'focus:outline-none focus:ring-2 focus:ring-emerald-500/40'
                 )}
               >
-                <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-300", option.gradient)} />
-                <div className="relative space-y-2">
-                  <div className={cn(
-                    "text-4xl font-black tracking-tight bg-gradient-to-br bg-clip-text text-transparent",
-                    option.activeGradient
-                  )}>
+                {/* Tavsiya badge */}
+                {option.recommended && (
+                  <span className="absolute -top-2 right-4 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black text-white bg-amber-500 shadow-md">
+                    <Sparkles className="h-2.5 w-2.5" /> TAVSIYA
+                  </span>
+                )}
+
+                {/* Header — icon + level */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center shadow-sm', option.iconBg)}>
+                    <Columns3 className={cn('h-5 w-5', option.iconFg)} />
+                  </div>
+                  <span className={cn('text-[10px] font-bold uppercase tracking-wider', option.iconFg)}>
+                    {option.level}
+                  </span>
+                </div>
+
+                {/* Big number */}
+                <div className="flex items-baseline gap-1.5 mb-1">
+                  <span className={cn('text-5xl font-display font-black leading-none', option.numberColor)}>
                     {option.label}
-                  </div>
-                  <div className="text-xs font-medium text-muted-foreground">
-                    {option.description}
-                  </div>
+                  </span>
+                  <span className="text-xs text-muted-foreground font-semibold">ustun</span>
+                </div>
+
+                {/* Description */}
+                <div className="text-sm font-bold text-foreground mb-1">{option.description}</div>
+                <div className="text-[11px] text-muted-foreground mb-4">{option.maxNumber}</div>
+
+                {/* Abakus preview */}
+                <div className="rounded-xl bg-card/60 border border-border/40 mb-4">
+                  <AbacusPreview columns={option.value} color={option.numberColor} />
+                </div>
+
+                {/* CTA */}
+                <div className={cn('flex items-center justify-between pt-3 border-t border-border/40 text-xs font-bold transition-transform group-hover:translate-x-0.5', option.iconFg)}>
+                  <span>Tanlash</span>
+                  <ChevronRight className="h-4 w-4" />
                 </div>
               </motion.button>
             ))}
-          </div>
+          </section>
+
+          {/* INFO HINT */}
+          <section className="rounded-2xl bg-card border border-border/40 shadow-sm p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <div className="h-9 w-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="h-4 w-4 text-amber-600" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-sm font-bold mb-1">Maslahat</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Endigina boshlayotgan bo'lsangiz <span className="font-bold text-emerald-600">3 ustunli</span> abakusdan boshlang. Asosiy mashqlar uchun <span className="font-bold text-orange-600">5 ustunli</span> eng mos. Tezroq hisoblashga o'tganingizda <span className="font-bold text-purple-600">7 yoki 10 ustunli</span> abakusni tanlang. Keyin sozlamalardan istalgan vaqtda o'zgartira olasiz.
+                </p>
+              </div>
+            </div>
+          </section>
         </motion.div>
       </div>
     </div>

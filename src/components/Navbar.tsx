@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Volume2, VolumeX, User, LogOut, Play, Home, Settings, Moon, Sun, ShieldCheck, GraduationCap, Sparkles, ChevronDown, Trophy, Menu, X, BookOpen, Calendar, MessageCircle, BarChart3, Calculator, Users, FileText, Video } from 'lucide-react';
+import { Volume2, VolumeX, User, LogOut, Play, Home, Settings, Moon, Sun, ShieldCheck, GraduationCap, Sparkles, ChevronDown, Trophy, Menu, X, BookOpen, Calendar, MessageCircle, BarChart3, Calculator, Users, FileText, Video, ClipboardList } from 'lucide-react';
 import { Logo } from './Logo';
 import { Button } from './ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -106,7 +106,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
       return [
         { path: '/', icon: Home, label: "Bosh sahifa", emoji: "🏠" },
         { path: '/parent-dashboard', icon: BarChart3, label: "Nazorat", emoji: "📊" },
-        { path: '/lesson-stats', icon: FileText, label: "Hisobot", emoji: "📋" },
+        { path: '/problem-sheet', icon: ClipboardList, label: "Masalalar", emoji: "📝" },
       ];
     }
     if (isTeacher) {
@@ -115,7 +115,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
         { path: '/live-sessions', icon: Video, label: "Live", emoji: "📹" },
         { path: '/abacus-simulator', icon: Calculator, label: "Abakus", emoji: "🧮" },
         { path: '/courses', icon: GraduationCap, label: "Kurslar", emoji: "📚" },
-        { path: '/lesson-stats', icon: FileText, label: "Hisobot", emoji: "📋" },
+        { path: '/problem-sheet', icon: ClipboardList, label: "Masalalar", emoji: "📝" },
       ];
     }
     // Student (default)
@@ -123,6 +123,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
       { path: '/', icon: Home, label: "Uy", emoji: "🏠" },
       { path: '/subjects', icon: BookOpen, label: "Fanlar", emoji: "📚" },
       { path: '/abacus-simulator', icon: Calculator, label: "Abakus", emoji: "🧮" },
+      { path: '/problem-sheet', icon: ClipboardList, label: "Masalalar", emoji: "📝" },
       { path: '/weekly-game', icon: Trophy, label: "Musobaqa", emoji: "🏆" },
       { path: '/live-sessions', icon: Video, label: "Live", emoji: "📹" },
     ];

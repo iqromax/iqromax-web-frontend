@@ -1,12 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageBackground } from '@/components/layout/PageBackground';
 import { Navbar } from '@/components/Navbar';
-import { Mascot } from '@/components/Mascot';
-import { LevelMap } from '@/components/kids/LevelMap';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { useSound } from '@/hooks/useSound';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,14 +14,19 @@ import {
   Star,
   BookOpen,
   GraduationCap,
-  CheckCircle,
+  CheckCircle2,
   ChevronRight,
   Play,
   Clock,
   X,
-  Sparkles,
   Trophy,
-  Zap,
+  Search,
+  Filter,
+  ArrowRight,
+  PlayCircle,
+  Award,
+  Target,
+  Sparkles,
 } from 'lucide-react';
 
 interface Course {
@@ -47,38 +48,36 @@ interface Lesson {
   order_index: number | null;
 }
 
-interface Level {
-  id: string;
-  number: number;
-  title: string;
-  status: 'locked' | 'available' | 'completed';
-  stars?: number;
-}
+type FilterStatus = 'all' | 'in_progress' | 'completed' | 'not_started';
+type FilterDifficulty = 'all' | 'beginner' | 'intermediate' | 'advanced';
 
-const difficultyEmoji: Record<string, string> = {
-  beginner: '🌱',
-  intermediate: '🌿',
-  advanced: '🌳',
-};
-
-const difficultyConfig: Record<string, { gradient: string; bgLight: string; text: string; textColor: string }> = {
-  beginner: { 
-    gradient: 'from-emerald-500 to-green-600', 
-    bgLight: 'bg-emerald-50 dark:bg-emerald-950/30',
-    text: 'Boshlang\'ich',
-    textColor: 'text-emerald-700 dark:text-emerald-400'
+const difficultyConfig: Record<
+  string,
+  { label: string; bg: string; fg: string; ring: string; gradient: string; emoji: string }
+> = {
+  beginner: {
+    label: "Boshlang'ich",
+    bg: 'bg-emerald-100 dark:bg-emerald-900/40',
+    fg: 'text-emerald-600',
+    ring: 'border-emerald-200 dark:border-emerald-800/50',
+    gradient: 'from-emerald-400 to-emerald-600',
+    emoji: '🌱',
   },
-  intermediate: { 
-    gradient: 'from-amber-500 to-orange-600', 
-    bgLight: 'bg-amber-50 dark:bg-amber-950/30',
-    text: 'O\'rta',
-    textColor: 'text-amber-700 dark:text-amber-400'
+  intermediate: {
+    label: "O'rta",
+    bg: 'bg-amber-100 dark:bg-amber-900/40',
+    fg: 'text-amber-600',
+    ring: 'border-amber-200 dark:border-amber-800/50',
+    gradient: 'from-amber-400 to-orange-500',
+    emoji: '🌿',
   },
-  advanced: { 
-    gradient: 'from-rose-500 to-pink-600', 
-    bgLight: 'bg-rose-50 dark:bg-rose-950/30',
-    text: 'Murakkab',
-    textColor: 'text-rose-700 dark:text-rose-400'
+  advanced: {
+    label: 'Murakkab',
+    bg: 'bg-rose-100 dark:bg-rose-900/40',
+    fg: 'text-rose-600',
+    ring: 'border-rose-200 dark:border-rose-800/50',
+    gradient: 'from-rose-400 to-rose-600',
+    emoji: '🌳',
   },
 };
 
@@ -86,16 +85,19 @@ const KidsCourses = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { soundEnabled, toggleSound } = useSound();
-  
+
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [userProgress, setUserProgress] = useState<Record<string, { total: number; completed: number }>>({});
-  
-  // Selected course and its lessons
+
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [courseLessons, setCourseLessons] = useState<Lesson[]>([]);
   const [lessonsLoading, setLessonsLoading] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
+  const [diffFilter, setDiffFilter] = useState<FilterDifficulty>('all');
 
   const fetchCourses = useCallback(async () => {
     const { data: coursesData } = await supabase
@@ -112,7 +114,6 @@ const KidsCourses = () => {
             .select('*', { count: 'exact', head: true })
             .eq('course_id', course.id)
             .eq('is_published', true);
-
           return { ...course, lessons_count: count || 0 };
         })
       );
@@ -121,7 +122,6 @@ const KidsCourses = () => {
 
       if (user) {
         const progressMap: Record<string, { total: number; completed: number }> = {};
-        
         for (const course of coursesWithLessons) {
           const { data: lessons } = await supabase
             .from('lessons')
@@ -130,7 +130,7 @@ const KidsCourses = () => {
             .eq('is_published', true);
 
           if (lessons && lessons.length > 0) {
-            const lessonIds = lessons.map(l => l.id);
+            const lessonIds = lessons.map((l) => l.id);
             const { count } = await supabase
               .from('user_lesson_progress')
               .select('*', { count: 'exact', head: true })
@@ -140,7 +140,7 @@ const KidsCourses = () => {
 
             progressMap[course.id] = {
               total: lessons.length,
-              completed: count || 0
+              completed: count || 0,
             };
           }
         }
@@ -150,36 +150,37 @@ const KidsCourses = () => {
     setLoading(false);
   }, [user]);
 
-  // Fetch lessons for selected course
-  const fetchCourseLessons = useCallback(async (course: Course) => {
-    setLessonsLoading(true);
-    const { data: lessonsData } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('course_id', course.id)
-      .eq('is_published', true)
-      .order('order_index', { ascending: true });
+  const fetchCourseLessons = useCallback(
+    async (course: Course) => {
+      setLessonsLoading(true);
+      const { data: lessonsData } = await supabase
+        .from('lessons')
+        .select('*')
+        .eq('course_id', course.id)
+        .eq('is_published', true)
+        .order('order_index', { ascending: true });
 
-    if (lessonsData) {
-      setCourseLessons(lessonsData);
+      if (lessonsData) {
+        setCourseLessons(lessonsData);
 
-      // Fetch user progress for lessons
-      if (user) {
-        const lessonIds = lessonsData.map(l => l.id);
-        const { data: progressData } = await supabase
-          .from('user_lesson_progress')
-          .select('lesson_id')
-          .eq('user_id', user.id)
-          .eq('completed', true)
-          .in('lesson_id', lessonIds);
+        if (user) {
+          const lessonIds = lessonsData.map((l) => l.id);
+          const { data: progressData } = await supabase
+            .from('user_lesson_progress')
+            .select('lesson_id')
+            .eq('user_id', user.id)
+            .eq('completed', true)
+            .in('lesson_id', lessonIds);
 
-        if (progressData) {
-          setCompletedLessons(new Set(progressData.map(p => p.lesson_id)));
+          if (progressData) {
+            setCompletedLessons(new Set(progressData.map((p) => p.lesson_id)));
+          }
         }
       }
-    }
-    setLessonsLoading(false);
-  }, [user]);
+      setLessonsLoading(false);
+    },
+    [user]
+  );
 
   useEffect(() => {
     fetchCourses();
@@ -189,43 +190,53 @@ const KidsCourses = () => {
     await fetchCourses();
   };
 
-  const getProgressPercent = (courseId: string) => {
-    const progress = userProgress[courseId];
-    if (!progress) return 0;
-    return (progress.completed / progress.total) * 100;
-  };
+  const getProgressPercent = useCallback(
+    (courseId: string) => {
+      const progress = userProgress[courseId];
+      if (!progress || progress.total === 0) return 0;
+      return Math.round((progress.completed / progress.total) * 100);
+    },
+    [userProgress]
+  );
 
-  const isCompleted = (courseId: string) => {
-    const progress = userProgress[courseId];
-    return progress && progress.completed === progress.total && progress.total > 0;
-  };
+  const isCompleted = useCallback(
+    (courseId: string) => {
+      const progress = userProgress[courseId];
+      return !!(progress && progress.completed === progress.total && progress.total > 0);
+    },
+    [userProgress]
+  );
 
-  // Handle course selection - show lessons
   const handleCourseClick = (course: Course) => {
     setSelectedCourse(course);
     fetchCourseLessons(course);
   };
 
-  // Transform courses to level map format
-  const courseLevels: Level[] = courses.map((course, index) => {
-    const completed = isCompleted(course.id);
-    const progressPercent = getProgressPercent(course.id);
-    const isLocked = index > 0 && !isCompleted(courses[index - 1].id) && progressPercent === 0;
-    
-    return {
-      id: course.id,
-      number: index + 1,
-      title: course.title,
-      status: completed ? 'completed' : (isLocked ? 'locked' : 'available'),
-      stars: completed ? 3 : progressPercent > 66 ? 2 : progressPercent > 33 ? 1 : 0,
-    };
-  });
+  // Filtering
+  const filteredCourses = useMemo(() => {
+    return courses.filter((c) => {
+      // Search
+      if (search && !c.title.toLowerCase().includes(search.toLowerCase()) &&
+          !(c.description || '').toLowerCase().includes(search.toLowerCase())) {
+        return false;
+      }
+      // Difficulty
+      if (diffFilter !== 'all' && c.difficulty !== diffFilter) return false;
+      // Status
+      const pct = getProgressPercent(c.id);
+      const completed = isCompleted(c.id);
+      if (statusFilter === 'completed' && !completed) return false;
+      if (statusFilter === 'in_progress' && (completed || pct === 0)) return false;
+      if (statusFilter === 'not_started' && pct > 0) return false;
+      return true;
+    });
+  }, [courses, search, diffFilter, statusFilter, getProgressPercent, isCompleted]);
 
-  const handleLevelClick = (level: Level) => {
-    if (level.status === 'locked') return;
-    const course = courses.find(c => c.id === level.id);
-    if (course) handleCourseClick(course);
-  };
+  // Stats
+  const totalCompleted = Object.values(userProgress).reduce((s, p) => s + p.completed, 0);
+  const totalLessons = Object.values(userProgress).reduce((s, p) => s + p.total, 0);
+  const completedCourses = Object.keys(userProgress).filter((id) => isCompleted(id)).length;
+  const overallPct = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) : 0;
 
   if (loading) {
     return (
@@ -237,354 +248,502 @@ const KidsCourses = () => {
   }
 
   return (
-    <PageBackground className="min-h-screen pb-20 sm:pb-24">
+    <PageBackground className="min-h-screen pb-20 sm:pb-24 bg-gradient-to-br from-emerald-50/40 via-background to-amber-50/30 dark:from-emerald-950/20 dark:via-background dark:to-amber-950/20">
       <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
 
       <PullToRefresh onRefresh={handleRefresh}>
-        <div className="container px-3 xs:px-4 py-4 sm:py-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+        <div className="container px-3 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
+          {/* Top bar */}
+          <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/')}
-              className="gap-1.5 h-9 px-3"
+              className="gap-1.5 h-9 px-3 -ml-1"
             >
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden xs:inline">Orqaga</span>
             </Button>
-            <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1.5">
-              <GraduationCap className="h-4 w-4 mr-1.5" />
-              Kurslar
-            </Badge>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500 text-white shadow-sm">
+              <GraduationCap className="h-3 w-3" />
+              KURSLAR KATALOGI
+            </span>
           </div>
 
-          {/* Hero Card */}
-          <Card className="mb-6 overflow-hidden border-0 shadow-xl relative">
-            {/* Animated Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-emerald-500 to-teal-500" />
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-pulse" />
-              <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-            </div>
-            
-            {/* Floating Decorations */}
-            <div className="absolute top-3 right-4 text-2xl sm:text-3xl animate-bounce" style={{ animationDuration: '2s' }}>⭐</div>
-            <div className="absolute bottom-4 right-8 text-xl sm:text-2xl animate-bounce" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>🎯</div>
-            <div className="absolute top-1/2 right-1/4 text-lg animate-bounce hidden sm:block" style={{ animationDuration: '3s', animationDelay: '1s' }}>✨</div>
-            
-            <CardContent className="p-5 sm:p-8 relative">
-              <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8">
-                {/* Mascot with Glow */}
-                <div className="relative overflow-visible pt-14">
-                  <div className="absolute inset-0 top-14 bg-white/20 rounded-full blur-xl scale-110 animate-pulse" />
-                  <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-3 shadow-lg border border-white/20 overflow-visible">
-                    <Mascot mood="excited" size="lg" message="O'rganamiz!" />
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <div className="text-center sm:text-left flex-1">
-                  <div className="flex items-center justify-center sm:justify-start gap-3 mb-3">
-                    <span className="text-3xl sm:text-4xl drop-shadow-lg">📚</span>
-                    <h1 className="text-2xl sm:text-3xl font-display font-black text-white drop-shadow-md">
-                      O'rganish sarguzashti
-                    </h1>
-                  </div>
-                  <p className="text-white/90 text-sm sm:text-base mb-5 max-w-md leading-relaxed">
-                    Har bir kursni tugatib, yangi darajalarni oching va yulduzlar to'plang! ✨
-                  </p>
-                  
-                  {/* Stats Badges */}
-                  <div className="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start">
-                    <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full border border-white/30 shadow-lg">
-                      <BookOpen className="h-4 w-4 text-white" />
-                      <span className="text-white font-semibold text-sm">{courses.length} ta kurs</span>
-                    </div>
-                    <div className="flex items-center gap-2 bg-amber-400/30 backdrop-blur-sm px-4 py-2 rounded-full border border-amber-300/40 shadow-lg">
-                      <Star className="h-4 w-4 text-amber-200 fill-amber-200" />
-                      <span className="text-amber-100 font-semibold text-sm">{Object.values(userProgress).reduce((sum, p) => sum + p.completed, 0)} tugatilgan</span>
-                    </div>
-                    <div className="flex items-center gap-2 bg-cyan-400/30 backdrop-blur-sm px-4 py-2 rounded-full border border-cyan-300/40 shadow-lg">
-                      <Trophy className="h-4 w-4 text-cyan-200" />
-                      <span className="text-cyan-100 font-semibold text-sm">Davom eting!</span>
-                    </div>
-                  </div>
+          {/* HERO */}
+          <section className="rounded-3xl bg-gradient-to-br from-emerald-50/80 via-amber-50/40 to-white dark:from-emerald-950/30 dark:via-amber-950/20 dark:to-card border border-emerald-200/60 dark:border-emerald-800/40 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 px-5 sm:px-7 py-6 sm:py-8">
+              <div className="min-w-0">
+                <h1 className="font-display font-black text-2xl sm:text-3xl md:text-4xl leading-tight">
+                  Barcha <span className="text-emerald-600">kurslar</span>
+                </h1>
+                <p className="text-sm text-muted-foreground mt-2 max-w-xl">
+                  Yapon abakus metodikasi asosida ishlab chiqilgan {courses.length} ta kurs sizni kutmoqda.
+                  Boshqaruv panelidan istalgan kursni tanlang va o'rganishni boshlang.
+                </p>
+
+                {/* Inline action buttons */}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <button
+                    onClick={() => setStatusFilter('in_progress')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-orange-500 text-white hover:bg-orange-600 shadow-sm transition-colors"
+                  >
+                    <PlayCircle className="h-3.5 w-3.5" /> Davomida
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter('not_started')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-card border border-border hover:border-emerald-300 transition-colors"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" /> Yangi boshlash
+                  </button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {courses.length === 0 ? (
-            <div className="text-center py-12">
-              <Mascot mood="thinking" size="lg" message="Kurslar hali mavjud emas. Tez orada qo'shiladi!" />
+              {/* Donut + summary */}
+              <div className="hidden lg:flex items-center gap-4">
+                <div className="relative">
+                  <svg viewBox="0 0 110 110" className="w-24 h-24">
+                    <circle cx="55" cy="55" r="46" stroke="currentColor" strokeOpacity="0.1" strokeWidth="10" fill="none" />
+                    <circle
+                      cx="55"
+                      cy="55"
+                      r="46"
+                      stroke="rgb(16 185 129)"
+                      strokeWidth="10"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(overallPct / 100) * 289} 289`}
+                      transform="rotate(-90 55 55)"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-2xl font-display font-black text-emerald-600 leading-none">{overallPct}%</div>
+                    <div className="text-[9px] text-muted-foreground mt-0.5">umumiy</div>
+                  </div>
+                </div>
+                <div>
+                  <div className="font-display font-bold text-base">
+                    {totalCompleted} / {totalLessons}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">dars tugatildi</div>
+                </div>
+              </div>
             </div>
+          </section>
+
+          {/* KPI cards */}
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            {[
+              {
+                icon: BookOpen,
+                value: courses.length,
+                label: 'Mavjud kurslar',
+                sub: 'jami katalog',
+                bg: 'bg-emerald-100 dark:bg-emerald-900/40',
+                fg: 'text-emerald-600',
+                gradient: 'from-emerald-50 to-green-50/30 dark:from-emerald-950/30 dark:to-green-950/20',
+                border: 'border-emerald-200 dark:border-emerald-800/50',
+              },
+              {
+                icon: Trophy,
+                value: completedCourses,
+                label: 'Tugatilgan',
+                sub: 'kurslar',
+                bg: 'bg-amber-100 dark:bg-amber-900/40',
+                fg: 'text-amber-600',
+                gradient: 'from-amber-50 to-yellow-50/30 dark:from-amber-950/30 dark:to-yellow-950/20',
+                border: 'border-amber-200 dark:border-amber-800/50',
+              },
+              {
+                icon: CheckCircle2,
+                value: totalCompleted,
+                label: 'Bajarilgan',
+                sub: 'darslar',
+                bg: 'bg-orange-100 dark:bg-orange-900/40',
+                fg: 'text-orange-600',
+                gradient: 'from-orange-50 to-amber-50/30 dark:from-orange-950/30 dark:to-amber-950/20',
+                border: 'border-orange-200 dark:border-orange-800/50',
+              },
+              {
+                icon: Target,
+                value: `${overallPct}%`,
+                label: 'Umumiy progress',
+                sub: 'barcha kurs bo\'yicha',
+                bg: 'bg-purple-100 dark:bg-purple-900/40',
+                fg: 'text-purple-600',
+                gradient: 'from-purple-50 to-fuchsia-50/30 dark:from-purple-950/30 dark:to-fuchsia-950/20',
+                border: 'border-purple-200 dark:border-purple-800/50',
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`rounded-2xl bg-gradient-to-br ${item.gradient} border ${item.border} p-4 sm:p-5 hover:shadow-md transition-shadow`}
+              >
+                <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center mb-3 shadow-sm`}>
+                  <item.icon className={`h-5 w-5 ${item.fg}`} />
+                </div>
+                <div className="text-xl sm:text-2xl font-display font-black leading-tight">{item.value}</div>
+                <div className="text-xs font-semibold mt-0.5">{item.label}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{item.sub}</div>
+              </div>
+            ))}
+          </section>
+
+          {/* SEARCH + FILTERS */}
+          <section className="rounded-2xl bg-card border border-border/40 shadow-sm p-3 sm:p-4">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+              {/* Search */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Kurs nomi yoki tavsifi bo'yicha qidirish..."
+                  className="w-full h-10 pl-10 pr-3 rounded-xl bg-secondary/50 border border-border/40 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all"
+                />
+              </div>
+
+              {/* Status tabs */}
+              <div className="flex items-center gap-1 bg-secondary/40 rounded-xl p-1 overflow-x-auto">
+                {(
+                  [
+                    { id: 'all', label: 'Hammasi' },
+                    { id: 'in_progress', label: 'Davomida' },
+                    { id: 'completed', label: 'Tugagan' },
+                    { id: 'not_started', label: 'Yangi' },
+                  ] as const
+                ).map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setStatusFilter(f.id)}
+                    className={`px-3 h-8 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                      statusFilter === f.id ? 'bg-emerald-500 text-white shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Difficulty pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto">
+                <Filter className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                {(
+                  [
+                    { id: 'all', label: 'Daraja' },
+                    { id: 'beginner', label: '🌱 Oson' },
+                    { id: 'intermediate', label: '🌿 O\'rta' },
+                    { id: 'advanced', label: '🌳 Qiyin' },
+                  ] as const
+                ).map((d) => (
+                  <button
+                    key={d.id}
+                    onClick={() => setDiffFilter(d.id)}
+                    className={`px-2.5 h-7 rounded-full text-[11px] font-bold whitespace-nowrap transition-colors ${
+                      diffFilter === d.id
+                        ? 'bg-orange-500 text-white shadow-sm'
+                        : 'bg-secondary text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* COURSES GRID */}
+          {filteredCourses.length === 0 ? (
+            <section className="rounded-2xl bg-card border border-border/40 p-12 text-center">
+              <Search className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
+              <h3 className="font-display font-bold text-base mb-1">Kurs topilmadi</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Boshqa filterlarni sinab ko'ring yoki qidiruvni o'zgartiring
+              </p>
+              <button
+                onClick={() => {
+                  setSearch('');
+                  setStatusFilter('all');
+                  setDiffFilter('all');
+                }}
+                className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition-colors"
+              >
+                Filterlarni tozalash
+              </button>
+            </section>
           ) : (
-            <>
-              {/* Level Map */}
-              <div className="mb-6">
-                <h2 className="text-lg font-display font-bold mb-3 flex items-center gap-2 text-foreground">
-                  <span className="text-xl">🗺️</span>
-                  Ta'lim xaritasi
-                  <Sparkles className="h-4 w-4 text-primary" />
-                </h2>
-                <Card className="p-4 border-primary/10">
-                  <LevelMap 
-                    levels={courseLevels} 
-                    onLevelClick={handleLevelClick}
-                  />
-                </Card>
-              </div>
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+              {filteredCourses.map((course, index) => {
+                const progress = userProgress[course.id];
+                const progressPercent = getProgressPercent(course.id);
+                const completed = isCompleted(course.id);
+                const isLocked =
+                  index > 0 && courses[index - 1] &&
+                  !isCompleted(courses[index - 1].id) &&
+                  progressPercent === 0 &&
+                  statusFilter === 'all' &&
+                  diffFilter === 'all' &&
+                  !search;
+                const cfg = difficultyConfig[course.difficulty] || difficultyConfig.beginner;
 
-              {/* Course Cards */}
-              <h2 className="text-lg font-display font-bold mb-3 flex items-center gap-2 text-foreground">
-                <span className="text-xl">🏝️</span>
-                Barcha orollar
-                <Zap className="h-4 w-4 text-kids-yellow" />
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {courses.map((course, index) => {
-                  const progress = userProgress[course.id];
-                  const progressPercent = getProgressPercent(course.id);
-                  const completed = isCompleted(course.id);
-                  const isLocked = index > 0 && !isCompleted(courses[index - 1].id) && progressPercent === 0;
-                  const emoji = difficultyEmoji[course.difficulty] || '🌱';
-                  const config = difficultyConfig[course.difficulty] || difficultyConfig.beginner;
+                return (
+                  <article
+                    key={course.id}
+                    onClick={() => !isLocked && handleCourseClick(course)}
+                    className={`group rounded-2xl bg-card border border-border/40 overflow-hidden transition-all ${
+                      isLocked
+                        ? 'opacity-50 cursor-not-allowed grayscale'
+                        : 'cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-emerald-300 dark:hover:border-emerald-700/50'
+                    }`}
+                  >
+                    {/* Thumbnail */}
+                    <div className={`relative h-36 bg-gradient-to-br ${cfg.gradient} overflow-hidden`}>
+                      {course.thumbnail_url ? (
+                        <img
+                          src={course.thumbnail_url}
+                          alt={course.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-6xl drop-shadow-lg group-hover:scale-110 transition-transform">
+                          {cfg.emoji}
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-                  return (
-                    <Card 
-                      key={course.id}
-                      className={`relative overflow-hidden transition-all duration-300 cursor-pointer group border-border/50 ${
-                        isLocked 
-                          ? 'opacity-50 cursor-not-allowed grayscale' 
-                          : 'hover:shadow-lg hover:scale-[1.02] hover:border-primary/30'
-                      }`}
-                      onClick={() => !isLocked && handleCourseClick(course)}
-                    >
-                      {/* Thumbnail */}
-                      <div className={`relative h-32 sm:h-36 bg-gradient-to-br ${config.gradient} overflow-hidden`}>
-                        {course.thumbnail_url ? (
-                          <img 
-                            src={course.thumbnail_url} 
-                            alt={course.title}
-                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                      {/* Difficulty badge */}
+                      <span className={`absolute top-3 left-3 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/95 ${cfg.fg} backdrop-blur-sm shadow-sm`}>
+                        {cfg.emoji} {cfg.label}
+                      </span>
+
+                      {/* Lesson count badge */}
+                      <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/40 text-white backdrop-blur-sm">
+                        <BookOpen className="h-2.5 w-2.5" />
+                        {course.lessons_count}
+                      </span>
+
+                      {isLocked && (
+                        <div className="absolute inset-0 bg-black/55 flex items-center justify-center backdrop-blur-sm">
+                          <div className="h-12 w-12 rounded-full bg-white/15 border border-white/30 flex items-center justify-center">
+                            <Lock className="h-5 w-5 text-white" />
+                          </div>
+                        </div>
+                      )}
+
+                      {completed && (
+                        <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-black shadow-lg">
+                          <Trophy className="h-3 w-3" fill="currentColor" /> Tugagan
+                        </div>
+                      )}
+
+                      {!isLocked && !completed && progressPercent > 0 && (
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/30">
+                          <div
+                            className={`h-full bg-gradient-to-r ${cfg.gradient}`}
+                            style={{ width: `${progressPercent}%` }}
                           />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-5xl sm:text-6xl drop-shadow-lg group-hover:scale-110 transition-transform">{emoji}</span>
-                          </div>
-                        )}
-                        
-                        {/* Overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                        
-                        {isLocked && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center border-2 border-muted-foreground/30">
-                              <Lock className="h-6 w-6 text-muted-foreground" />
-                            </div>
-                          </div>
-                        )}
-                        
-                        {completed && (
-                          <div className="absolute top-2 right-2 flex gap-0.5">
-                            {[1, 2, 3].map((star) => (
-                              <Star key={star} className="h-5 w-5 text-kids-yellow fill-kids-yellow drop-shadow" />
-                            ))}
-                          </div>
-                        )}
+                        </div>
+                      )}
+                    </div>
 
-                        {/* Difficulty badge */}
-                        <Badge className={`absolute top-2 left-2 ${config.bgLight} ${config.textColor} border-0 text-xs`}>
-                          {config.text}
-                        </Badge>
+                    {/* Content */}
+                    <div className="p-4 sm:p-5">
+                      <h3 className="font-display font-bold text-base sm:text-lg leading-tight mb-1.5 line-clamp-1 group-hover:text-emerald-600 transition-colors">
+                        {course.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mb-4 min-h-[32px]">
+                        {course.description || "Kurs tavsifi tez orada qo'shiladi"}
+                      </p>
 
-                        {!isLocked && !completed && progressPercent > 0 && (
-                          <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/30">
-                            <div 
-                              className="h-full bg-kids-yellow transition-all duration-500"
+                      {progress && progress.total > 0 ? (
+                        <div className="mb-3">
+                          <div className="flex items-center justify-between text-[11px] mb-1">
+                            <span className="text-muted-foreground">Progress</span>
+                            <span className="font-display font-black">{progressPercent}%</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-secondary overflow-hidden mb-1">
+                            <div
+                              className={`h-full rounded-full bg-gradient-to-r ${cfg.gradient} transition-all`}
                               style={{ width: `${progressPercent}%` }}
                             />
                           </div>
-                        )}
-                      </div>
-
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <h3 className="font-display font-bold text-base text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-                            {course.title}
-                          </h3>
-                          {completed && <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />}
-                        </div>
-                        
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                          {course.description}
-                        </p>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <BookOpen className="h-4 w-4" />
-                            <span>{course.lessons_count} ta dars</span>
+                          <div className="text-[10px] text-muted-foreground">
+                            {progress.completed} / {progress.total} dars tugatildi
                           </div>
-                          
-                          {!isLocked && (
-                            <Button 
-                              size="sm" 
-                              className={`h-8 rounded-full gap-1 text-xs px-3 bg-gradient-to-r ${config.gradient} text-white border-0 shadow hover:opacity-90`}
-                            >
-                              {completed ? 'Takror' : progressPercent > 0 ? 'Davom' : 'Boshlash'}
-                              <ChevronRight className="h-3.5 w-3.5" />
-                            </Button>
+                        </div>
+                      ) : (
+                        <div className="mb-3 text-[10px] text-muted-foreground inline-flex items-center gap-1">
+                          <Sparkles className="h-3 w-3 text-amber-400" /> Yangi boshlash uchun mos
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between pt-3 border-t border-border/40">
+                        <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                          {completed ? (
+                            <>
+                              <Star className="h-3 w-3 text-amber-400" fill="currentColor" />
+                              <Star className="h-3 w-3 text-amber-400" fill="currentColor" />
+                              <Star className="h-3 w-3 text-amber-400" fill="currentColor" />
+                            </>
+                          ) : (
+                            <>
+                              <Star className="h-3 w-3 text-muted-foreground/40" />
+                              <Star className="h-3 w-3 text-muted-foreground/40" />
+                              <Star className="h-3 w-3 text-muted-foreground/40" />
+                            </>
                           )}
                         </div>
-
-                        {progress && !completed && (
-                          <div className="mt-3 pt-3 border-t border-border">
-                            <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                              <span>Jarayon</span>
-                              <span className="text-primary font-medium">{progress.completed}/{progress.total}</span>
-                            </div>
-                            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full bg-gradient-to-r ${config.gradient} rounded-full transition-all duration-500`}
-                                style={{ width: `${progressPercent}%` }}
-                              />
-                            </div>
-                          </div>
+                        {!isLocked && (
+                          <span className={`inline-flex items-center gap-1 text-xs font-bold ${cfg.fg} group-hover:translate-x-0.5 transition-transform`}>
+                            {completed ? 'Takror' : progressPercent > 0 ? 'Davom ettirish' : 'Boshlash'}
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </span>
                         )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </section>
           )}
+
+          {/* CTA banner */}
+          <section className="rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-md p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
+                  <Award className="h-6 w-6 text-amber-200" />
+                </div>
+                <div>
+                  <h3 className="font-display font-black text-lg sm:text-xl mb-1">
+                    Yangi kurslarni boshlashga tayyormisiz?
+                  </h3>
+                  <p className="text-sm text-white/85">
+                    Har bir tugatilgan kurs uchun maxsus sertifikat va yutuqlar oling.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/badges')}
+                className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-white text-emerald-700 hover:bg-white/95 text-sm font-bold shadow-sm transition-all flex-shrink-0"
+              >
+                Yutuqlarim
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </section>
         </div>
       </PullToRefresh>
 
-      {/* Lessons Drawer/Panel */}
+      {/* Lessons Drawer */}
       {selectedCourse && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setSelectedCourse(null)}
-          />
-          
-          {/* Panel */}
-          <div className="relative w-full sm:max-w-lg max-h-[85vh] bg-background rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden animate-fade-in border border-border">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedCourse(null)} />
+
+          <div className="relative w-full sm:max-w-lg max-h-[85vh] bg-background rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-border/40">
             {/* Header */}
-            <div className={`relative p-5 sm:p-6 bg-gradient-to-br ${difficultyConfig[selectedCourse.difficulty]?.gradient || 'from-primary to-primary/80'}`}>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/20 text-white hover:bg-white/30"
+            <div className={`relative p-5 sm:p-6 bg-gradient-to-br ${difficultyConfig[selectedCourse.difficulty]?.gradient || 'from-emerald-400 to-emerald-600'}`}>
+              <button
                 onClick={() => setSelectedCourse(null)}
+                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/25 hover:bg-white/40 text-white flex items-center justify-center backdrop-blur-sm transition-colors"
               >
                 <X className="h-4 w-4" />
-              </Button>
-              
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl shadow-lg">
-                  {difficultyEmoji[selectedCourse.difficulty] || '🌱'}
+              </button>
+
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl shadow-lg backdrop-blur-sm">
+                  {difficultyConfig[selectedCourse.difficulty]?.emoji || '🌱'}
                 </div>
-                <div className="text-white">
-                  <h2 className="font-display font-bold text-lg sm:text-xl line-clamp-1">{selectedCourse.title}</h2>
-                  <p className="text-white/80 text-sm">{selectedCourse.lessons_count} ta dars</p>
+                <div className="text-white min-w-0">
+                  <h2 className="font-display font-black text-lg sm:text-xl line-clamp-1">{selectedCourse.title}</h2>
+                  <div className="flex items-center gap-3 text-xs text-white/85 mt-0.5">
+                    <span className="inline-flex items-center gap-1">
+                      <BookOpen className="h-3 w-3" /> {selectedCourse.lessons_count} dars
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> {completedLessons.size} tugagan
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Lessons List */}
-            <div className="p-5 overflow-y-auto max-h-[55vh]">
-              <h3 className="font-display font-bold text-sm mb-4 flex items-center gap-2 text-foreground">
-                <BookOpen className="h-4 w-4 text-primary" />
+            {/* Lessons list */}
+            <div className="p-4 sm:p-5 overflow-y-auto max-h-[55vh]">
+              <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-emerald-500" />
                 Darslar ro'yxati
               </h3>
 
               {lessonsLoading ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-16 bg-muted rounded-xl animate-pulse" />
+                    <div key={i} className="h-14 bg-secondary rounded-xl animate-pulse" />
                   ))}
                 </div>
               ) : courseLessons.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  <BookOpen className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                  <BookOpen className="h-10 w-10 mx-auto mb-2 opacity-40" />
                   <p className="text-sm">Darslar hali qo'shilmagan</p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <ul className="space-y-2">
                   {courseLessons.map((lesson, index) => {
                     const isLessonCompleted = completedLessons.has(lesson.id);
-                    
                     return (
-                      <div
+                      <li
                         key={lesson.id}
-                        className={`overflow-hidden rounded-xl border transition-all active:scale-[0.98] cursor-pointer ${
-                          isLessonCompleted 
-                            ? 'border-primary/30 bg-primary/5' 
-                            : 'border-border bg-card hover:bg-accent hover:border-primary/20'
-                        }`}
                         onClick={() => navigate(`/lessons/${lesson.id}`)}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:-translate-y-0.5 ${
+                          isLessonCompleted
+                            ? 'border-emerald-200/60 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-950/20'
+                            : 'border-border/40 bg-card hover:border-emerald-300 dark:hover:border-emerald-700/50'
+                        }`}
                       >
-                        <div className="p-3 flex items-center gap-3">
-                          {/* Number/Status */}
-                          <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                            isLessonCompleted 
-                              ? 'bg-primary text-primary-foreground' 
-                              : 'bg-muted text-muted-foreground'
-                          }`}>
-                            {isLessonCompleted ? (
-                              <CheckCircle className="h-5 w-5" />
-                            ) : (
-                              <span className="font-bold">{index + 1}</span>
-                            )}
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm text-foreground line-clamp-1">{lesson.title}</h4>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                              {lesson.duration_minutes && (
-                                <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {lesson.duration_minutes} daq
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Play button */}
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
-                            className="h-8 w-8 rounded-full"
-                          >
-                            <Play className="h-4 w-4" />
-                          </Button>
+                        <div
+                          className={`h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                            isLessonCompleted
+                              ? 'bg-emerald-500 text-white'
+                              : 'bg-secondary text-muted-foreground'
+                          }`}
+                        >
+                          {isLessonCompleted ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : (
+                            <span className="text-xs font-display font-black">{index + 1}</span>
+                          )}
                         </div>
-                      </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-sm line-clamp-1">{lesson.title}</h4>
+                          {lesson.duration_minutes && (
+                            <div className="text-[10px] text-muted-foreground inline-flex items-center gap-1 mt-0.5">
+                              <Clock className="h-2.5 w-2.5" /> {lesson.duration_minutes} daqiqa
+                            </div>
+                          )}
+                        </div>
+                        <Play className="h-4 w-4 text-emerald-500" />
+                      </li>
                     );
                   })}
-                </div>
+                </ul>
               )}
             </div>
 
             {/* Footer */}
-            <div className="p-5 border-t border-border bg-muted/30">
-              <Button 
-                className={`w-full gap-2 h-12 rounded-xl bg-gradient-to-r ${difficultyConfig[selectedCourse.difficulty]?.gradient || 'from-primary to-primary/80'} text-white border-0 shadow-lg font-bold text-base`}
+            <div className="p-4 sm:p-5 border-t border-border/40 bg-secondary/30">
+              <button
                 onClick={() => {
-                  const firstIncomplete = courseLessons.find(l => !completedLessons.has(l.id));
+                  const firstIncomplete = courseLessons.find((l) => !completedLessons.has(l.id));
                   navigate(`/lessons/${firstIncomplete?.id || courseLessons[0]?.id}`);
                 }}
                 disabled={courseLessons.length === 0}
+                className="w-full inline-flex items-center justify-center gap-2 h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-md shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Play className="h-5 w-5" />
-                {completedLessons.size > 0 ? 'Davom ettirish' : 'Boshlash'}
-              </Button>
+                {completedLessons.size > 0 ? 'Davom ettirish' : 'Kursni boshlash'}
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>

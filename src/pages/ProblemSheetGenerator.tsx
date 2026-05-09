@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Download, RefreshCw, FileText, Save, FolderOpen, Trash2, Loader2, Share2, Copy, Globe, Lock, Columns, Hash, Calculator, Layers, LayoutGrid } from 'lucide-react';
+import { Download, RefreshCw, FileText, Save, FolderOpen, Trash2, Loader2, Share2, Copy, Globe, Lock, Columns, Hash, Calculator, Layers, LayoutGrid, ClipboardList, Sparkles, ArrowRight, CheckCircle2, Printer, BookOpen } from 'lucide-react';
 import { generateProblem, getLegacyFormulas, FORMULA_LABELS, validateProblemSequence } from '@/lib/sorobanEngine';
 import { ProblemSheetTable } from '@/components/ProblemSheetTable';
 import { toast } from 'sonner';
@@ -358,45 +358,102 @@ const ProblemSheetGenerator = () => {
   }, [sheet, formulaType, columnsPerRow, playClick]);
   
   return (
-    <PageBackground>
+    <PageBackground className="min-h-screen pb-20 sm:pb-24 bg-gradient-to-br from-orange-50/40 via-background to-amber-50/30 dark:from-orange-950/20 dark:via-background dark:to-amber-950/20">
       <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
-      
-      <main className="container mx-auto px-4 py-8 pt-24">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Hero Header */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 p-8 md:p-10 animate-fade-in">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-            <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl shadow-lg shadow-primary/25 shrink-0">
-                <FileText className="w-8 h-8 text-white" />
-              </div>
-              <div className="flex-1">
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-                  Misol Varag'i Generatori
+
+      <main className="container mx-auto px-3 sm:px-6 py-5 sm:py-8">
+        <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
+          {/* HERO */}
+          <section className="rounded-3xl bg-gradient-to-br from-orange-50/80 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/20 dark:to-card border border-orange-200/60 dark:border-orange-800/40 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 px-5 sm:px-7 py-6 sm:py-8">
+              <div className="min-w-0">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-orange-500 text-white shadow-sm mb-3">
+                  <ClipboardList className="h-3 w-3" />
+                  MASALA VARAQLARI
+                </span>
+                <h1 className="font-display font-black text-2xl sm:text-3xl md:text-4xl leading-tight">
+                  Misol <span className="text-orange-500">varaqi</span> generatori
                 </h1>
-                <p className="text-muted-foreground text-sm md:text-base">
-                  Soroban misollarini jadval shaklida generatsiya qiling va PDF sifatida yuklab oling
+                <p className="text-sm text-muted-foreground mt-2 max-w-xl">
+                  Soroban metodikasi asosida tayyor misollar varag'ini generatsiya qiling, saqlang va
+                  bosib chiqarish uchun PDF formatida yuklab oling.
                 </p>
-              </div>
-              {sheet && (
-                <Badge variant="secondary" className="text-sm px-3 py-1.5 shrink-0">
-                  {sheet.problems.length} ta misol tayyor
-                </Badge>
-              )}
-            </div>
-          </div>
-          
-          {/* Settings Card */}
-          <Card className="border-border/50 shadow-sm animate-fade-in">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <RefreshCw className="w-4 h-4 text-primary" />
+
+                {/* Inline quick badges */}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">
+                    <CheckCircle2 className="h-3 w-3" /> Avtomatik tekshiruv
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/40">
+                    <Printer className="h-3 w-3" /> A4 PDF eksport
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40">
+                    <Share2 className="h-3 w-3" /> Ulashish mumkin
+                  </span>
                 </div>
-                Sozlamalar
-              </CardTitle>
+              </div>
+
+              {/* Right summary */}
+              <div className="hidden lg:flex items-center gap-4">
+                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
+                  <FileText className="h-8 w-8 text-white" />
+                </div>
+                {sheet ? (
+                  <div>
+                    <div className="font-display font-black text-xl text-orange-600">{sheet.problems.length}</div>
+                    <div className="text-[11px] text-muted-foreground">misol tayyor</div>
+                    <div className="text-[10px] text-emerald-600 font-bold mt-0.5 inline-flex items-center gap-1">
+                      <CheckCircle2 className="h-2.5 w-2.5" /> Generatsiya qilindi
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="font-display font-bold text-base">Tayyor</div>
+                    <div className="text-[11px] text-muted-foreground">Sozlamalarni tanlang</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* QUICK STATS PREVIEW */}
+          <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {[
+              { ic: Hash, value: `${digitCount}`, label: 'Xona soni', sub: 'masala', bg: 'bg-emerald-100 dark:bg-emerald-900/40', fg: 'text-emerald-600' },
+              { ic: Columns, value: operationCount, label: 'Ustun soni', sub: 'misolda', bg: 'bg-orange-100 dark:bg-orange-900/40', fg: 'text-orange-600' },
+              { ic: Calculator, value: FORMULA_LABELS[formulaType]?.label?.split(' ')[0] || formulaType, label: 'Formula', sub: 'turi', bg: 'bg-purple-100 dark:bg-purple-900/40', fg: 'text-purple-600' },
+              { ic: Layers, value: problemCount, label: 'Jami misollar', sub: 'varaqda', bg: 'bg-amber-100 dark:bg-amber-900/40', fg: 'text-amber-600' },
+              { ic: LayoutGrid, value: columnsPerRow, label: 'Qatorga', sub: 'ustun', bg: 'bg-blue-100 dark:bg-blue-900/40', fg: 'text-blue-600' },
+            ].map((s, i) => (
+              <div key={i} className="rounded-2xl bg-card border border-border/40 p-3 sm:p-4 shadow-sm">
+                <div className={`w-9 h-9 rounded-xl ${s.bg} flex items-center justify-center mb-2`}>
+                  <s.ic className={`h-4 w-4 ${s.fg}`} />
+                </div>
+                <div className={`text-base sm:text-lg font-display font-black ${s.fg} leading-tight truncate`}>
+                  {s.value}
+                </div>
+                <div className="text-[10px] font-semibold mt-0.5">{s.label}</div>
+                <div className="text-[9px] text-muted-foreground">{s.sub}</div>
+              </div>
+            ))}
+          </section>
+
+          {/* SETTINGS CARD */}
+          <Card className="border-border/40 shadow-sm rounded-2xl">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center">
+                    <RefreshCw className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <span>Generatsiya sozlamalari</span>
+                </CardTitle>
+                <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                  Variantni tanlab "Generatsiya" tugmasini bosing
+                </span>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-5">
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 {/* Digit Count */}
                 <div className="space-y-2">
@@ -414,7 +471,7 @@ const ProblemSheetGenerator = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 {/* Operation Count */}
                 <div className="space-y-2">
                   <Label htmlFor="operationCount" className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
@@ -431,7 +488,7 @@ const ProblemSheetGenerator = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 {/* Formula Type */}
                 <div className="space-y-2">
                   <Label htmlFor="formulaType" className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
@@ -449,7 +506,7 @@ const ProblemSheetGenerator = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 {/* Problem Count */}
                 <div className="space-y-2">
                   <Label htmlFor="problemCount" className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
@@ -466,7 +523,7 @@ const ProblemSheetGenerator = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 {/* Columns Per Row */}
                 <div className="space-y-2">
                   <Label htmlFor="columnsPerRow" className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
@@ -484,72 +541,79 @@ const ProblemSheetGenerator = () => {
                   </Select>
                 </div>
               </div>
-              
+
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border/50">
-                <Button 
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-4 border-t border-border/40">
+                <Button
                   onClick={generateSheet}
                   disabled={isGenerating}
                   size="lg"
-                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md shadow-primary/20"
+                  className="gap-2 h-11 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-md shadow-orange-500/25"
                 >
-                  <RefreshCw className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
-                  {isGenerating ? 'Generatsiya...' : 'Generatsiya'}
+                  <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                  {isGenerating ? 'Generatsiya...' : 'Generatsiya qilish'}
+                  {!isGenerating && <ArrowRight className="w-4 h-4" />}
                 </Button>
-                
+
                 <Dialog open={showLoadDialog} onOpenChange={setShowLoadDialog}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="lg">
-                      <FolderOpen className="w-4 h-4 mr-2" />
-                      Saqlangan
+                    <Button variant="outline" size="lg" className="gap-2 h-11 rounded-xl">
+                      <FolderOpen className="w-4 h-4" />
+                      Saqlangan varaqlar
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-2">
-                        <FolderOpen className="w-5 h-5 text-primary" />
+                        <FolderOpen className="w-5 h-5 text-orange-500" />
                         Saqlangan varaqlar
                       </DialogTitle>
                     </DialogHeader>
                     {loadingSaved ? (
                       <div className="flex items-center justify-center py-12">
-                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
                       </div>
                     ) : savedSheets.length === 0 ? (
                       <div className="text-center py-12">
                         <FolderOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-                        <p className="text-muted-foreground">Saqlangan varaqlar yo'q</p>
+                        <p className="text-muted-foreground text-sm">Saqlangan varaqlar yo'q</p>
+                        <p className="text-xs text-muted-foreground/60 mt-1">Birinchi varaqni generatsiya qiling va saqlang</p>
                       </div>
                     ) : (
                       <div className="space-y-2">
                         {savedSheets.map((s) => (
-                          <div 
+                          <div
                             key={s.id}
-                            className="group flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card hover:bg-accent/50 hover:border-primary/20 transition-all cursor-pointer"
+                            className="group flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card hover:bg-orange-50 dark:hover:bg-orange-900/10 hover:border-orange-200 dark:hover:border-orange-800/40 transition-all cursor-pointer"
                             onClick={() => loadSheet(s)}
                           >
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-semibold truncate">{s.title}</h4>
-                                {s.is_public ? (
-                                  <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 text-[10px] px-1.5 shrink-0">
-                                    <Globe className="w-2.5 h-2.5 mr-0.5" /> Ommaviy
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="secondary" className="text-[10px] px-1.5 shrink-0">
-                                    <Lock className="w-2.5 h-2.5 mr-0.5" /> Yopiq
-                                  </Badge>
-                                )}
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <div className="h-10 w-10 rounded-xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center flex-shrink-0">
+                                <FileText className="w-4 h-4 text-orange-600" />
                               </div>
-                              <p className="text-xs text-muted-foreground">
-                                {s.digit_count} xona • {s.operation_count} ustun • {s.problem_count} misol • {FORMULA_LABELS[s.formula_type]?.label || s.formula_type}
-                              </p>
-                              <p className="text-[10px] text-muted-foreground/60 mt-0.5">
-                                {new Date(s.created_at).toLocaleDateString('uz-UZ')}
-                              </p>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <h4 className="font-bold text-sm truncate">{s.title}</h4>
+                                  {s.is_public ? (
+                                    <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 text-[10px] px-1.5 shrink-0 border-emerald-500/20">
+                                      <Globe className="w-2.5 h-2.5 mr-0.5" /> Ommaviy
+                                    </Badge>
+                                  ) : (
+                                    <Badge variant="secondary" className="text-[10px] px-1.5 shrink-0">
+                                      <Lock className="w-2.5 h-2.5 mr-0.5" /> Yopiq
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-[11px] text-muted-foreground">
+                                  {s.digit_count} xona · {s.operation_count} ustun · {s.problem_count} misol · {FORMULA_LABELS[s.formula_type]?.label || s.formula_type}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                                  {new Date(s.created_at).toLocaleDateString('uz-UZ')}
+                                </p>
+                              </div>
                             </div>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-primary"
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-600"
                                 onClick={(e) => { e.stopPropagation(); openShareDialog(s); }}>
                                 <Share2 className="w-3.5 h-3.5" />
                               </Button>
@@ -564,19 +628,19 @@ const ProblemSheetGenerator = () => {
                     )}
                   </DialogContent>
                 </Dialog>
-                
+
                 {sheet && (
                   <>
-                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
-                    <Button variant="outline" size="lg" onClick={downloadPDF}>
-                      <Download className="w-4 h-4 mr-2" />
+                    <div className="w-px h-8 bg-border/50 hidden sm:block mx-1" />
+                    <Button variant="outline" size="lg" onClick={downloadPDF} className="gap-2 h-11 rounded-xl border-orange-200 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">
+                      <Download className="w-4 h-4" />
                       PDF yuklab olish
                     </Button>
-                    
+
                     <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" size="lg" className="border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10">
-                          <Save className="w-4 h-4 mr-2" />
+                        <Button variant="outline" size="lg" className="gap-2 h-11 rounded-xl border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
+                          <Save className="w-4 h-4" />
                           Saqlash
                         </Button>
                       </DialogTrigger>
@@ -598,13 +662,13 @@ const ProblemSheetGenerator = () => {
                               className="h-11"
                             />
                           </div>
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="secondary">{digitCount} xona</Badge>
-                            <Badge variant="secondary">{operationCount} ustun</Badge>
-                            <Badge variant="secondary">{problemCount} misol</Badge>
-                            <Badge variant="secondary">{FORMULA_LABELS[formulaType]?.label || formulaType}</Badge>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Badge variant="secondary" className="bg-orange-100 text-orange-700">{digitCount} xona</Badge>
+                            <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">{operationCount} ustun</Badge>
+                            <Badge variant="secondary" className="bg-amber-100 text-amber-700">{problemCount} misol</Badge>
+                            <Badge variant="secondary" className="bg-purple-100 text-purple-700">{FORMULA_LABELS[formulaType]?.label || formulaType}</Badge>
                           </div>
-                          <Button onClick={saveSheet} disabled={savingSheet || !sheetTitle.trim()} className="w-full h-11">
+                          <Button onClick={saveSheet} disabled={savingSheet || !sheetTitle.trim()} className="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white">
                             {savingSheet ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                             {savingSheet ? 'Saqlanmoqda...' : 'Saqlash'}
                           </Button>
@@ -676,43 +740,101 @@ const ProblemSheetGenerator = () => {
           
           {/* Generated Sheet Preview */}
           {sheet && (
-            <Card className="border-border/50 shadow-sm animate-fade-in">
+            <Card className="border-border/40 shadow-sm rounded-2xl animate-fade-in">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-lg">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <FileText className="w-4 h-4 text-primary" />
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     </div>
-                    Generatsiya natijasi
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="font-mono">
+                    <span>Generatsiya natijasi</span>
+                  </CardTitle>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge variant="outline" className="font-mono text-[10px] bg-orange-50 dark:bg-orange-900/20 text-orange-700 border-orange-200">
                       {sheet.problems.length} misol
                     </Badge>
-                    <Badge variant="outline" className="font-mono">
+                    <Badge variant="outline" className="font-mono text-[10px] bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 border-emerald-200">
                       {sheet.settings.digitCount} xona
                     </Badge>
+                    <Badge variant="outline" className="font-mono text-[10px] bg-purple-50 dark:bg-purple-900/20 text-purple-700 border-purple-200">
+                      {sheet.settings.operationCount} ustun
+                    </Badge>
+                    <Badge variant="outline" className="font-mono text-[10px] bg-amber-50 dark:bg-amber-900/20 text-amber-700 border-amber-200">
+                      {FORMULA_LABELS[sheet.settings.formulaType]?.label || sheet.settings.formulaType}
+                    </Badge>
                   </div>
-                </CardTitle>
+                </div>
               </CardHeader>
               <CardContent className="overflow-x-auto">
-                <ProblemSheetTable 
-                  problems={sheet.problems} 
+                <ProblemSheetTable
+                  problems={sheet.problems}
                   columnsPerRow={columnsPerRow}
                 />
               </CardContent>
             </Card>
           )}
-          
+
           {/* Empty State */}
           {!sheet && (
-            <div className="text-center py-16 animate-fade-in">
-              <div className="w-20 h-20 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                <FileText className="w-10 h-10 text-muted-foreground/30" />
+            <div className="rounded-2xl bg-card border border-dashed border-border/60 p-10 sm:p-16 text-center animate-fade-in">
+              <div className="w-16 h-16 rounded-2xl bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-7 h-7 text-orange-500" />
               </div>
-              <h3 className="text-lg font-medium text-muted-foreground mb-1">Hali misol generatsiya qilinmagan</h3>
-              <p className="text-sm text-muted-foreground/60">Yuqoridagi sozlamalarni tanlab "Generatsiya" tugmasini bosing</p>
+              <h3 className="font-display font-bold text-base sm:text-lg mb-1">
+                Hali misol generatsiya qilinmagan
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto mb-5">
+                Yuqoridagi sozlamalarni tanlab "Generatsiya qilish" tugmasini bosing.
+                Tayyor varaqni PDF qilib yuklab olish va saqlashingiz mumkin.
+              </p>
+              <Button
+                onClick={generateSheet}
+                disabled={isGenerating}
+                size="lg"
+                className="gap-2 h-11 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold shadow-md shadow-orange-500/25"
+              >
+                <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                Hoziroq generatsiya qilish
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
+          )}
+
+          {/* CTA banner */}
+          {sheet && (
+            <section className="rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-md p-5 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
+                    <BookOpen className="h-6 w-6 text-amber-200" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-black text-lg sm:text-xl mb-1">
+                      Varaq tayyor — endi nima qilamiz?
+                    </h3>
+                    <p className="text-sm text-white/85">
+                      PDF qilib yuklab oling, saqlang yoki o'quvchilaringizga ulashing.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 flex-shrink-0">
+                  <Button
+                    onClick={downloadPDF}
+                    className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-white text-orange-600 hover:bg-white/95 text-sm font-bold shadow-sm"
+                  >
+                    <Download className="h-4 w-4" />
+                    PDF
+                  </Button>
+                  <Button
+                    onClick={() => setShowSaveDialog(true)}
+                    className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/30 text-white text-sm font-bold backdrop-blur-sm"
+                  >
+                    <Save className="h-4 w-4" />
+                    Saqlash
+                  </Button>
+                </div>
+              </div>
+            </section>
           )}
         </div>
       </main>
