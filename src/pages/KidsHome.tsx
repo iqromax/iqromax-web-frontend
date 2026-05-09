@@ -275,61 +275,26 @@ const KidsHome = () => {
             <TeacherDashboard />
           </div>
         ) : (
-          /* STUDENT HOME - O'rganish & Qiziqish */
+          /* STUDENT HOME - Modern minimal */
           <>
             {/* Hero Carousel */}
-            <div className="container px-3 xs:px-4 py-2 sm:py-3">
+            <div className="container px-4 sm:px-6 pt-6">
               <HeroCarousel userRole={role as any} />
             </div>
 
-            {/* Daily Task Card */}
-            <div className="container px-3 xs:px-4 py-2">
-              <Card className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                    <Target className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold">🎯 Bugungi topshiriq</p>
-                    <p className="text-xs text-muted-foreground">Tez va aniq hisoblash mashqlari</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 gap-2 mb-3">
-                  <div className="text-center p-2 rounded-xl bg-background/60">
-                    <p className="text-xs text-muted-foreground">⭐ Ballar</p>
-                    <p className="text-lg font-bold text-primary">{profile?.total_score || 0}</p>
-                  </div>
-                  <div className="text-center p-2 rounded-xl bg-background/60">
-                    <p className="text-xs text-muted-foreground">🏆 Bosqich</p>
-                    <p className="text-lg font-bold text-accent">{level}</p>
-                  </div>
-                  <div className="text-center p-2 rounded-xl bg-background/60">
-                    <p className="text-xs text-muted-foreground">📝 Bugun</p>
-                    <p className="text-lg font-bold text-emerald-500">{todaySolved}/{dailyGoal}</p>
-                  </div>
-                  <div className="text-center p-2 rounded-xl bg-background/60">
-                    <p className="text-xs text-muted-foreground">🔥 Streak</p>
-                    <p className="text-lg font-bold text-orange-500">{profile?.current_streak || 0}</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-
-            {/* Main Action Button */}
-            <div className="container px-3 xs:px-4 py-2 sm:py-3">
+            {/* Primary CTA */}
+            <div className="container px-4 sm:px-6 pt-5">
               <button
                 onClick={() => navigate('/train')}
-                className="w-full h-14 xs:h-16 sm:h-18 rounded-xl sm:rounded-2xl flex items-center justify-center gap-3 sm:gap-4 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 shadow-xl hover:shadow-green-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 relative overflow-hidden group touch-target"
+                className="w-full h-14 sm:h-16 rounded-2xl flex items-center justify-center gap-3 bg-foreground text-background hover:opacity-90 active:scale-[0.99] transition-all shadow-sm"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
-                <span className="text-2xl sm:text-3xl">🟢</span>
-                <span className="text-base sm:text-lg font-bold text-white">Boshlash</span>
-                <Play className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                <span className="text-base sm:text-lg font-semibold tracking-tight">Mashqni boshlash</span>
+                <Play className="w-4 h-4 fill-current" />
               </button>
             </div>
 
             {/* Section Carousels */}
-            <div className="container px-3 xs:px-4 space-y-2">
+            <div className="container px-4 sm:px-6 pt-8 space-y-2">
               <SectionCarousel {...kidsSection} />
               <SectionCarousel {...parentsSection} />
               <SectionCarousel {...teachersSection} />
