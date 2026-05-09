@@ -213,7 +213,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
                     <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2 bg-card/98 backdrop-blur-xl border-border/50 shadow-xl rounded-xl">
+                <DropdownMenuContent align="end" className="w-56 p-2 bg-popover text-popover-foreground border border-border shadow-xl rounded-xl">
                   {/* User info header */}
                   <div className="flex items-center gap-3 p-2 mb-2 rounded-lg bg-secondary/50">
                     <Avatar className="h-10 w-10 border border-primary/30">
