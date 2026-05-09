@@ -6,10 +6,6 @@ import {
   Zap,
   Trophy,
   BarChart3,
-  Users,
-  GraduationCap,
-  BookOpen,
-  Globe,
   TrendingUp,
 } from 'lucide-react';
 import { MathSymbolsBg } from './MathSymbolsBg';
@@ -156,30 +152,6 @@ export const MainSlide = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-4 sm:bottom-5 left-5 right-5 sm:left-8 sm:right-8 md:left-12 md:right-12">
-        <div className="rounded-2xl bg-emerald-950/60 border border-emerald-700/40 backdrop-blur-md grid grid-cols-2 sm:grid-cols-4 divide-x divide-emerald-700/40">
-          {[
-            { icon: Users, value: '10 000+', label: "O'quvchilar" },
-            { icon: GraduationCap, value: '500+', label: 'Trenerlar' },
-            { icon: BookOpen, value: '200+', label: 'Kurslar' },
-            { icon: Globe, value: '20+', label: 'Mamlakat' },
-          ].map((s, i) => (
-            <div key={i} className="flex items-center gap-2.5 px-3 sm:px-4 py-2.5 sm:py-3">
-              <div className="flex-shrink-0 h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-emerald-500/15 border border-emerald-400/20 flex items-center justify-center">
-                <s.icon className="h-4 w-4 text-emerald-300" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm sm:text-base font-display font-black text-white leading-tight">
-                  {s.value}
-                </div>
-                <div className="text-[10px] sm:text-xs text-emerald-200/70 leading-tight">
-                  {s.label}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
