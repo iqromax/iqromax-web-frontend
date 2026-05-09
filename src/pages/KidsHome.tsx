@@ -172,8 +172,8 @@ const KidsHome = () => {
     );
   }
 
-  // Student role → render the dedicated landing-style page
-  if (isStudent) {
+  // Students and any non-parent/non-teacher role → render the dedicated landing page
+  if (!isParent && !isTeacher) {
     return <StudentsLanding />;
   }
 
