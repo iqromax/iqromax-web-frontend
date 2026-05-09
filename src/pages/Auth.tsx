@@ -260,9 +260,9 @@ const Auth = () => {
 
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
 
-        <div className="relative z-10 flex flex-col justify-between p-8 xl:p-12 text-primary-foreground h-full w-full">
-          <div className="flex items-center gap-3">
-            <Logo size="xs" />
+        <div className="relative z-10 flex flex-col justify-between pt-2 px-8 pb-8 xl:pt-3 xl:px-12 xl:pb-12 text-primary-foreground h-full w-full">
+          <div className="flex items-center gap-3 -ml-4 -mt-2">
+            <Logo size="lg" />
           </div>
 
           <div className="space-y-8">
