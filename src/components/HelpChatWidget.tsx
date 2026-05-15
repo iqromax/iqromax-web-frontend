@@ -36,6 +36,7 @@ import {
   History,
   Plus } from
 'lucide-react';
+import { FeedbackDialog } from './FeedbackDialog';
 
 interface FAQItem {
   id: string;
@@ -821,6 +822,10 @@ Kunlik maqsad: ${userProgress.daily_goal} masala` :
   };
 
 
+  if (location.pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Button + Greeting bubble */}
@@ -849,18 +854,16 @@ Kunlik maqsad: ${userProgress.daily_goal} masala` :
           </div>
         }
 
-        <Button
-          onClick={() => {
-            setShowGreeting(false);setGreetingDismissed(true);
-            if (showFullWidget) {setIsOpen(true);} else {window.location.href = '/auth';}
-          }}
-          size="lg"
-          className={`rounded-full h-12 w-12 md:h-14 md:w-14 shadow-lg hover:shadow-xl transition-all duration-300 ${
-          isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} ${
-          showGreeting ? 'animate-bounce' : ''}`}>
-
-          <MessageCircle className="h-5 w-5 md:h-6 md:w-6" />
-        </Button>
+        <FeedbackDialog>
+          <Button
+            size="lg"
+            className={`rounded-full h-12 w-12 md:h-14 md:w-14 shadow-lg hover:shadow-xl transition-all duration-300 ${
+            isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} ${
+            showGreeting ? 'animate-bounce' : ''}`}
+          >
+            <MessageCircle className="h-5 w-5 md:h-6 md:w-6" />
+          </Button>
+        </FeedbackDialog>
       </div>
 
       {/* Chat Widget - mobile responsive */}

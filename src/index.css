@@ -288,9 +288,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     
-    /* GPU acceleration for smooth scrolling */
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
+    /* GPU acceleration for smooth scrolling - removed to fix fixed positioning */
+    /* -webkit-transform: translate3d(0, 0, 0); */
+    /* transform: translate3d(0, 0, 0); */
   }
 
   /* ENTERPRISE: Root container normalization */

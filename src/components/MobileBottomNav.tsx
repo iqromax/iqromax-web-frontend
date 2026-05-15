@@ -38,8 +38,8 @@ export const MobileBottomNav = () => {
 
   const navItems = getNavItems(role);
 
-  // Hide on auth page and for non-logged-in users
-  if (!user || location.pathname === '/auth' || location.pathname === '/reset-password') {
+  // Hide on auth page, admin pages and for non-logged-in users
+  if (!user || location.pathname === '/auth' || location.pathname === '/reset-password' || location.pathname.startsWith('/admin')) {
     return null;
   }
 

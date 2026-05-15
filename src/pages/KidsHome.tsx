@@ -17,8 +17,6 @@ import { TeacherDashboard } from '@/components/TeacherDashboard';
 import { SubscriptionPlans } from '@/components/SubscriptionPlans';
 import { PullToRefresh } from '@/components/PullToRefresh';
 import { PageSkeleton } from '@/components/PageSkeleton';
-import { GuestDashboard } from '@/components/GuestDashboard';
-import StudentsLanding from '@/pages/StudentsLanding';
 import { ParentHero } from '@/components/parent/ParentHero';
 import { ParentControlMenu } from '@/components/parent/ParentControlMenu';
 import { ParentLiveActivity } from '@/components/parent/ParentLiveActivity';
@@ -167,22 +165,7 @@ const KidsHome = () => {
     );
   }
 
-  // Show GuestDashboard for non-logged-in users
-  if (!user) {
-    return (
-      <PageBackground className="min-h-screen pb-20 sm:pb-24">
-        <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
-        <div className="container px-3 xs:px-4 py-4 sm:py-6">
-          <GuestDashboard />
-        </div>
-      </PageBackground>
-    );
-  }
 
-  // Students and any non-parent/non-teacher role → render the dedicated landing page
-  if (!isParent && !isTeacher) {
-    return <StudentsLanding />;
-  }
 
   // Calculate progress
   const dailyGoal = profile?.daily_goal || 20;

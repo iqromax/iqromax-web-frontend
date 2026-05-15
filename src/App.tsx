@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { PageLoader } from "@/components/PageLoader";
@@ -16,7 +15,7 @@ import { SessionTimeoutProvider } from "@/components/SessionTimeoutProvider";
 
 // Core pages - loaded immediately
 import KidsHome from "@/pages/KidsHome";
-import Auth from "@/pages/Auth";
+import Landing from "@/pages/Landing";
 
 // Lazy loaded pages for better initial load
 const Index = lazy(() => import("@/pages/Index"));
@@ -28,6 +27,8 @@ const Pricing = lazy(() => import("@/pages/Pricing"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPostPage = lazy(() => import("@/pages/BlogPost"));
 const Admin = lazy(() => import("@/pages/Admin"));
+const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
+const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
 const FAQ = lazy(() => import("@/pages/FAQ"));
 const CourseDetail = lazy(() => import("@/pages/CourseDetail"));
 const LessonDetail = lazy(() => import("@/pages/LessonDetail"));
@@ -46,8 +47,6 @@ const Profile = lazy(() => import("@/pages/Profile"));
 const KidsCourses = lazy(() => import("@/pages/KidsCourses"));
 const KidsLeaderboard = lazy(() => import("@/pages/KidsLeaderboard"));
 const ParentDashboard = lazy(() => import("@/pages/ParentDashboard"));
-const ParentsLanding = lazy(() => import("@/pages/ParentsLanding"));
-const StudentsLanding = lazy(() => import("@/pages/StudentsLanding"));
 const LessonStats = lazy(() => import("@/pages/LessonStats"));
 
 const Privacy = lazy(() => import("@/pages/Privacy"));
@@ -56,6 +55,11 @@ const About = lazy(() => import("@/pages/About"));
 const AbacusSimulator = lazy(() => import("@/pages/AbacusSimulator"));
 const AbacusPractice = lazy(() => import("@/pages/AbacusPractice"));
 const LiveSessions = lazy(() => import("@/pages/LiveSessions"));
+const FeatureDetail = lazy(() => import("@/pages/FeatureDetail"));
+const BlogDetail = lazy(() => import("@/pages/BlogDetail"));
+const Blogs = lazy(() => import("@/pages/Blogs"));
+const ComingSoon = lazy(() => import("@/pages/ComingSoon"));
+const MentalTrainer = lazy(() => import("@/pages/MentalTrainer"));
 const LiveClassroom = lazy(() => import("@/pages/LiveClassroom"));
 const Subjects = lazy(() => import("@/pages/Subjects"));
 const SubjectPractice = lazy(() => import("@/pages/SubjectPractice"));
@@ -107,57 +111,58 @@ const App = () => (
                 <PageTransition>
                   <Suspense fallback={<LazyFallback />}>
                     <Routes>
-                      <Route path="/" element={<KidsHome />} />
-                      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                      <Route path="/train" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/" element={<Landing />} />
+                      <Route path="/home" element={<KidsHome />} />
+                      <Route path="/feature/:id" element={<FeatureDetail />} />
+                      <Route path="/blog/:id" element={<BlogDetail />} />
+                      <Route path="/blogs" element={<Blogs />} />
+                      <Route path="/subjects" element={<ComingSoon title="Fanlar" />} />
+                      <Route path="/tournaments" element={<ComingSoon title="Musobaqalar" />} />
+                      <Route path="/live" element={<ComingSoon title="Live darslar" />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/train" element={<Index />} />
                       
-                      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                      <Route path="/settings" element={<Settings />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/pricing" element={<Pricing />} />
                       <Route path="/blog" element={<Blog />} />
                       <Route path="/blog/:id" element={<BlogPostPage />} />
-                      <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+                      <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="/admin/login" element={<AdminLogin />} />
                       <Route path="/faq" element={<FAQ />} />
-                      <Route path="/courses" element={<ProtectedRoute><KidsCourses /></ProtectedRoute>} />
-                      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                      <Route path="/courses" element={<KidsCourses />} />
+                      <Route path="/profile" element={<Profile />} />
                       <Route path="/leaderboard" element={<KidsLeaderboard />} />
-                      <Route path="/parent-dashboard" element={<ProtectedRoute><ParentDashboard /></ProtectedRoute>} />
-                      <Route path="/ota-onalar" element={<ParentsLanding />} />
-                      <Route path="/oquvchilar" element={<StudentsLanding />} />
-                      <Route path="/lesson-stats" element={<ProtectedRoute><LessonStats /></ProtectedRoute>} />
-                      <Route path="/courses/:courseId" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
-                      <Route path="/lessons/:lessonId" element={<ProtectedRoute><LessonDetail /></ProtectedRoute>} />
-                      <Route path="/weekly-game" element={<ProtectedRoute><WeeklyGame /></ProtectedRoute>} />
+                      <Route path="/parent-dashboard" element={<ParentDashboard />} />
+                      <Route path="/lesson-stats" element={<LessonStats />} />
+                      <Route path="/courses/:courseId" element={<CourseDetail />} />
+                      <Route path="/lessons/:lessonId" element={<LessonDetail />} />
+                      <Route path="/weekly-game" element={<WeeklyGame />} />
                       <Route path="/badges" element={<Badges />} />
                       <Route path="/install" element={<Install />} />
                       
-                      <Route path="/achievements" element={<ProtectedRoute><Achievements /></ProtectedRoute>} />
-                      <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
-                      <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-                      <Route path="/records" element={<ProtectedRoute><Records /></ProtectedRoute>} />
-                      <Route path="/problem-sheet" element={<ProtectedRoute><ProblemSheetGenerator /></ProtectedRoute>} />
+                      <Route path="/achievements" element={<Achievements />} />
+                      <Route path="/statistics" element={<Statistics />} />
+                      <Route path="/messages" element={<Messages />} />
+                      <Route path="/records" element={<Records />} />
                       <Route path="/challenge-stats" element={<ChallengeStats />} />
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/abacus-simulator" element={<AbacusSimulator />} />
-                      <Route path="/abacus-practice" element={<ProtectedRoute><AbacusPractice /></ProtectedRoute>} />
-                      <Route path="/live-sessions" element={<ProtectedRoute><LiveSessions /></ProtectedRoute>} />
-                      <Route path="/live/:sessionId" element={<ProtectedRoute><LiveClassroom /></ProtectedRoute>} />
-                      <Route path="/subjects" element={<ProtectedRoute><Subjects /></ProtectedRoute>} />
-                      <Route path="/subjects/:subjectId" element={<ProtectedRoute><SubjectPractice /></ProtectedRoute>} />
-                      <Route path="/lms" element={<ProtectedRoute><LMSDashboard /></ProtectedRoute>} />
+                      <Route path="/abacus-practice" element={<AbacusPractice />} />
+                      <Route path="/live-sessions" element={<LiveSessions />} />
+                      <Route path="/live/:sessionId" element={<LiveClassroom />} />
+                      <Route path="/subjects" element={<Subjects />} />
+                      <Route path="/subjects/:subjectId" element={<SubjectPractice />} />
+                      <Route path="/lms" element={<LMSDashboard />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
                 </PageTransition>
               </main>
             </PullToRefresh>
-            <div className="w-full flex justify-center mt-8 mb-4">
-              {/* TractionStats pastdan olib tashlandi */}
-            </div>
             <MobileBottomNav />
             
             

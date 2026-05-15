@@ -14,7 +14,6 @@ import { GameHistoryItem } from '@/components/GameHistoryItem';
 import { Leaderboard } from '@/components/Leaderboard';
 import { InfoCarousel } from '@/components/InfoCarousel';
 import { TestimonialForm } from '@/components/TestimonialForm';
-import { GuestDashboard } from '@/components/GuestDashboard';
 import { Footer } from '@/components/Footer';
 
 import { WeeklyCompetition } from '@/components/WeeklyCompetition';
@@ -374,9 +373,11 @@ const Dashboard = () => {
     return (
       <div className="flex flex-col min-h-[100dvh] bg-gradient-to-br from-background via-background to-primary/5 dark:from-background dark:via-background dark:to-primary/10">
         <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
-        <main className="flex-1 container px-4 py-6 md:py-8 pb-4">
-          <div className="max-w-5xl mx-auto">
-            <GuestDashboard />
+        <main className="flex-1 container px-4 py-6 md:py-8 pb-4 text-center">
+          <div className="max-w-5xl mx-auto py-20">
+            <h2 className="text-2xl font-bold mb-4">Tizimga kiring</h2>
+            <p className="text-muted-foreground mb-6">Ma'lumotlarni ko'rish uchun profilingizga kiring.</p>
+            <Button onClick={() => navigate('/auth')}>Kirish</Button>
           </div>
         </main>
         <Footer />

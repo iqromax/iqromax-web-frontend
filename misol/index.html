@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Arifmetika Treneri - Premium Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="glass-background"></div>
+    
+    <main class="container">
+        <header>
+            <div class="logo">
+                <i data-lucide="brain-circuit"></i>
+                <h1>Math<span>Master</span></h1>
+            </div>
+            <div class="stats-mini">
+                <div class="stat-item">
+                    <span class="label">Streak</span>
+                    <span class="value" id="current-streak">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">XP</span>
+                    <span class="value" id="total-xp">0</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="setup-screen" class="card active">
+            <div class="card-header">
+                <h2>Mashg'ulot Sozlamalari</h2>
+                <p>O'zingizga mos qiyinchilik darajasini tanlang</p>
+            </div>
+            
+            <div class="settings-grid">
+                <div class="setting-group full-width">
+                    <label><i data-lucide="layers"></i> Formula Turi</label>
+                    <div id="formula-options" class="options-grid">
+                        <div class="option-card active" data-value="oddiy">
+                            <i data-lucide="book-open"></i>
+                            <div class="option-info">
+                                <span class="option-title">Oddiy</span>
+                                <span class="option-desc">Formulasiz amallar</span>
+                            </div>
+                        </div>
+                        <div class="option-card" data-value="formula5">
+                            <i data-lucide="zap"></i>
+                            <div class="option-info">
+                                <span class="option-title">Kichik do'st</span>
+                                <span class="option-desc">+5 formulalari</span>
+                            </div>
+                        </div>
+                        <div class="option-card" data-value="formula10">
+                            <i data-lucide="flame"></i>
+                            <div class="option-info">
+                                <span class="option-title">Katta do'st</span>
+                                <span class="option-desc">+10 formulalari</span>
+                            </div>
+                        </div>
+                        <div class="option-card" data-value="mix">
+                            <i data-lucide="shuffle"></i>
+                            <div class="option-info">
+                                <span class="option-title">Mix</span>
+                                <span class="option-desc">Aralash amallar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label><i data-lucide="hash"></i> Xonalar Soni</label>
+                    <div class="number-input">
+                        <button class="minus">-</button>
+                        <input type="number" id="digit-count" value="1" min="1" max="5">
+                        <button class="plus">+</button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label><i data-lucide="clock"></i> Tezlik (sekund)</label>
+                    <div class="slider-container">
+                        <input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+                        <span class="slider-value">1.0s</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label><i data-lucide="list-ordered"></i> Misollar Soni</label>
+                    <div class="number-input">
+                        <button class="minus">-</button>
+                        <input type="number" id="problem-count" value="5" min="2" max="20">
+                        <button class="plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="start-btn" class="primary-btn">
+                <span>Boshlash</span>
+                <i data-lucide="play"></i>
+            </button>
+        </section>
+
+        <section id="game-screen" class="card">
+            <div class="display-area">
+                <div id="countdown" class="countdown"></div>
+                <div id="number-display" class="number-display">
+                    <span id="sign" class="sign"></span>
+                    <span id="number" class="number"></span>
+                </div>
+                <div id="progress-bar" class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="input-screen" class="card">
+            <div class="card-header">
+                <h2>Natijani Kiriting</h2>
+            </div>
+            <div class="input-container">
+                <input type="number" id="answer-input" placeholder="?" autocomplete="off">
+                <button id="submit-btn" class="primary-btn">Tekshirish</button>
+            </div>
+            <div class="numpad">
+                <button>1</button><button>2</button><button>3</button>
+                <button>4</button><button>5</button><button>6</button>
+                <button>7</button><button>8</button><button>9</button>
+                <button>C</button><button>0</button><button>←</button>
+            </div>
+        </section>
+
+        <section id="result-screen" class="card">
+            <div id="result-icon" class="result-icon"></div>
+            <h2 id="result-text"></h2>
+            <div class="result-details">
+                <div class="detail-item">
+                    <span>To'g'ri javob:</span>
+                    <span id="correct-answer" class="highlight">0</span>
+                </div>
+                <div id="user-answer-container" class="detail-item">
+                    <span>Sizning javobingiz:</span>
+                    <span id="user-answer" class="highlight">0</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="restart-btn" class="secondary-btn">Qayta boshlash</button>
+                <button id="home-btn" class="outline-btn">Asosiy sahifa</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
