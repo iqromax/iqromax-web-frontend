@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import api from '@/lib/axios';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Badge } from './ui/badge';
-import { Switch } from './ui/switch';
 import { toast } from 'sonner';
 import { 
   Plus, 
@@ -17,39 +14,38 @@ import {
   X, 
   HelpCircle,
   Loader2,
-  GripVertical
+  Search,
+  PlusCircle,
+  Calendar
 } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface FAQItem {
-  id: string;
+  id: number;
   question: string;
   answer: string;
-  icon: string;
   order_index: number;
   is_active: boolean;
+  created_at: string;
 }
 
-const iconOptions = [
-  { value: 'HelpCircle', label: 'Yordam' },
-  { value: 'Calculator', label: 'Kalkulyator' },
-  { value: 'GraduationCap', label: 'Kurs' },
-  { value: 'Trophy', label: 'Kubok' },
-  { value: 'Settings', label: 'Sozlamalar' },
-  { value: 'BookOpen', label: 'Kitob' },
-  { value: 'Target', label: 'Nishon' },
-  { value: 'User', label: 'Foydalanuvchi' },
-];
-
-export const FAQManager = () => {
+export const FAQManager = ({ searchQuery = "" }: { searchQuery?: string }) => {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     question: '',
     answer: '',
-    icon: 'HelpCircle',
+    order_index: 0,
     is_active: true,
   });
 
@@ -59,26 +55,29 @@ export const FAQManager = () => {
 
   const fetchFAQs = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('faq_items')
-      .select('*')
-      .order('order_index', { ascending: true });
-    
-    if (data) {
-      setFaqs(data);
+    try {
+      const res = await api.get('faqs/');
+      setFaqs(res.data);
+      if (!editingId) {
+        setFormData(prev => ({ ...prev, order_index: res.data.length + 1 }));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Ma'lumotlarni yuklashda xatolik");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const resetForm = () => {
     setFormData({
       question: '',
       answer: '',
-      icon: 'HelpCircle',
+      order_index: faqs.length + 1,
       is_active: true,
     });
-    setIsEditing(false);
     setEditingId(null);
+    setIsFormVisible(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,36 +91,23 @@ export const FAQManager = () => {
     const payload = {
       question: formData.question.trim(),
       answer: formData.answer.trim(),
-      icon: formData.icon,
+      order_index: formData.order_index,
       is_active: formData.is_active,
-      order_index: editingId ? undefined : faqs.length,
     };
 
-    if (editingId) {
-      const { error } = await supabase
-        .from('faq_items')
-        .update(payload)
-        .eq('id', editingId);
-
-      if (error) {
-        toast.error("Xatolik yuz berdi");
-      } else {
+    try {
+      if (editingId) {
+        await api.patch(`faqs/${editingId}/`, payload);
         toast.success("FAQ yangilandi");
-        resetForm();
-        fetchFAQs();
-      }
-    } else {
-      const { error } = await supabase
-        .from('faq_items')
-        .insert([payload]);
-
-      if (error) {
-        toast.error("Xatolik yuz berdi");
       } else {
-        toast.success("FAQ qo'shildi");
-        resetForm();
-        fetchFAQs();
+        await api.post('faqs/', payload);
+        toast.success("Yangi FAQ muvaffaqiyatli yaratildi");
       }
+      resetForm();
+      fetchFAQs();
+    } catch (err) {
+      console.error(err);
+      toast.error(editingId ? "Yangilashda xatolik yuz berdi" : "Qo'shishda xatolik yuz berdi");
     }
   };
 
@@ -129,217 +115,186 @@ export const FAQManager = () => {
     setFormData({
       question: faq.question,
       answer: faq.answer,
-      icon: faq.icon,
+      order_index: faq.order_index,
       is_active: faq.is_active,
     });
     setEditingId(faq.id);
-    setIsEditing(true);
+    setIsFormVisible(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("FAQ ni o'chirmoqchimisiz?")) return;
+  const handleDelete = async (id: number) => {
+    if (!confirm("Ushbu savolni o'chirib tashlamoqchimisiz?")) return;
 
-    const { error } = await supabase
-      .from('faq_items')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      toast.error("Xatolik yuz berdi");
-    } else {
-      toast.success("FAQ o'chirildi");
+    try {
+      await api.delete(`faqs/${id}/`);
+      toast.success("Muvaffaqiyatli o'chirildi");
       fetchFAQs();
+    } catch (err) {
+      console.error(err);
+      toast.error("O'chirishda xatolik yuz berdi");
     }
   };
 
-  const toggleActive = async (id: string, currentStatus: boolean) => {
-    const { error } = await supabase
-      .from('faq_items')
-      .update({ is_active: !currentStatus })
-      .eq('id', id);
-
-    if (!error) {
-      fetchFAQs();
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('uz-UZ', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
-  if (loading) {
+  const filteredFaqs = faqs.filter(faq => 
+    faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (loading && faqs.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 blur-xl animate-pulse" />
-          <div className="relative p-4 rounded-full bg-gradient-to-br from-card/80 to-muted/50 border border-border/50 shadow-lg dark:from-slate-800/80 dark:to-slate-900/50 dark:border-slate-600/50">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        </div>
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Form Card */}
-      <Card className="border-border/40 dark:border-slate-600/50 bg-gradient-to-br from-card via-card/95 to-muted/30 dark:from-slate-800/90 dark:via-slate-800/70 dark:to-slate-900/80">
-        <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
-          <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-            <div className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 dark:from-primary/30 dark:to-accent/30">
-              <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+    <div className="space-y-6">
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-black text-foreground tracking-tight">Ko'p beriladigan savollar</h2>
+          <p className="text-sm text-muted-foreground font-medium">Platforma yordam bo'limi savollarini boshqarish</p>
+        </div>
+        {!isFormVisible && (
+          <Button 
+            onClick={() => setIsFormVisible(true)}
+            className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl shadow-lg shadow-emerald-500/20"
+          >
+            <PlusCircle className="w-5 h-5" />
+            Yangi savol qo'shish
+          </Button>
+        )}
+      </div>
+
+      {/* Add/Edit Form */}
+      {isFormVisible && (
+        <Card className="border-emerald-500/20 bg-emerald-500/[0.02] overflow-hidden shadow-xl">
+          <CardHeader className="border-b border-emerald-500/10">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg font-black flex items-center gap-2">
+                {editingId ? "Savolni tahrirlash" : "Yangi savol yaratish"}
+              </CardTitle>
+              <Button variant="ghost" size="icon" onClick={resetForm} className="hover:bg-red-500/10 hover:text-red-500">
+                <X className="w-5 h-5" />
+              </Button>
             </div>
-            {editingId ? "FAQ tahrirlash" : "Yangi FAQ qo'shish"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <div className="grid grid-cols-1 gap-3 sm:gap-4">
-              <div className="space-y-1.5 sm:space-y-2">
-                <Label className="text-xs sm:text-sm">Savol *</Label>
-                <Input
-                  placeholder="Masalan: Mashq qanday ishlaydi?"
-                  value={formData.question}
-                  onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                  className="text-sm dark:bg-slate-800/50 dark:border-slate-600/50 focus:border-primary/50"
+          </CardHeader>
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Tartib raqami</Label>
+                  <Input
+                    type="number"
+                    value={formData.order_index}
+                    onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
+                    className="h-12 rounded-xl border-emerald-500/20 focus:border-emerald-500 focus:ring-emerald-500/20 font-bold"
+                  />
+                </div>
+                <div className="md:col-span-3 space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Savol</Label>
+                  <Input
+                    placeholder="Savolni kiriting..."
+                    value={formData.question}
+                    onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                    className="h-12 rounded-xl border-emerald-500/20 focus:border-emerald-500 focus:ring-emerald-500/20 font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Javob</Label>
+                <Textarea
+                  placeholder="Javobni kiriting..."
+                  value={formData.answer}
+                  onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                  rows={4}
+                  className="rounded-xl border-emerald-500/20 focus:border-emerald-500 focus:ring-emerald-500/20 font-medium resize-none"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div className="space-y-1.5 sm:space-y-2">
-                  <Label className="text-xs sm:text-sm">Ikonka</Label>
-                  <Select
-                    value={formData.icon}
-                    onValueChange={(v) => setFormData({ ...formData, icon: v })}
-                  >
-                    <SelectTrigger className="text-sm dark:bg-slate-800/50 dark:border-slate-600/50">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="dark:bg-slate-800 dark:border-slate-600/50">
-                      {iconOptions.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value} className="text-sm">
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5 sm:space-y-2">
-                  <Label className="text-xs sm:text-sm">Holat</Label>
-                  <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-lg bg-muted/50 dark:bg-slate-800/50 border border-border/30 dark:border-slate-600/30">
-                    <Switch
-                      checked={formData.is_active}
-                      onCheckedChange={(v) => setFormData({ ...formData, is_active: v })}
-                    />
-                    <span className="text-xs sm:text-sm text-muted-foreground">
-                      {formData.is_active ? "Faol" : "Nofaol"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-1.5 sm:space-y-2">
-              <Label className="text-xs sm:text-sm">Javob *</Label>
-              <Textarea
-                placeholder="Savolga to'liq javob yozing..."
-                value={formData.answer}
-                onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                rows={3}
-                className="text-sm min-h-[80px] dark:bg-slate-800/50 dark:border-slate-600/50 focus:border-primary/50"
-              />
-            </div>
-
-            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 pt-2">
-              <Button type="submit" className="gap-2 w-full xs:w-auto text-sm bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary">
-                {editingId ? (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Saqlash
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-4 w-4" />
-                    Qo'shish
-                  </>
-                )}
-              </Button>
-              {isEditing && (
-                <Button type="button" variant="outline" onClick={resetForm} className="w-full xs:w-auto text-sm dark:bg-slate-800/50 dark:border-slate-600/50 dark:hover:bg-slate-700/50">
-                  <X className="h-4 w-4 mr-2" />
+              <div className="flex justify-end gap-3 pt-2">
+                <Button type="button" variant="ghost" onClick={resetForm} className="font-bold rounded-xl">
                   Bekor qilish
                 </Button>
-              )}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* FAQ List */}
-      <Card className="border-border/40 dark:border-slate-600/50 bg-gradient-to-br from-card via-card/95 to-muted/30 dark:from-slate-800/90 dark:via-slate-800/70 dark:to-slate-900/80">
-        <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
-          <CardTitle className="flex items-center justify-between text-sm sm:text-base">
-            <span className="text-foreground">FAQ ro'yxati</span>
-            <Badge variant="secondary" className="text-[10px] sm:text-xs dark:bg-slate-700 dark:text-slate-300">{faqs.length} ta</Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
-          {faqs.length === 0 ? (
-            <div className="text-center py-8 sm:py-12">
-              <div className="p-4 rounded-full bg-gradient-to-br from-muted to-muted/50 dark:from-slate-700 dark:to-slate-800 w-fit mx-auto mb-4">
-                <HelpCircle className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground" />
+                <Button type="submit" className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-black px-8 rounded-xl shadow-lg shadow-emerald-500/20">
+                  {editingId ? "Yangilash" : "Yaratish"} <Save className="w-4 h-4" />
+                </Button>
               </div>
-              <p className="text-muted-foreground font-medium text-sm sm:text-base">FAQ lar topilmadi</p>
-              <p className="text-xs text-muted-foreground/70 mt-1">Yangi FAQ qo'shish uchun yuqoridagi formani to'ldiring</p>
-            </div>
-          ) : (
-            <div className="space-y-2 sm:space-y-3">
-              {faqs.map((faq) => (
-                <div
-                  key={faq.id}
-                  className={`flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all ${
-                    faq.is_active 
-                      ? 'bg-gradient-to-r from-secondary/60 to-secondary/40 dark:from-slate-700/60 dark:to-slate-700/40 border-border/40 dark:border-slate-600/40 hover:border-primary/30 dark:hover:border-primary/40' 
-                      : 'bg-muted/30 dark:bg-slate-800/30 border-border/20 dark:border-slate-700/20 opacity-60'
-                  }`}
-                >
-                  <div className="hidden sm:block pt-1">
-                    <GripVertical className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground/50" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5">
-                      <Badge variant="outline" className="text-[10px] sm:text-xs dark:border-slate-600 dark:text-slate-300">{faq.icon}</Badge>
-                      {!faq.is_active && (
-                        <Badge variant="secondary" className="text-[10px] sm:text-xs text-muted-foreground dark:bg-slate-700">Nofaol</Badge>
-                      )}
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* FAQ Table */}
+      <Card className="border-border/50 shadow-xl overflow-hidden bg-card/50 backdrop-blur-sm">
+        <Table>
+          <TableHeader className="bg-muted/50">
+            <TableRow className="hover:bg-transparent border-border/50">
+              <TableHead className="w-[80px] font-black uppercase tracking-tighter text-[11px] py-5">#</TableHead>
+              <TableHead className="font-black uppercase tracking-tighter text-[11px] py-5">Savol nomi</TableHead>
+              <TableHead className="w-[200px] font-black uppercase tracking-tighter text-[11px] py-5">Yaratilgan vaqti</TableHead>
+              <TableHead className="w-[120px] text-right font-black uppercase tracking-tighter text-[11px] py-5 pr-6">Amallar</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredFaqs.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="h-40 text-center text-muted-foreground font-medium">
+                  {searchQuery ? "Qidiruv bo'yicha ma'lumot topilmadi." : "Hozircha hech qanday savollar mavjud emas."}
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredFaqs.map((faq) => (
+                <TableRow key={faq.id} className="group border-border/40 hover:bg-primary/[0.02] transition-colors">
+                  <TableCell className="font-bold text-muted-foreground">{faq.order_index}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold text-foreground leading-tight">{faq.question}</span>
+                      <span className="text-xs text-muted-foreground line-clamp-1">{faq.answer}</span>
                     </div>
-                    <p className="font-semibold text-sm sm:text-base mb-1 text-foreground">{faq.question}</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground/80 dark:text-slate-400 line-clamp-2">{faq.answer}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 justify-end sm:justify-start self-end sm:self-auto">
-                    <Switch
-                      checked={faq.is_active}
-                      onCheckedChange={() => toggleActive(faq.id, faq.is_active)}
-                    />
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => handleEdit(faq)}
-                      className="h-7 w-7 sm:h-8 sm:w-8 hover:bg-primary/10 dark:hover:bg-primary/20"
-                    >
-                      <Edit2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-7 w-7 sm:h-8 sm:w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => handleDelete(faq.id)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span className="text-xs font-medium">{formatDate(faq.created_at)}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right pr-6">
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleEdit(faq)}
+                        className="h-8 w-8 rounded-lg text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleDelete(faq.id)}
+                        className="h-8 w-8 rounded-lg text-rose-500 hover:text-rose-600 hover:bg-rose-500/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </Card>
     </div>
   );

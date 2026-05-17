@@ -21,17 +21,57 @@ import {
   Search
 } from 'lucide-react';
 import { blogPosts } from '@/data/blogData';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import api from '@/lib/axios';
 
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const post = id ? blogPosts.find(p => p.id === Number(id)) : null;
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [allBlogs, setAllBlogs] = useState<any[]>([]);
 
-  // Scroll to top on mount
+  // Scroll to top and fetch post on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchPost = async () => {
+      setLoading(true);
+      try {
+        const res = await api.get(`blogs/${id}/`);
+        setPost(res.data);
+      } catch (err) {
+        console.warn("API load failed or slug not found, falling back to local mock data.");
+        const local = blogPosts.find(p => String(p.id) === id || p.slug === id);
+        setPost(local || null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) {
+      fetchPost();
+    }
   }, [id]);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const res = await api.get('blogs/');
+        setAllBlogs(res.data);
+      } catch (e) {
+        setAllBlogs([]);
+      }
+    };
+    fetchAll();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50">
+        <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-zinc-500 font-bold text-sm">Maqola yuklanmoqda...</p>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -49,7 +89,8 @@ const BlogDetail = () => {
   }
 
   // Recommendations (exclude current post)
-  const recommendations = blogPosts.filter(p => p.id !== post.id).slice(0, 3);
+  const activeBlogsList = allBlogs.length > 0 ? allBlogs : blogPosts;
+  const recommendations = activeBlogsList.filter(p => (p.slug || String(p.id)) !== id).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-zinc-900 selection:bg-emerald-500/10 selection:text-emerald-600">
@@ -85,8 +126,10 @@ const BlogDetail = () => {
             {/* LEFT SIDEBAR - AUTHOR & SOCIAL */}
             <aside className="lg:col-span-1 hidden lg:block sticky top-32 h-fit">
               <div className="flex flex-col gap-6 items-center">
-                <div className="w-12 h-12 rounded-full border-2 border-emerald-500 p-0.5 overflow-hidden">
-                  <img src={`https://i.pravatar.cc/100?u=${post.author}`} alt={post.author} className="w-full h-full rounded-full object-cover" />
+                <div className="w-12 h-12 rounded-full border-2 border-emerald-500 p-0.5 overflow-hidden flex items-center justify-center bg-zinc-50">
+                  {post.author_image || post.authorImage ? (
+                    <img src={post.author_image || post.authorImage} alt={post.author} className="w-full h-full rounded-full object-cover" />
+                  ) : <User className="w-5 h-5 text-zinc-400" />}
                 </div>
                 <div className="h-12 w-[1px] bg-zinc-100" />
                 <button className="text-zinc-400 hover:text-[#1877F2] transition-colors"><Facebook className="w-5 h-5" /></button>
@@ -126,15 +169,17 @@ const BlogDetail = () => {
                 >
                   <div className="flex items-center gap-2.5">
                     <Calendar className="w-4 h-4" />
-                    {post.date}
+                    {post.created_at ? new Date(post.created_at).toLocaleDateString() : post.date}
                   </div>
                   <div className="flex items-center gap-2.5 text-emerald-600 bg-emerald-500/5 px-3 py-1 rounded-lg">
                     <Clock className="w-4 h-4" />
-                    {post.readTime} o'qish
+                    {post.read_time || post.readTime || "5 min"} o'qish
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <div className="w-6 h-6 rounded-full overflow-hidden border border-zinc-200">
-                       <img src={`https://i.pravatar.cc/100?u=${post.author}`} alt={post.author} />
+                    <div className="w-6 h-6 rounded-full overflow-hidden border border-zinc-200 flex items-center justify-center bg-zinc-50">
+                       {post.author_image || post.authorImage ? (
+                         <img src={post.author_image || post.authorImage} alt={post.author} className="w-full h-full object-cover" />
+                       ) : <User className="w-3 h-3 text-zinc-400" />}
                     </div>
                     {post.author}
                   </div>
@@ -173,7 +218,7 @@ const BlogDetail = () => {
 
               {/* Tags Section */}
               <div className="flex flex-wrap gap-3 mb-24">
-                {post.tags.map((tag: string, i: number) => (
+                {(post.hashtags ? post.hashtags.split(' ').map((t: string) => t.replace('#', '')).filter(Boolean) : (post.tags || [])).map((tag: string, i: number) => (
                   <button key={i} className="px-5 py-2.5 rounded-2xl bg-white border border-zinc-100 text-zinc-500 text-sm font-bold hover:border-emerald-500 hover:text-emerald-600 transition-all">
                     #{tag}
                   </button>
@@ -196,35 +241,38 @@ const BlogDetail = () => {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">
-                  {recommendations.map((rec, i) => (
-                    <motion.div
-                      key={rec.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      onClick={() => navigate(`/blog/${rec.id}`)}
-                      className="group cursor-pointer"
-                    >
-                      <div className="relative h-40 rounded-3xl overflow-hidden mb-4 shadow-lg shadow-zinc-200/50">
-                        <img 
-                          src={rec.image} 
-                          alt={rec.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute top-3 left-3 px-2 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[8px] font-black uppercase text-emerald-600 tracking-wider">
-                          {rec.category}
+                  {recommendations.map((rec, i) => {
+                    const recIdOrSlug = rec.slug || rec.id;
+                    return (
+                      <motion.div
+                        key={rec.id || recIdOrSlug}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        onClick={() => navigate(`/blog/${recIdOrSlug}`)}
+                        className="group cursor-pointer"
+                      >
+                        <div className="relative h-40 rounded-3xl overflow-hidden mb-4 shadow-lg shadow-zinc-200/50">
+                          <img 
+                            src={rec.image} 
+                            alt={rec.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                          <div className="absolute top-3 left-3 px-2 py-1 rounded-lg bg-white/90 backdrop-blur-md text-[8px] font-black uppercase text-emerald-600 tracking-wider">
+                            {rec.category}
+                          </div>
                         </div>
-                      </div>
-                      <h4 className="text-sm font-black text-zinc-900 group-hover:text-emerald-500 transition-colors line-clamp-2 leading-tight mb-2">
-                        {rec.title}
-                      </h4>
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-400">
-                        <Calendar className="w-3 h-3" />
-                        {rec.date}
-                      </div>
-                    </motion.div>
-                  ))}
+                        <h4 className="text-sm font-black text-zinc-900 group-hover:text-emerald-500 transition-colors line-clamp-2 leading-tight mb-2">
+                          {rec.title}
+                        </h4>
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-400">
+                          <Calendar className="w-3 h-3" />
+                          {rec.created_at ? new Date(rec.created_at).toLocaleDateString() : rec.date}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
 

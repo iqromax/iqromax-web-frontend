@@ -1,11 +1,28 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Volume2, VolumeX, User, LogOut, Play, Home, Settings, Moon, Sun, ShieldCheck, GraduationCap, Sparkles, ChevronDown, Trophy, Menu, X, BookOpen, Calendar, MessageCircle, BarChart3, Calculator, Users, FileText, Video, ClipboardList, Star } from 'lucide-react';
+import { 
+  Volume2, 
+  VolumeX, 
+  User, 
+  LogOut, 
+  Home, 
+  Settings, 
+  Moon, 
+  Sun, 
+  Trophy, 
+  Menu, 
+  X, 
+  BookOpen, 
+  Calculator, 
+  ClipboardList, 
+  Video,
+  LayoutDashboard
+} from 'lucide-react';
 import { Logo } from './Logo';
 import { Button } from './ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useTheme } from 'next-themes';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   DropdownMenu,
@@ -13,11 +30,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuGroup,
 } from './ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Badge } from './ui/badge';
-import { XPLevelBar } from './XPLevelBar';
 
 interface NavbarProps {
   soundEnabled: boolean;
@@ -26,44 +40,17 @@ interface NavbarProps {
 
 export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
   const { user, signOut } = useAuth();
-  const { role, isAdmin, isParent, isTeacher, isStudent } = useUserRole();
+  const { isAdmin } = useUserRole();
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [profile, setProfile] = useState<{ username: string; avatar_url: string | null; total_score: number } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navScrollRef = useRef<HTMLDivElement>(null);
   
-  const isTrainPage = location.pathname === '/train';
-  const isHomePage = location.pathname === '/';
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      scrollTimeout = setTimeout(() => {
-        const activeButton = navScrollRef.current?.querySelector('[data-active="true"]');
-        if (activeButton) {
-          activeButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 100);
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-    };
-  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -89,173 +76,119 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
     navigate('/');
   };
 
-  const handleNavigation = useCallback((path: string) => {
-    navigate(path);
-    setMobileMenuOpen(false);
-  }, [navigate]);
-
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', icon: Home, label: "Uy", emoji: "🏠" },
-    { path: '/subjects', icon: BookOpen, label: "Fanlar", emoji: "📚" },
-    { path: '/abacus-simulator', icon: Calculator, label: "Abakus", emoji: "🧮" },
-    { path: '/train', icon: ClipboardList, label: "Masalalar", emoji: "📝" },
-    { path: '/tournaments', icon: Trophy, label: "Musobaqa", emoji: "🏆" },
-    { path: '/live', icon: Video, label: "Live", emoji: "📹" },
+    { path: '/', icon: Home, label: "Asosiy" },
+    { path: '/subjects', icon: BookOpen, label: "Fanlar" },
+    { path: '/abacus-simulator', icon: Calculator, label: "Abakus" },
+    { path: '/train', icon: ClipboardList, label: "Mashqlar" },
+    { path: '/tournaments', icon: Trophy, label: "Musobaqalar" },
+    { path: '/live', icon: Video, label: "Live" },
   ];
 
   return (
-    <>
-      <header className="sticky top-0 z-50 w-full safe-top">
-        <div className="absolute inset-0 bg-background/85 backdrop-blur-xl" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-        
-        <div className="container relative flex h-11 sm:h-12 items-center justify-between px-2 xs:px-3 sm:px-4 lg:px-6">
-          <Link to="/" className="flex-shrink-0 hover:opacity-80 active:scale-95 transition-all">
-            <Logo size="xs" />
-          </Link>
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 dark:bg-zinc-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-zinc-950/60 transition-all duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex h-16 items-center justify-between relative">
+          {/* Logo - Left */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center hover:opacity-90 transition-opacity">
+              <Logo size="xs" />
+            </Link>
+          </div>
           
-          <nav className="hidden lg:flex items-center gap-1 bg-secondary/60 backdrop-blur-sm rounded-full px-1.5 py-1 border border-border/30">
+          {/* Nav Links - Center */}
+          <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center space-x-1">
             {navItems.map((item) => (
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`
-                  flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200
-                  ${isActive(item.path) 
-                    ? 'bg-primary text-primary-foreground shadow-sm' 
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-                  }
-                `}
+                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  isActive(item.path)
+                    ? 'text-primary bg-primary/5'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900'
+                }`}
               >
-                <item.icon className="h-3.5 w-3.5" />
-                <span>{item.label}</span>
+                {item.label}
               </button>
             ))}
           </nav>
 
-          <div className="flex items-center gap-1">
+          {/* User Actions - Right */}
+          <div className="flex items-center gap-2">
+            {user && profile ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 overflow-hidden border border-zinc-200 dark:border-zinc-800">
+                    <Avatar className="h-full w-full">
+                      <AvatarImage src={profile.avatar_url || undefined} />
+                      <AvatarFallback className="bg-primary text-white font-bold">
+                        {profile.username?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-xl">
+                  <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
+                    <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">{profile.username}</p>
+                    <p className="text-xs font-medium text-primary mt-0.5 flex items-center gap-1">
+                      <Trophy className="w-3 h-3" /> {profile.total_score} Ball
+                    </p>
+                  </div>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate('/admin')} className="py-2.5 cursor-pointer">
+                      <LayoutDashboard className="mr-2 h-4 w-4 text-emerald-500" />
+                      <span className="font-medium">Admin Panel</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={() => navigate('/settings')} className="py-2.5 cursor-pointer">
+                    <User className="mr-2 h-4 w-4 text-zinc-400" />
+                    <span className="font-medium">Profil</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="py-2.5 cursor-pointer text-rose-500">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span className="font-bold">Chiqish</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden h-9 w-9 rounded-full hover:bg-secondary active:scale-95 transition-all"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden h-10 w-10 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
-              <Menu className="h-5 w-5" />
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
-          </div>
-        </div>
-      </header>
-
-      {mobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] animate-fade-in"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
-
-      <div 
-        className={`fixed top-0 right-0 h-full w-[80%] max-w-[280px] z-[70] bg-card/98 backdrop-blur-xl shadow-2xl transform transition-transform duration-250 ease-out flex flex-col ${
-          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="flex items-center justify-between p-3 border-b border-border/40">
-          <Logo size="sm" />
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => setMobileMenuOpen(false)}
-            className="h-8 w-8 rounded-full hover:bg-secondary active:scale-95"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {user && profile && (
-          <div className="p-3 border-b border-border/40 space-y-2">
-            <button
-              onClick={() => handleNavigation('/settings')}
-              className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 active:scale-[0.98] transition-all"
-            >
-              <Avatar className="h-10 w-10 border-2 border-primary/40 shadow-sm">
-                <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground font-bold text-sm">
-                  {profile.username?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 text-left min-w-0">
-                <p className="font-semibold text-sm truncate">{profile.username}</p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Trophy className="h-3 w-3 text-warning" />
-                    {profile.total_score}
-                  </span>
-                </div>
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted-foreground -rotate-90 flex-shrink-0" />
-            </button>
-            
-            <Button 
-              variant="outline" 
-              onClick={handleSignOut}
-              className="w-full h-9 rounded-xl border-destructive/30 text-destructive hover:bg-destructive/10 active:scale-[0.98] text-sm"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Chiqish
-            </Button>
-          </div>
-        )}
-
-        <div ref={navScrollRef} className="flex-1 overflow-y-auto p-3">
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            {navItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => handleNavigation(item.path)}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all duration-200 active:scale-95 ${
-                  isActive(item.path)
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'bg-secondary/60 hover:bg-secondary border border-border/30'
-                }`}
-              >
-                <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                  isActive(item.path) ? 'bg-white/20' : 'bg-background/60'
-                }`}>
-                  <span className="text-lg">{item.emoji}</span>
-                </div>
-                <span className="text-xs font-medium">{item.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="h-px bg-border/40 my-3" />
-
-          <div className="space-y-1.5">
-            <button
-              onClick={() => onToggleSound()}
-              className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-secondary/60 active:scale-[0.98] transition-all"
-            >
-              <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
-                soundEnabled ? 'bg-primary/15 text-primary' : 'bg-secondary text-muted-foreground'
-              }`}>
-                {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-              </div>
-              <span className="text-sm font-medium flex-1 text-left">Ovoz</span>
-            </button>
-
-            <button
-              onClick={() => handleNavigation('/settings')}
-              className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-secondary/60 active:scale-[0.98] transition-all"
-            >
-              <div className="h-8 w-8 rounded-lg bg-secondary flex items-center justify-center">
-                <Settings className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <span className="text-sm font-medium">Sozlamalar</span>
-            </button>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-800 py-4 px-4 space-y-1 shadow-2xl">
+          {navItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => {
+                navigate(item.path);
+                setMobileMenuOpen(false);
+              }}
+              className={`flex items-center gap-3 w-full p-3 rounded-lg text-sm font-bold transition-all ${
+                isActive(item.path)
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
+              }`}
+            >
+              <item.icon className="h-5 w-5 opacity-70" />
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </header>
   );
 };

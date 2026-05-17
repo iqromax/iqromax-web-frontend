@@ -15,6 +15,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
+import api from '@/lib/axios';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -28,21 +29,24 @@ const AdminLogin = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // For now, this is a mock login as we haven't built the Django backend yet.
-    // The user will provide the API details later.
-    console.log('Login attempt:', formData);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    if (formData.username === 'admin' && formData.password === 'admin123') {
-      toast.success("Xush kelibsiz, Admin!");
-      navigate('/admin');
-    } else {
+    try {
+      const response = await api.post('token/', {
+        username: formData.username,
+        password: formData.password
+      });
+
+      if (response.data && response.data.access) {
+        localStorage.setItem('access_token', response.data.access);
+        localStorage.setItem('refresh_token', response.data.refresh);
+        toast.success("Xush kelibsiz, Admin!");
+        navigate('/admin');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
       toast.error("Username yoki parol noto'g'ri");
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (

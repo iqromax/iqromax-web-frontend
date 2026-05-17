@@ -1,4 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import api from '@/lib/axios';
+import * as Icons from 'lucide-react';
+
+const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
+  const IconComponent = (Icons as any)[name];
+  if (!IconComponent) return <Icons.Zap className={className} />;
+  return <IconComponent className={className} />;
+};
+
 import { Button } from '@/components/ui/button';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -11,6 +21,19 @@ import heroKids from '@/assets/hero-student-tablet.jpg';
 
 const StudentsLanding = () => {
   const navigate = useNavigate();
+  const [dbFeatures, setDbFeatures] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      try {
+        const res = await api.get('features/');
+        setDbFeatures(res.data);
+      } catch (err) {
+        console.error("Error fetching features:", err);
+      }
+    };
+    fetchFeatures();
+  }, []);
 
   const features = [
     { icon: Gamepad2, color: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40', title: 'Qiziqarli mashqlar', desc: "Darajaga mos mashqlar, interaktiv topshiriqlar va mini o'yinlar." },
@@ -180,15 +203,44 @@ const StudentsLanding = () => {
             <p className="text-xs sm:text-sm text-muted-foreground">O'yin elementi bilan o'qish ko'proq motivatsiya va natija beradi!</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {features.map((f, i) => (
-              <div key={i} className="bg-white dark:bg-card rounded-2xl p-4 sm:p-5 border border-border/40 shadow-sm">
-                <div className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center mb-2 sm:mb-3 ${f.color}`}>
-                  <f.icon className="h-5 w-5" />
+            {(dbFeatures.length > 0 ? dbFeatures : features).map((f, i) => {
+              const isDb = !!f.slug;
+              const title = isDb ? f.name : f.title;
+              const desc = isDb ? f.description : f.desc;
+              const slugOrId = isDb ? f.slug : f.id;
+
+              const getColorClasses = (colorName: string) => {
+                switch (colorName) {
+                  case 'emerald': return 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40';
+                  case 'blue': return 'bg-blue-50 text-blue-600 dark:bg-blue-950/40';
+                  case 'amber': return 'bg-amber-50 text-amber-600 dark:bg-amber-950/40';
+                  case 'rose': return 'bg-rose-50 text-rose-600 dark:bg-rose-950/40';
+                  case 'violet': return 'bg-violet-50 text-violet-600 dark:bg-violet-950/40';
+                  case 'cyan': return 'bg-cyan-50 text-cyan-600 dark:bg-cyan-950/40';
+                  default: return 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40';
+                }
+              };
+
+              const colorClass = isDb ? getColorClasses(f.color) : f.color;
+
+              return (
+                <div 
+                  key={i} 
+                  onClick={() => navigate(`/feature/${slugOrId}`)}
+                  className="bg-white dark:bg-card rounded-2xl p-4 sm:p-5 border border-border/40 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-emerald-500/20"
+                >
+                  <div className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center mb-2 sm:mb-3 ${colorClass}`}>
+                    {isDb ? (
+                      <DynamicIcon name={f.icon} className="h-5 w-5" />
+                    ) : (
+                      <f.icon className="h-5 w-5" />
+                    )}
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base mb-1">{title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
                 </div>
-                <h3 className="font-bold text-sm sm:text-base mb-1">{f.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

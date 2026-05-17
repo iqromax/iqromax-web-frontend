@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import api from '@/lib/axios';
+import { useAuth } from '@/hooks/useAuth';
 
 interface FeedbackDialogProps {
   children: React.ReactNode;
@@ -31,22 +33,43 @@ export const FeedbackDialog = ({ children }: FeedbackDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [feedbackType, setFeedbackType] = useState<'suggestion' | 'problem' | 'other'>('suggestion');
+  const [message, setMessage] = useState('');
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!message.trim()) return;
+    
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    toast.success("Fikr-mulohazangiz uchun rahmat!");
-    
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsSuccess(false);
-    }, 3000);
+    const subjectMap = {
+      suggestion: 'Taklif',
+      problem: 'Xatolik',
+      other: 'Boshqa'
+    };
+
+    try {
+      await api.post('feedback/', {
+        name: user?.user_metadata?.username || user?.email?.split('@')[0] || 'Mehmon',
+        email: user?.email || 'guest@iqromax.uz',
+        subject: subjectMap[feedbackType],
+        message: message.trim(),
+        is_read: false
+      });
+      setIsSuccess(true);
+      toast.success("Fikr-mulohazangiz uchun rahmat!");
+      setMessage('');
+      
+      setTimeout(() => {
+        setIsOpen(false);
+        setIsSuccess(false);
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast.error("Xabarni yuborishda xatolik yuz berdi");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,6 +129,8 @@ export const FeedbackDialog = ({ children }: FeedbackDialogProps) => {
                   <Textarea 
                     id="feedback-message" 
                     required
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Fikringizni shu yerda qoldiring..." 
                     className="min-h-[120px] rounded-2xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:ring-emerald-500/20 transition-all font-medium resize-none p-4"
                   />

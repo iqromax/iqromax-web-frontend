@@ -22,7 +22,6 @@ const Index = lazy(() => import("@/pages/Index"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
-const Contact = lazy(() => import("@/pages/Contact"));
 const Pricing = lazy(() => import("@/pages/Pricing"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPostPage = lazy(() => import("@/pages/BlogPost"));
@@ -124,7 +123,6 @@ const App = () => (
                       
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
-                      <Route path="/contact" element={<Contact />} />
                       <Route path="/pricing" element={<Pricing />} />
                       <Route path="/blog" element={<Blog />} />
                       <Route path="/blog/:id" element={<BlogPostPage />} />

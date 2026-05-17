@@ -506,684 +506,424 @@ const Admin = () => {
 
   const unreadCount = messages.filter(m => !m.is_read).length;
 
+  const [activeTab, setActiveTab] = useState('users');
+
   return (
-    <PageBackground className="flex flex-col">
+    <PageBackground className="flex flex-col min-h-screen">
       <Navbar soundEnabled={soundEnabled} onToggleSound={toggleSound} />
 
-      <main className="flex-1 container px-2 sm:px-4 py-4 sm:py-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Header - Enhanced Dark Mode Design */}
-          <div className="relative mb-6 sm:mb-10 p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-primary/15 via-background to-accent/10 dark:from-primary/20 dark:via-background/80 dark:to-accent/15 border border-primary/20 dark:border-primary/30 overflow-hidden shadow-xl dark:shadow-primary/5">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.15),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_50%)]" />
-            <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-br from-accent/20 dark:from-accent/30 to-transparent rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-primary/10 dark:from-primary/20 to-transparent rounded-full blur-2xl" />
-            
-            <div className="relative flex items-center gap-3 sm:gap-4">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary to-primary/80 dark:from-primary dark:to-primary/70 flex items-center justify-center shadow-lg shadow-primary/30 dark:shadow-primary/40 ring-2 ring-primary/20 dark:ring-primary/30">
-                <ShieldCheck className="h-7 w-7 sm:h-8 sm:w-8 text-primary-foreground" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-3xl font-display font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 dark:from-foreground dark:via-foreground/90 dark:to-foreground/60 bg-clip-text">Admin Panel</h1>
-                <p className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground/80 mt-0.5">Platforma boshqaruvi va statistika</p>
-              </div>
-              <div className="hidden sm:flex items-center gap-2">
-                <Badge variant="outline" className="bg-background/60 dark:bg-background/40 backdrop-blur-sm border-primary/30 dark:border-primary/40 text-primary dark:text-primary/90 shadow-sm">
-                  <Bell className="h-3 w-3 mr-1 animate-pulse" />
-                  {unreadCount} yangi xabar
-                </Badge>
-              </div>
-            </div>
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 bg-card/80 dark:bg-card/40 backdrop-blur-xl border-r border-border/40 hidden md:flex flex-col shrink-0">
+          <div className="p-6 border-b border-border/20">
+            <h2 className="text-xl font-black tracking-tight flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-primary" /> Admin Panel
+            </h2>
           </div>
-
-          {/* Stats Cards - Enhanced Dark Mode */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2 sm:gap-4 mb-6 sm:mb-10">
-            <Card className="bg-gradient-to-br from-blue-500/15 to-blue-500/5 dark:from-blue-500/25 dark:to-blue-500/10 border-blue-500/30 dark:border-blue-500/40 overflow-hidden h-[90px] sm:h-[110px] flex flex-col group hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300">
-              <CardContent className="p-2 sm:p-4 text-center flex-1 flex flex-col justify-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-500/20 dark:bg-blue-500/30 flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
-                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 dark:text-blue-400" />
-                </div>
-                <p className="text-lg sm:text-2xl font-bold dark:text-foreground">{stats.totalUsers}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground/80">Foydalanuvchilar</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-green-500/15 to-green-500/5 dark:from-green-500/25 dark:to-green-500/10 border-green-500/30 dark:border-green-500/40 overflow-hidden h-[90px] sm:h-[110px] flex flex-col group hover:shadow-lg hover:shadow-green-500/20 dark:hover:shadow-green-500/30 hover:-translate-y-1 transition-all duration-300">
-              <CardContent className="p-2 sm:p-4 text-center flex-1 flex flex-col justify-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-green-500/20 dark:bg-green-500/30 flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
-                  <Target className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 dark:text-green-400" />
-                </div>
-                <p className="text-lg sm:text-2xl font-bold dark:text-foreground">{stats.totalProblems.toLocaleString()}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground/80">Yechilgan</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-yellow-500/15 to-yellow-500/5 dark:from-yellow-500/25 dark:to-yellow-500/10 border-yellow-500/30 dark:border-yellow-500/40 overflow-hidden h-[90px] sm:h-[110px] flex flex-col group hover:shadow-lg hover:shadow-yellow-500/20 dark:hover:shadow-yellow-500/30 hover:-translate-y-1 transition-all duration-300">
-              <CardContent className="p-2 sm:p-4 text-center flex-1 flex flex-col justify-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-yellow-500/20 dark:bg-yellow-500/30 flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
-                  <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 dark:text-yellow-400" />
-                </div>
-                <p className="text-lg sm:text-2xl font-bold dark:text-foreground">{stats.totalScore.toLocaleString()}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground/80">Jami ball</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-purple-500/15 to-purple-500/5 dark:from-purple-500/25 dark:to-purple-500/10 border-purple-500/30 dark:border-purple-500/40 overflow-hidden h-[90px] sm:h-[110px] flex flex-col group hover:shadow-lg hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 hover:-translate-y-1 transition-all duration-300">
-              <CardContent className="p-2 sm:p-4 text-center flex-1 flex flex-col justify-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-500/20 dark:bg-purple-500/30 flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
-                  <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500 dark:text-purple-400" />
-                </div>
-                <p className="text-lg sm:text-2xl font-bold dark:text-foreground">{stats.totalGames}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground/80">O'yinlar</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 dark:from-emerald-500/25 dark:to-emerald-500/10 border-emerald-500/30 dark:border-emerald-500/40 overflow-hidden h-[90px] sm:h-[110px] flex flex-col group hover:shadow-lg hover:shadow-emerald-500/20 dark:hover:shadow-emerald-500/30 hover:-translate-y-1 transition-all duration-300">
-              <CardContent className="p-2 sm:p-4 text-center flex-1 flex flex-col justify-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 dark:bg-emerald-500/30 flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
-                  <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500 dark:text-emerald-400" />
-                </div>
-                <p className="text-lg sm:text-2xl font-bold dark:text-foreground">{stats.newUsersToday}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground/80">Bugun yangi</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-orange-500/15 to-orange-500/5 dark:from-orange-500/25 dark:to-orange-500/10 border-orange-500/30 dark:border-orange-500/40 overflow-hidden h-[90px] sm:h-[110px] flex flex-col group hover:shadow-lg hover:shadow-orange-500/20 dark:hover:shadow-orange-500/30 hover:-translate-y-1 transition-all duration-300">
-              <CardContent className="p-2 sm:p-4 text-center flex-1 flex flex-col justify-center">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-orange-500/20 dark:bg-orange-500/30 flex items-center justify-center mx-auto mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
-                  <Flame className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500 dark:text-orange-400" />
-                </div>
-                <p className="text-lg sm:text-2xl font-bold dark:text-foreground">{stats.activeToday}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground dark:text-muted-foreground/80">Bugun faol</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Tez harakatlar (Quick Actions) - Enhanced Dark Mode */}
-          <Card className="mb-4 sm:mb-8 bg-card/80 dark:bg-card/60 backdrop-blur-md border-border/50 dark:border-border/30 overflow-hidden shadow-lg dark:shadow-xl dark:shadow-black/20">
-            <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6 border-b border-border/30 dark:border-border/20">
-              <CardTitle className="flex items-center gap-2 text-sm sm:text-lg">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-yellow-500/20 to-amber-500/20 dark:from-yellow-500/30 dark:to-amber-500/30">
-                  <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500 dark:text-yellow-400" />
-                </div>
-                <span className="dark:text-foreground/95">Tez harakatlar</span>
-              </CardTitle>
-              <CardDescription className="text-xs dark:text-muted-foreground/70">Eng ko'p ishlatiladigan amallar</CardDescription>
-            </CardHeader>
-            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6 pt-3 sm:pt-4">
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
-                <Button
-                  variant="outline"
-                  className="h-auto flex flex-col items-center gap-1.5 sm:gap-2 p-2.5 sm:p-4 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 dark:from-emerald-500/20 dark:to-emerald-500/10 border-emerald-500/30 dark:border-emerald-500/40 hover:bg-emerald-500/20 dark:hover:bg-emerald-500/30 hover:border-emerald-500/50 dark:hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-500/20 dark:hover:shadow-emerald-500/30 hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
-                  onClick={() => openBlogDialog()}
+          
+          <nav className="flex-1 overflow-y-auto p-4 space-y-8">
+            {/* Bosh sahifa Group */}
+            <div>
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">Bosh sahifa</p>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setActiveTab('users')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'users' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
                 >
-                  <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/20 dark:from-emerald-500/40 dark:to-emerald-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-inner">
-                    <PlusCircle className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500 dark:text-emerald-400" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center truncate w-full dark:text-foreground/90">Maqola</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="h-auto flex flex-col items-center gap-1.5 sm:gap-2 p-2.5 sm:p-4 bg-gradient-to-br from-blue-500/10 to-blue-500/5 dark:from-blue-500/20 dark:to-blue-500/10 border-blue-500/30 dark:border-blue-500/40 hover:bg-blue-500/20 dark:hover:bg-blue-500/30 hover:border-blue-500/50 dark:hover:border-blue-500/60 hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
-                  onClick={() => {
-                    fetchUsers();
-                    fetchStats();
-                    toast.success("Ma'lumotlar yangilandi");
-                  }}
+                  <Users className="w-4 h-4" /> Foydalanuvchilar
+                </button>
+                <button
+                  onClick={() => setActiveTab('faq')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'faq' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
                 >
-                  <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 dark:from-blue-500/40 dark:to-blue-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-180 transition-all duration-500 shadow-inner">
-                    <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 dark:text-blue-400" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center truncate w-full dark:text-foreground/90">Yangilash</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="h-auto flex flex-col items-center gap-1.5 sm:gap-2 p-2.5 sm:p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 dark:from-purple-500/20 dark:to-purple-500/10 border-purple-500/30 dark:border-purple-500/40 hover:bg-purple-500/20 dark:hover:bg-purple-500/30 hover:border-purple-500/50 dark:hover:border-purple-500/60 hover:shadow-lg hover:shadow-purple-500/20 dark:hover:shadow-purple-500/30 hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
-                  onClick={() => navigate('/courses')}
-                >
-                  <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 dark:from-purple-500/40 dark:to-purple-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-inner">
-                    <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500 dark:text-purple-400" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center truncate w-full dark:text-foreground/90">Kurslar</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="h-auto flex flex-col items-center gap-1.5 sm:gap-2 p-2.5 sm:p-4 bg-gradient-to-br from-amber-500/10 to-amber-500/5 dark:from-amber-500/20 dark:to-amber-500/10 border-amber-500/30 dark:border-amber-500/40 hover:bg-amber-500/20 dark:hover:bg-amber-500/30 hover:border-amber-500/50 dark:hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/20 dark:hover:shadow-amber-500/30 hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
-                  onClick={() => navigate('/blog')}
-                >
-                  <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-amber-500/30 to-amber-600/20 dark:from-amber-500/40 dark:to-amber-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-inner">
-                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 dark:text-amber-400" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center truncate w-full dark:text-foreground/90">Blog</span>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="h-auto flex flex-col items-center gap-1.5 sm:gap-2 p-2.5 sm:p-4 bg-gradient-to-br from-red-500/10 to-red-500/5 dark:from-red-500/20 dark:to-red-500/10 border-red-500/30 dark:border-red-500/40 hover:bg-red-500/20 dark:hover:bg-red-500/30 hover:border-red-500/50 dark:hover:border-red-500/60 hover:shadow-lg hover:shadow-red-500/20 dark:hover:shadow-red-500/30 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
-                  onClick={() => {
-                    const messagesTab = document.querySelector('[value="messages"]') as HTMLElement;
-                    messagesTab?.click();
-                  }}
-                >
-                  <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-red-500/30 to-red-600/20 dark:from-red-500/40 dark:to-red-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-inner">
-                    <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 dark:text-red-400" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center truncate w-full dark:text-foreground/90">Xabar</span>
-                  {unreadCount > 0 && (
-                    <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] animate-pulse shadow-lg shadow-red-500/50">{unreadCount}</Badge>
-                  )}
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="h-auto flex flex-col items-center gap-1.5 sm:gap-2 p-2.5 sm:p-4 bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 dark:from-cyan-500/20 dark:to-cyan-500/10 border-cyan-500/30 dark:border-cyan-500/40 hover:bg-cyan-500/20 dark:hover:bg-cyan-500/30 hover:border-cyan-500/50 dark:hover:border-cyan-500/60 hover:shadow-lg hover:shadow-cyan-500/20 dark:hover:shadow-cyan-500/30 hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
-                  onClick={() => navigate('/settings')}
-                >
-                  <div className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-gradient-to-br from-cyan-500/30 to-cyan-600/20 dark:from-cyan-500/40 dark:to-cyan-600/30 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-90 transition-all duration-300 shadow-inner">
-                    <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-500 dark:text-cyan-400" />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center truncate w-full dark:text-foreground/90">Sozlama</span>
-                </Button>
+                  <HelpCircle className="w-4 h-4" /> Ko'p beriladigan savollar
+                </button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Tabs defaultValue="users" className="space-y-3 sm:space-y-4 md:space-y-6">
-            {/* Mobile: Grid tabs - all visible - Dark mode optimized */}
-            <div className="block md:hidden">
-              <Card className="bg-card/70 dark:bg-card/50 backdrop-blur-md border-border/50 dark:border-border/30 shadow-lg dark:shadow-xl overflow-hidden">
-                <TabsList className="grid w-full grid-cols-5 h-auto bg-transparent p-1 gap-0.5">
-                  <TabsTrigger value="users" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-blue-500/30 transition-all">
-                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Users</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="reports" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-purple-500/30 transition-all">
-                    <BarChart2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Hisobot</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="competitions" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-yellow-500/30 transition-all">
-                    <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Musobaqa</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="courses" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-emerald-500/30 transition-all">
-                    <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Kurs</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="files" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-amber-500/30 transition-all">
-                    <FolderOpen className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Fayl</span>
-                  </TabsTrigger>
-                </TabsList>
-                <TabsList className="grid w-full grid-cols-6 h-auto bg-transparent p-1 pt-0 gap-0.5">
-                  <TabsTrigger value="faq" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-indigo-500/30 transition-all">
-                    <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">FAQ</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="testimonials" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-pink-500/30 transition-all">
-                    <Quote className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Sharh</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="team" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-violet-500/30 transition-all">
-                    <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Jamoa</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="chats" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-teal-500/30 transition-all">
-                    <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Chat</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="messages" className="relative flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-red-500/30 transition-all">
-                    <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Xabar</span>
-                    {unreadCount > 0 && <Badge variant="destructive" className="absolute -top-0.5 -right-0.5 h-4 min-w-4 p-0 flex items-center justify-center text-[10px] animate-pulse shadow-lg">{unreadCount}</Badge>}
-                  </TabsTrigger>
-                  <TabsTrigger value="blog" className="flex flex-col items-center gap-0.5 py-2 sm:py-2.5 px-1 rounded-lg dark:text-foreground/80 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-orange-500/30 transition-all">
-                    <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="text-[9px] sm:text-[10px] font-medium">Blog</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Card>
             </div>
 
-            {/* Desktop: Beautiful horizontal navigation - Dark mode optimized */}
-            <div className="hidden md:block">
-              <Card className="bg-card/70 dark:bg-card/50 backdrop-blur-md border-border/50 dark:border-border/30 shadow-lg dark:shadow-xl overflow-hidden relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 dark:from-primary/10 via-transparent to-accent/5 dark:to-accent/10" />
-                <TabsList className="relative grid w-full grid-cols-11 h-14 gap-0.5 bg-transparent p-1.5">
-                  <TabsTrigger value="users" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-blue-500/15 dark:hover:bg-blue-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-blue-500/40">
-                    <Users className="h-4 w-4 text-blue-500 dark:text-blue-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Users</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="reports" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-purple-500/15 dark:hover:bg-purple-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-purple-500/40">
-                    <BarChart2 className="h-4 w-4 text-purple-500 dark:text-purple-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Hisobot</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="competitions" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-yellow-500/15 dark:hover:bg-yellow-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-yellow-500/40">
-                    <Trophy className="h-4 w-4 text-yellow-500 dark:text-yellow-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Musobaqa</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="courses" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-emerald-500/15 dark:hover:bg-emerald-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-emerald-500/40">
-                    <GraduationCap className="h-4 w-4 text-emerald-500 dark:text-emerald-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Kurslar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="files" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-amber-500/15 dark:hover:bg-amber-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-amber-500/40">
-                    <FolderOpen className="h-4 w-4 text-amber-500 dark:text-amber-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Fayllar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="faq" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-indigo-500/15 dark:hover:bg-indigo-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-indigo-500/40">
-                    <HelpCircle className="h-4 w-4 text-indigo-500 dark:text-indigo-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">FAQ</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="testimonials" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-pink-500/15 dark:hover:bg-pink-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-pink-500/40">
-                    <Quote className="h-4 w-4 text-pink-500 dark:text-pink-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Sharhlar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="team" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-violet-500/15 dark:hover:bg-violet-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-violet-500/40">
-                    <Users className="h-4 w-4 text-violet-500 dark:text-violet-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Jamoa</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="chats" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-teal-500/15 dark:hover:bg-teal-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-500 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-teal-500/40">
-                    <MessageCircle className="h-4 w-4 text-teal-500 dark:text-teal-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Chatlar</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="messages" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-red-500/15 dark:hover:bg-red-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-red-500/40">
-                    <Mail className="h-4 w-4 text-red-500 dark:text-red-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Xabarlar</span>
-                    {unreadCount > 0 && <Badge variant="destructive" className="absolute -top-0.5 -right-0.5 h-4 min-w-4 p-0 flex items-center justify-center text-[10px] animate-pulse shadow-lg">{unreadCount}</Badge>}
-                  </TabsTrigger>
-                  <TabsTrigger value="blog" className="relative group flex flex-col items-center justify-center gap-0.5 py-1.5 px-1 rounded-lg transition-all duration-300 hover:bg-orange-500/15 dark:hover:bg-orange-500/25 hover:-translate-y-0.5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:shadow-orange-500/40">
-                    <FileText className="h-4 w-4 text-orange-500 dark:text-orange-400 group-data-[state=active]:text-white" />
-                    <span className="text-[10px] font-medium truncate dark:text-foreground/80 group-data-[state=active]:text-white">Maqolalar</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Card>
+            {/* Kontent Group */}
+            <div>
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">Kontent</p>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setActiveTab('courses')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'courses' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <GraduationCap className="w-4 h-4" /> Kurslar
+                </button>
+                <button
+                  onClick={() => setActiveTab('blog')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'blog' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <FileText className="w-4 h-4" /> Blog maqolalari
+                </button>
+                <button
+                  onClick={() => setActiveTab('files')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'files' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <FolderOpen className="w-4 h-4" /> Fayllar
+                </button>
+              </div>
             </div>
 
-            {/* Users Tab */}
-            <TabsContent value="users" className="space-y-4 sm:space-y-6">
-              {/* Statistics Charts */}
-              <AdminUserCharts users={users} gameSessions={gameSessions} />
+            {/* Statistika Group */}
+            <div>
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">Statistika</p>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setActiveTab('reports')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'reports' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <BarChart2 className="w-4 h-4" /> Hisobotlar
+                </button>
+                <button
+                  onClick={() => setActiveTab('competitions')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'competitions' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <Trophy className="w-4 h-4" /> Musobaqalar
+                </button>
+              </div>
+            </div>
 
-              <Card className="overflow-hidden">
-                <CardHeader className="px-3 sm:px-6 py-3 sm:py-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <CardTitle className="text-base sm:text-lg">Foydalanuvchilar</CardTitle>
-                      <CardDescription className="text-xs sm:text-sm">Ro'yxatdan o'tganlar</CardDescription>
+            {/* Aloqa Group */}
+            <div>
+              <p className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-4">Aloqa</p>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setActiveTab('messages')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'messages' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <Mail className="w-4 h-4" /> Xabarlar
+                  {unreadCount > 0 && <Badge variant="destructive" className="ml-auto h-5 w-5 p-0 flex items-center justify-center text-[10px]">{unreadCount}</Badge>}
+                </button>
+                <button
+                  onClick={() => setActiveTab('chats')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'chats' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <MessageCircle className="w-4 h-4" /> Chat tarixi
+                </button>
+                <button
+                  onClick={() => setActiveTab('testimonials')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'testimonials' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <Quote className="w-4 h-4" /> Sharhlar
+                </button>
+                <button
+                  onClick={() => setActiveTab('team')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'team' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'}`}
+                >
+                  <Users className="w-4 h-4" /> Jamoa
+                </button>
+              </div>
+            </div>
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto bg-muted/20 dark:bg-black/20 p-4 sm:p-8">
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* Mobile Navigation - Scrollable Tabs */}
+            <div className="md:hidden flex overflow-x-auto pb-4 gap-2 no-scrollbar -mx-4 px-4">
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'users' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-card/50 text-muted-foreground border border-border/40'}`}
+              >
+                <Users className="w-3.5 h-3.5" /> Foydalanuvchilar
+              </button>
+              <button
+                onClick={() => setActiveTab('faq')}
+                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'faq' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-card/50 text-muted-foreground border border-border/40'}`}
+              >
+                <HelpCircle className="w-3.5 h-3.5" /> FAQ
+              </button>
+              <button
+                onClick={() => setActiveTab('courses')}
+                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'courses' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-card/50 text-muted-foreground border border-border/40'}`}
+              >
+                <GraduationCap className="w-3.5 h-3.5" /> Kurslar
+              </button>
+              <button
+                onClick={() => setActiveTab('blog')}
+                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'blog' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-card/50 text-muted-foreground border border-border/40'}`}
+              >
+                <FileText className="w-3.5 h-3.5" /> Blog
+              </button>
+              <button
+                onClick={() => setActiveTab('messages')}
+                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === 'messages' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-card/50 text-muted-foreground border border-border/40'}`}
+              >
+                <Mail className="w-3.5 h-3.5" /> Xabarlar {unreadCount > 0 && `(${unreadCount})`}
+              </button>
+            </div>
+
+            {/* Content based on activeTab */}
+            {activeTab === 'users' && (
+              <div className="space-y-8">
+                <AdminUserCharts users={users} gameSessions={gameSessions} />
+                <Card className="overflow-hidden border-border/40 shadow-xl">
+                  <CardHeader className="px-3 sm:px-6 py-3 sm:py-6 bg-card/50">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <CardTitle className="text-xl font-black">Foydalanuvchilar</CardTitle>
+                        <CardDescription>Platformada ro'yxatdan o'tgan barcha foydalanuvchilar</CardDescription>
+                      </div>
+                      <div className="relative w-full sm:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Ism yoki telefon raqami..."
+                          value={userSearchQuery}
+                          onChange={(e) => setUserSearchQuery(e.target.value)}
+                          className="pl-9 h-11 rounded-xl border-border/40 focus:border-primary/40 focus:ring-primary/10"
+                        />
+                      </div>
                     </div>
-                    <div className="relative w-full sm:w-72">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Ism yoki telefon raqami..."
-                        value={userSearchQuery}
-                        onChange={(e) => setUserSearchQuery(e.target.value)}
-                        className="pl-9 h-9 text-sm"
-                      />
-                      {userSearchQuery && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
-                          onClick={() => setUserSearchQuery('')}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
-                  {loadingUsers ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {users
-                        .filter((profile) => {
-                          if (!userSearchQuery.trim()) return true;
-                          const query = userSearchQuery.toLowerCase().replace(/\s/g, '');
-                          const username = profile.username.toLowerCase();
-                          const phone = (profile.phone_number || '').replace(/\s/g, '').toLowerCase();
-                          return username.includes(query) || phone.includes(query);
-                        })
-                        .map((profile, index) => (
-                        <div key={profile.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2 sm:p-4 rounded-xl border bg-secondary/30 gap-2 sm:gap-4">
-                          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-                            <span className="text-sm sm:text-lg font-bold text-muted-foreground w-6 sm:w-8 shrink-0">#{index + 1}</span>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                                <p className="font-semibold text-sm sm:text-base truncate">{profile.username}</p>
-                                {adminUsers.includes(profile.user_id) && (
-                                  <Badge variant="default" className="text-[10px] sm:text-xs h-4 sm:h-5">Admin</Badge>
-                                )}
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader className="bg-muted/30">
+                        <TableRow>
+                          <TableHead className="w-12 font-black">#</TableHead>
+                          <TableHead className="font-black">Foydalanuvchi</TableHead>
+                          <TableHead className="font-black">Ball / Masala</TableHead>
+                          <TableHead className="font-black">Sana</TableHead>
+                          <TableHead className="text-right font-black pr-6">Amallar</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users
+                          .filter((profile) => {
+                            if (!userSearchQuery.trim()) return true;
+                            const query = userSearchQuery.toLowerCase().replace(/\s/g, '');
+                            const username = profile.username.toLowerCase();
+                            const phone = (profile.phone_number || '').replace(/\s/g, '').toLowerCase();
+                            return username.includes(query) || phone.includes(query);
+                          })
+                          .map((profile, index) => (
+                            <TableRow key={profile.id} className="hover:bg-primary/[0.02]">
+                              <TableCell className="font-bold text-muted-foreground">#{index + 1}</TableCell>
+                              <TableCell>
+                                <div className="flex flex-col">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold">{profile.username}</span>
+                                    {adminUsers.includes(profile.user_id) && (
+                                      <Badge variant="default" className="text-[9px] h-4">Admin</Badge>
+                                    )}
+                                  </div>
+                                  <span className="text-xs text-muted-foreground">{profile.phone_number ? formatPhoneNumber(profile.phone_number) : "Telefon yo'q"}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-col">
+                                  <span className="font-black text-primary">{profile.total_score.toLocaleString()}</span>
+                                  <span className="text-xs text-muted-foreground">{profile.total_problems_solved} masala</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground">
+                                {formatDate(profile.created_at).split(',')[0]}
+                              </TableCell>
+                              <TableCell className="text-right pr-6">
+                                <div className="flex justify-end gap-1">
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => toggleAdminRole(profile.user_id)}>
+                                    <ShieldCheck className={`h-4 w-4 ${adminUsers.includes(profile.user_id) ? 'text-primary' : 'text-muted-foreground'}`} />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-destructive" onClick={() => setDeleteConfirmDialog({ open: true, userId: profile.user_id, username: profile.username })}>
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {activeTab === 'faq' && <FAQManager />}
+            {activeTab === 'reports' && <AdminReports />}
+            {activeTab === 'competitions' && <CompetitionsManager />}
+            {activeTab === 'courses' && <CourseManager isAdmin={isAdmin} />}
+            {activeTab === 'files' && <FileManager isAdmin={isAdmin} />}
+            {activeTab === 'testimonials' && <TestimonialsManager />}
+            {activeTab === 'team' && <TeamMembersManager />}
+            {activeTab === 'chats' && <ChatHistoryManager />}
+            {activeTab === 'blog' && (
+               <Card className="overflow-hidden border-border/40 shadow-xl">
+                 <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-card/50">
+                   <div>
+                     <CardTitle className="text-xl font-black">Blog maqolalari</CardTitle>
+                     <CardDescription>Maqolalarni boshqarish va nashr qilish</CardDescription>
+                   </div>
+                   <Button onClick={() => openBlogDialog()} className="bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl px-6">
+                     <Plus className="w-4 h-4 mr-2" /> Yangi maqola
+                   </Button>
+                 </CardHeader>
+                 <CardContent className="p-0">
+                    <Table>
+                      <TableHeader className="bg-muted/30">
+                        <TableRow>
+                          <TableHead className="font-black">Maqola</TableHead>
+                          <TableHead className="font-black">Holat</TableHead>
+                          <TableHead className="font-black">Muallif</TableHead>
+                          <TableHead className="text-right font-black pr-6">Amallar</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {blogPosts.map((post) => (
+                          <TableRow key={post.id} className="hover:bg-primary/[0.02]">
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <span className="font-bold">{post.title}</span>
+                                <span className="text-xs text-muted-foreground line-clamp-1">{post.excerpt}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-[10px] sm:text-sm text-muted-foreground">
-                                <span className="truncate">
-                                  {profile.total_problems_solved} masala · {profile.best_streak} seriya
-                                </span>
-                                {profile.phone_number && (
-                                  <span className="flex items-center gap-1 text-primary/80">
-                                    <Phone className="h-3 w-3" />
-                                    {formatPhoneNumber(profile.phone_number)}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4 pl-8 sm:pl-0">
-                            <div className="text-left sm:text-right">
-                              <p className="text-base sm:text-xl font-bold text-primary">{profile.total_score.toLocaleString()}</p>
-                              <p className="text-[10px] sm:text-xs text-muted-foreground">{formatDate(profile.created_at).split(',')[0]}</p>
-                            </div>
-                            {profile.user_id !== user?.id && (
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-7 sm:h-9 text-[10px] sm:text-sm px-2 sm:px-3"
-                                  onClick={() => toggleAdminRole(profile.user_id)}
-                                >
-                                  {adminUsers.includes(profile.user_id) ? (
-                                    <><X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /><span className="hidden sm:inline">Admin o'chirish</span><span className="sm:hidden">O'chirish</span></>
-                                  ) : (
-                                    <><ShieldCheck className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /><span className="hidden sm:inline">Admin qilish</span><span className="sm:hidden">Admin</span></>
-                                  )}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={post.is_published ? 'default' : 'secondary'} className="text-[10px]">
+                                {post.is_published ? 'Nashr etilgan' : 'Qoralama'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs font-medium text-muted-foreground">{post.author}</TableCell>
+                            <TableCell className="text-right pr-6">
+                              <div className="flex justify-end gap-1">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => togglePostPublish(post)}>
+                                  {post.is_published ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
                                 </Button>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  className="h-7 sm:h-9 text-[10px] sm:text-sm px-2 sm:px-3"
-                                  onClick={() => setDeleteConfirmDialog({ open: true, userId: profile.user_id, username: profile.username })}
-                                >
-                                  <X className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                                  <span className="hidden sm:inline">O'chirish</span>
-                                  <span className="sm:hidden">Del</span>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => openBlogDialog(post)}>
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-destructive" onClick={() => handleDeletePost(post.id)}>
+                                  <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                      {users.filter((profile) => {
-                        if (!userSearchQuery.trim()) return true;
-                        const query = userSearchQuery.toLowerCase().replace(/\s/g, '');
-                        const username = profile.username.toLowerCase();
-                        const phone = (profile.phone_number || '').replace(/\s/g, '').toLowerCase();
-                        return username.includes(query) || phone.includes(query);
-                      }).length === 0 && (
-                        <div className="text-center py-8 text-muted-foreground">
-                          <Search className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                          <p>"{userSearchQuery}" bo'yicha foydalanuvchi topilmadi</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Reports Tab */}
-            <TabsContent value="reports">
-              <AdminReports />
-            </TabsContent>
-
-            {/* Competitions Tab */}
-            <TabsContent value="competitions">
-              <CompetitionsManager />
-            </TabsContent>
-
-            {/* Courses Tab */}
-            <TabsContent value="courses">
-              <Card className="overflow-hidden">
-                <CardContent className="p-2 sm:p-6">
-                  <CourseManager isAdmin={isAdmin} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Files Tab */}
-            <TabsContent value="files">
-              <Card className="overflow-hidden">
-                <CardContent className="p-2 sm:p-6">
-                  <FileManager isAdmin={isAdmin} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-
-            {/* FAQ Tab */}
-            <TabsContent value="faq">
-              <FAQManager />
-            </TabsContent>
-
-            {/* Testimonials Tab */}
-            <TabsContent value="testimonials">
-              <TestimonialsManager />
-            </TabsContent>
-
-            {/* Team Members Tab */}
-            <TabsContent value="team">
-              <TeamMembersManager />
-            </TabsContent>
-
-            {/* Chat History Tab */}
-            <TabsContent value="chats">
-              <ChatHistoryManager />
-            </TabsContent>
-
-            {/* Messages Tab */}
-            <TabsContent value="messages">
-              <Card className="overflow-hidden">
-                <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-3 sm:py-6">
-                  <div>
-                    <CardTitle className="text-base sm:text-lg">Kontakt xabarlari</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Foydalanuvchilardan kelgan xabarlar</CardDescription>
-                  </div>
-                  <Button onClick={() => openBlogDialog()} size="sm" className="w-full sm:w-auto h-8 sm:h-10">
-                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    Yangi maqola
-                  </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                 </CardContent>
+               </Card>
+            )}
+            {activeTab === 'messages' && (
+              <Card className="overflow-hidden border-border/40 shadow-xl">
+                <CardHeader className="p-6 bg-card/50">
+                  <CardTitle className="text-xl font-black">Kontakt xabarlari</CardTitle>
+                  <CardDescription>Foydalanuvchilardan kelgan xabarlar</CardDescription>
                 </CardHeader>
-                <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
-                  {loadingMessages ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : messages.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Mail className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p>Hali xabarlar yo'q</p>
+                <CardContent className="p-4 sm:p-6">
+                  {messages.length === 0 ? (
+                    <div className="text-center py-20">
+                      <Mail className="w-16 h-16 mx-auto mb-4 opacity-10 text-primary" />
+                      <p className="text-muted-foreground font-bold">Hozircha xabarlar yo'q</p>
                     </div>
                   ) : (
-                    <div className="space-y-2 sm:space-y-3">
+                    <div className="grid grid-cols-1 gap-4">
                       {messages.map((message) => (
                         <div
                           key={message.id}
-                          className={`p-2 sm:p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md ${message.is_read ? 'bg-secondary/30' : 'bg-primary/5 border-primary/20'}`}
+                          className={`p-5 rounded-2xl border transition-all cursor-pointer hover:shadow-lg ${message.is_read ? 'bg-card/50 border-border/40' : 'bg-primary/5 border-primary/20 ring-1 ring-primary/10'}`}
                           onClick={() => handleViewMessage(message)}
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap">
-                                {!message.is_read && <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary shrink-0" />}
-                                <span className="font-semibold text-sm sm:text-base truncate">{message.name}</span>
-                                <span className="text-[10px] sm:text-sm text-muted-foreground truncate">({message.email})</span>
-                              </div>
-                              <p className="font-medium text-xs sm:text-sm truncate">{message.subject}</p>
-                              <p className="text-[10px] sm:text-sm text-muted-foreground truncate">{message.message}</p>
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex items-center gap-3">
+                              {!message.is_read && <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />}
+                              <span className="font-black text-lg">{message.name}</span>
                             </div>
-                            <div className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap self-end sm:self-start">{formatDate(message.created_at)}</div>
+                            <span className="text-xs font-bold text-muted-foreground">{formatDate(message.created_at)}</span>
                           </div>
+                          <p className="font-bold text-primary mb-1">{message.subject}</p>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{message.message}</p>
                         </div>
                       ))}
                     </div>
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            )}
+          </div>
+        </main>
+      </div>
 
-            {/* Blog Tab */}
-            <TabsContent value="blog">
-              <Card className="overflow-hidden">
-                <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 px-3 sm:px-6 py-3 sm:py-6">
-                  <div>
-                    <CardTitle className="text-base sm:text-lg">Blog maqolalari</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Maqolalarni yaratish va tahrirlash</CardDescription>
-                  </div>
-                  <Button onClick={() => openBlogDialog()} size="sm" className="w-full sm:w-auto h-8 sm:h-10">
-                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    Yangi maqola
-                  </Button>
-                </CardHeader>
-                <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
-                  {loadingPosts ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : blogPosts.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p>Hali maqolalar yo'q</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2 sm:space-y-3">
-                      {blogPosts.map((post) => (
-                        <div key={post.id} className="p-2 sm:p-4 rounded-xl border bg-secondary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap">
-                              <span className="font-semibold text-sm sm:text-base truncate">{post.title}</span>
-                              <Badge variant={post.is_published ? 'default' : 'secondary'} className="text-[10px] sm:text-xs h-4 sm:h-5">
-                                {post.is_published ? 'Chop etilgan' : 'Qoralama'}
-                              </Badge>
-                            </div>
-                            <p className="text-[10px] sm:text-sm text-muted-foreground truncate">{post.excerpt}</p>
-                            <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-2 text-[10px] sm:text-xs text-muted-foreground flex-wrap">
-                              <span className="flex items-center gap-0.5 sm:gap-1"><User className="h-2.5 w-2.5 sm:h-3 sm:w-3" />{post.author}</span>
-                              <span className="flex items-center gap-0.5 sm:gap-1"><Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />{post.read_time}</span>
-                              <Badge variant="outline" className="text-[10px] sm:text-xs h-4 sm:h-5">{post.category}</Badge>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1 sm:gap-2 self-end sm:self-center">
-                            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9" onClick={() => togglePostPublish(post)}>
-                              {post.is_published ? <X className="h-3 w-3 sm:h-4 sm:w-4" /> : <Check className="h-3 w-3 sm:h-4 sm:w-4" />}
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9" onClick={() => openBlogDialog(post)}>
-                              <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-9 sm:w-9" onClick={() => handleDeletePost(post.id)}>
-                              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-
-      {/* Message Dialog */}
+      {/* Dialogs remain the same... */}
       <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md rounded-3xl border-border/40">
           <DialogHeader>
-            <DialogTitle>{selectedMessage?.subject}</DialogTitle>
-            <DialogDescription>{selectedMessage?.name} ({selectedMessage?.email})</DialogDescription>
+            <DialogTitle className="text-xl font-black">{selectedMessage?.subject}</DialogTitle>
+            <DialogDescription className="font-bold">{selectedMessage?.name} ({selectedMessage?.email})</DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground mb-2">{selectedMessage && formatDate(selectedMessage.created_at)}</p>
-            <p className="whitespace-pre-wrap">{selectedMessage?.message}</p>
+          <div className="py-6 space-y-4">
+            <div className="p-4 rounded-2xl bg-muted/30 text-sm leading-relaxed">
+              {selectedMessage?.message}
+            </div>
+            <p className="text-xs font-bold text-muted-foreground text-right">{selectedMessage && formatDate(selectedMessage.created_at)}</p>
           </div>
           <DialogFooter>
-            <Button variant="destructive" onClick={() => selectedMessage && handleDeleteMessage(selectedMessage.id)}>
-              <Trash2 className="h-4 w-4 mr-2" />O'chirish
+            <Button variant="destructive" onClick={() => selectedMessage && handleDeleteMessage(selectedMessage.id)} className="w-full rounded-xl font-black h-12">
+              <Trash2 className="w-4 h-4 mr-2" /> Xabarni o'chirish
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Blog Post Dialog */}
       <Dialog open={blogDialogOpen} onOpenChange={setBlogDialogOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto mx-2">
+        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-border/40">
           <DialogHeader>
-            <DialogTitle>{editingPost ? 'Maqolani tahrirlash' : 'Yangi maqola'}</DialogTitle>
+            <DialogTitle className="text-2xl font-black">{editingPost ? 'Maqolani tahrirlash' : 'Yangi maqola'}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-6">
             <div className="space-y-2">
-              <Label>Sarlavha</Label>
-              <Input value={blogForm.title} onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })} placeholder="Maqola sarlavhasi" />
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Sarlavha</Label>
+              <Input value={blogForm.title} onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })} className="h-12 rounded-xl font-bold" />
             </div>
             <div className="space-y-2">
-              <Label>Qisqa tavsif</Label>
-              <Textarea value={blogForm.excerpt} onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })} placeholder="Maqola haqida qisqacha..." rows={2} />
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Qisqa tavsif</Label>
+              <Textarea value={blogForm.excerpt} onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })} className="rounded-xl font-medium" rows={2} />
             </div>
             <div className="space-y-2">
-              <Label>To'liq matn</Label>
-              <Textarea value={blogForm.content} onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })} placeholder="Maqola matni..." rows={6} />
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">To'liq matn</Label>
+              <Textarea value={blogForm.content} onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })} className="rounded-xl font-medium" rows={8} />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label>Kategoriya</Label>
-                <Select value={blogForm.category} onValueChange={(value) => setBlogForm({ ...blogForm, category: value })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">Kategoriya</Label>
+                <Select value={blogForm.category} onValueChange={(v) => setBlogForm({ ...blogForm, category: v })}>
+                  <SelectTrigger className="h-12 rounded-xl"><SelectValue /></SelectTrigger>
+                  <SelectContent className="rounded-xl">
                     {CATEGORY_OPTIONS.map((cat) => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>O'qish vaqti</Label>
-                <Input value={blogForm.read_time} onChange={(e) => setBlogForm({ ...blogForm, read_time: e.target.value })} placeholder="5 daqiqa" />
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">O'qish vaqti</Label>
+                <Input value={blogForm.read_time} onChange={(e) => setBlogForm({ ...blogForm, read_time: e.target.value })} className="h-12 rounded-xl" />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div className="space-y-2">
-                <Label>Muallif</Label>
-                <Input value={blogForm.author} onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Rang</Label>
-                <Select value={blogForm.gradient} onValueChange={(value) => setBlogForm({ ...blogForm, gradient: value })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {GRADIENT_OPTIONS.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={blogForm.is_published} onCheckedChange={(checked) => setBlogForm({ ...blogForm, is_published: checked })} />
-              <Label>Chop etish</Label>
+            <div className="flex items-center gap-4 p-4 rounded-2xl bg-muted/30">
+              <Switch checked={blogForm.is_published} onCheckedChange={(v) => setBlogForm({ ...blogForm, is_published: v })} />
+              <Label className="font-bold cursor-pointer">Maqolani darhol nashr qilish</Label>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setBlogDialogOpen(false)}>Bekor qilish</Button>
-            <Button onClick={handleSavePost} disabled={savingPost}>
-              {savingPost && <Loader2 className="h-4 w-4 animate-spin mr-2" />}Saqlash
+          <DialogFooter className="gap-3">
+            <Button variant="ghost" onClick={() => setBlogDialogOpen(false)} className="font-bold rounded-xl">Bekor qilish</Button>
+            <Button onClick={handleSavePost} disabled={savingPost} className="bg-primary hover:bg-primary/90 text-white font-black px-8 rounded-xl h-12 shadow-lg shadow-primary/20">
+              {savingPost ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />} Saqlash
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete User Confirmation Dialog */}
       <Dialog open={deleteConfirmDialog.open} onOpenChange={(open) => !open && setDeleteConfirmDialog({ open: false, userId: '', username: '' })}>
-        <DialogContent className="max-w-[95vw] sm:max-w-md">
+        <DialogContent className="max-w-[95vw] sm:max-w-md rounded-3xl border-border/40">
           <DialogHeader>
-            <DialogTitle className="text-destructive">⚠️ Foydalanuvchini o'chirish</DialogTitle>
-            <DialogDescription>
-              <strong>{deleteConfirmDialog.username}</strong> foydalanuvchisini o'chirmoqchimisiz? Bu amalni qaytarib bo'lmaydi — barcha ma'lumotlari (profil, o'yin natijalari, badgelar) o'chiriladi.
+            <DialogTitle className="text-xl font-black text-destructive">⚠️ Foydalanuvchini o'chirish</DialogTitle>
+            <DialogDescription className="text-base font-medium pt-2">
+              <strong>{deleteConfirmDialog.username}</strong> foydalanuvchisini o'chirmoqchimisiz? Barcha ma'lumotlar butunlay yo'qoladi.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setDeleteConfirmDialog({ open: false, userId: '', username: '' })}>
-              Bekor qilish
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => handleDeleteUser(deleteConfirmDialog.userId)}
-              disabled={deletingUser}
-            >
-              {deletingUser && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              Ha, o'chirish
+          <DialogFooter className="gap-3 mt-4">
+            <Button variant="ghost" onClick={() => setDeleteConfirmDialog({ open: false, userId: '', username: '' })} className="font-bold rounded-xl">Bekor qilish</Button>
+            <Button variant="destructive" onClick={() => handleDeleteUser(deleteConfirmDialog.userId)} disabled={deletingUser} className="font-black px-6 rounded-xl h-12">
+              {deletingUser ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />} Ha, o'chirish
             </Button>
           </DialogFooter>
         </DialogContent>

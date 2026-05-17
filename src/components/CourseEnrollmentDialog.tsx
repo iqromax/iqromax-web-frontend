@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import api from '@/lib/axios';
 
 interface CourseEnrollmentDialogProps {
   children: React.ReactNode;
@@ -32,22 +33,38 @@ export const CourseEnrollmentDialog = ({ children, courseName }: CourseEnrollmen
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    message: ''
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    toast.success("Arizongiz muvaffaqiyatli yuborildi!");
-    
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsSuccess(false);
-    }, 3000);
+
+    try {
+      await api.post('feedback/', {
+        name: formData.name,
+        email: formData.phone, // We use email field to store phone number
+        subject: `Kursga ariza: ${courseName || 'Noma\'lum kurs'}`,
+        message: formData.message,
+        is_read: false
+      });
+      setIsSuccess(true);
+      toast.success("Arizangiz muvaffaqiyatli yuborildi!");
+      setFormData({ name: '', phone: '', message: '' });
+      
+      setTimeout(() => {
+        setIsOpen(false);
+        setIsSuccess(false);
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      toast.error("Arizani yuborishda xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,6 +104,8 @@ export const CourseEnrollmentDialog = ({ children, courseName }: CourseEnrollmen
                     <Input 
                       id="name" 
                       required 
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Masalan: Azizbek Olimov" 
                       className="h-12 pl-11 rounded-2xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:ring-emerald-500/20 transition-all font-medium"
                     />
@@ -103,6 +122,8 @@ export const CourseEnrollmentDialog = ({ children, courseName }: CourseEnrollmen
                       id="phone" 
                       required 
                       type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="+998 (__) ___-__-__" 
                       className="h-12 pl-11 rounded-2xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:ring-emerald-500/20 transition-all font-medium"
                     />
@@ -117,6 +138,8 @@ export const CourseEnrollmentDialog = ({ children, courseName }: CourseEnrollmen
                     <MessageSquare className="absolute left-4 top-4 w-4 h-4 text-zinc-400" />
                     <Textarea 
                       id="message" 
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Sizni nima qiziqtiryapti?" 
                       className="min-h-[100px] pl-11 pt-3.5 rounded-2xl border-zinc-100 bg-zinc-50/50 focus:bg-white focus:ring-emerald-500/20 transition-all font-medium resize-none"
                     />

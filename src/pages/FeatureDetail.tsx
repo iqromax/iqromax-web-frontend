@@ -1,8 +1,18 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import api from '@/lib/axios';
 import { motion, useScroll } from 'framer-motion';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
+import * as Icons from 'lucide-react';
+
+const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
+  const IconComponent = (Icons as any)[name];
+  if (!IconComponent) return <Icons.Zap className={className} />;
+  return <IconComponent className={className} />;
+};
+
 import { 
   ChevronLeft, 
   Gamepad2, 
@@ -17,7 +27,6 @@ import {
   ArrowRight,
   MousePointer2
 } from 'lucide-react';
-import { useRef } from 'react';
 import { CourseEnrollmentDialog } from '@/components/CourseEnrollmentDialog';
 
 const featureDetails: Record<string, any> = {
@@ -110,9 +119,54 @@ const featureDetails: Record<string, any> = {
 const FeatureDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const feature = id ? featureDetails[id] : null;
+  
+  const [feature, setFeature] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!feature) {
+  useEffect(() => {
+    const getFeature = async () => {
+      try {
+        const res = await api.get(`features/${id}/`);
+        setFeature(res.data);
+      } catch (err) {
+        console.error("Error fetching feature from API:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getFeature();
+  }, [id]);
+
+  const staticFeature = id ? featureDetails[id] : null;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+        <div className="text-center font-bold text-zinc-500 animate-pulse">Yuklanmoqda...</div>
+      </div>
+    );
+  }
+
+  const finalFeature = feature ? {
+    title: feature.name,
+    subtitle: feature.detail ? feature.detail.subtitle : feature.description,
+    desc: feature.detail ? feature.detail.description : feature.description,
+    image: feature.detail ? feature.detail.image : "https://images.unsplash.com/photo-1611996598516-5147a0db03dd?q=80&w=2070",
+    icon: feature.icon,
+    color: feature.color || "emerald",
+    stats: { users: "25k+", rating: "4.9", tasks: "500+" },
+    steps: feature.detail ? [
+      { t: feature.detail.step1_title, d: feature.detail.step1_desc },
+      { t: feature.detail.step2_title, d: feature.detail.step2_desc },
+      { t: feature.detail.step3_title, d: feature.detail.step3_desc }
+    ] : [
+      { t: "Darajani tanlang", d: "Bolaning bilimiga mos boshlang'ich nuqta." },
+      { t: "O'yinda qatnashing", d: "Interaktiv va qiziqarli topshiriqlar." },
+      { t: "Natijani ko'ring", d: "Har bir to'g'ri javob uchun mukofot." }
+    ]
+  } : staticFeature;
+
+  if (!finalFeature) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50">
         <div className="text-center p-6 rounded-2xl bg-white shadow-xl border border-zinc-100 max-w-xs">
@@ -123,7 +177,6 @@ const FeatureDetail = () => {
     );
   }
 
-  const Icon = feature.icon;
   const colorMap: Record<string, string> = {
     emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/10",
     blue: "text-blue-500 bg-blue-500/10 border-blue-500/20 shadow-blue-500/10",
@@ -132,6 +185,9 @@ const FeatureDetail = () => {
     violet: "text-violet-500 bg-violet-500/10 border-violet-500/20 shadow-violet-500/10",
     cyan: "text-cyan-500 bg-cyan-500/10 border-cyan-500/20 shadow-cyan-500/10"
   };
+
+  const isStringIcon = typeof finalFeature.icon === 'string';
+  const IconComponent = finalFeature.icon;
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] text-zinc-900 selection:bg-emerald-500/10 selection:text-emerald-600">
@@ -154,7 +210,7 @@ const FeatureDetail = () => {
             </Button>
             <span className="text-xs font-bold text-zinc-400 tracking-wider uppercase">Orqaga</span>
           </motion.div>
-
+ 
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div className="max-w-xl">
               <motion.div
@@ -162,25 +218,25 @@ const FeatureDetail = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl ${colorMap[feature.color]} border text-[9px] font-black tracking-widest mb-6 uppercase shadow-md`}>
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-xl ${colorMap[finalFeature.color] || colorMap['emerald']} border text-[9px] font-black tracking-widest mb-6 uppercase shadow-md`}>
                   <Sparkles className="w-3 h-3" />
                   PREMIUM
                 </div>
                 
                 <h1 className="text-3xl md:text-5xl font-black mb-5 leading-tight tracking-tight">
-                  {feature.title}
+                  {finalFeature.title}
                 </h1>
                 
                 <p className="text-lg md:text-xl font-bold text-zinc-400 mb-5">
-                  {feature.subtitle}
+                  {finalFeature.subtitle}
                 </p>
                 
                 <p className="text-zinc-500 text-sm md:text-base leading-relaxed mb-8 font-medium">
-                  {feature.desc}
+                  {finalFeature.desc}
                 </p>
-
+ 
                 <div className="flex flex-wrap items-center gap-4">
-                  <CourseEnrollmentDialog courseName={feature.title}>
+                  <CourseEnrollmentDialog courseName={finalFeature.title}>
                     <Button 
                       size="lg"
                       className="h-12 rounded-2xl bg-zinc-900 text-white hover:bg-emerald-600 font-black px-8 text-base shadow-xl shadow-zinc-900/10 transition-all hover:scale-105"
@@ -190,12 +246,12 @@ const FeatureDetail = () => {
                   </CourseEnrollmentDialog>
                   
                   <div className="flex items-center gap-2 px-4 h-12 rounded-2xl bg-white border border-zinc-100 shadow-lg shadow-zinc-200/50">
-                    <span className="text-xs font-black text-zinc-900">{feature.stats.users} faol</span>
+                    <span className="text-xs font-black text-zinc-900">{finalFeature.stats?.users || "25k+"} faol</span>
                   </div>
                 </div>
               </motion.div>
             </div>
-
+ 
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -204,37 +260,41 @@ const FeatureDetail = () => {
             >
               <div className="relative z-10 rounded-[30px] md:rounded-[40px] overflow-hidden border-[8px] border-white shadow-2xl w-full max-w-[420px] aspect-square bg-zinc-100">
                 <img 
-                  src={feature.image} 
-                  alt={feature.title}
+                  src={finalFeature.image} 
+                  alt={finalFeature.title}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
               </div>
-
+ 
               {/* Compact Floating Badges */}
               <motion.div 
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -top-6 -right-6 p-4 rounded-2xl bg-white shadow-xl border border-zinc-100 z-20 hidden md:block"
               >
-                <div className={`w-8 h-8 rounded-lg ${colorMap[feature.color]} flex items-center justify-center mb-1`}>
-                  <Icon className="w-4 h-4" />
+                <div className={`w-8 h-8 rounded-lg ${colorMap[finalFeature.color] || colorMap['emerald']} flex items-center justify-center mb-1`}>
+                  {isStringIcon ? (
+                    <DynamicIcon name={finalFeature.icon} className="w-4 h-4" />
+                  ) : IconComponent ? (
+                    <IconComponent className="w-4 h-4" />
+                  ) : null}
                 </div>
-                <p className="text-sm font-black text-zinc-900">{feature.stats.rating}</p>
+                <p className="text-sm font-black text-zinc-900">{finalFeature.stats?.rating || "4.9"}</p>
               </motion.div>
-
+ 
               <motion.div 
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                 className="absolute -bottom-6 -left-6 p-4 rounded-2xl bg-zinc-900 text-white shadow-xl z-20 hidden md:block"
               >
                 <p className="text-[8px] font-black text-white/50 uppercase tracking-widest">DARJA</p>
-                <p className="text-sm font-black">{feature.stats.tasks}</p>
+                <p className="text-sm font-black">{finalFeature.stats?.tasks || "500+"}</p>
               </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
-
+ 
       {/* COMPACT HOW IT WORKS */}
       <section className="py-16 bg-zinc-50 border-y border-zinc-100">
         <div className="container max-w-5xl mx-auto px-6">
@@ -242,9 +302,9 @@ const FeatureDetail = () => {
             <h2 className="text-2xl md:text-3xl font-black mb-3 tracking-tight">Qanday <span className="text-emerald-500">ishlaydi?</span></h2>
             <p className="text-zinc-500 text-sm md:text-base font-medium max-w-xl mx-auto">Siz uchun jarayonni maksimal darajada oson qildik.</p>
           </div>
-
+ 
           <div className="grid md:grid-cols-3 gap-6">
-            {feature.steps.map((step: any, i: number) => (
+            {finalFeature.steps?.map((step: any, i: number) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 10 }}
@@ -263,7 +323,7 @@ const FeatureDetail = () => {
           </div>
         </div>
       </section>
-
+ 
       {/* COMPACT CTA */}
       <section className="py-20">
         <div className="container max-w-3xl mx-auto px-6 text-center">
@@ -277,7 +337,7 @@ const FeatureDetail = () => {
               Matematikaga bo'lgan <span className="text-emerald-400">muhabbatni</span> uyg'oting!
             </h2>
             <div className="flex flex-wrap justify-center gap-3">
-              <CourseEnrollmentDialog courseName={feature.title}>
+              <CourseEnrollmentDialog courseName={finalFeature.title}>
                 <Button 
                   size="lg"
                   className="h-12 rounded-2xl bg-emerald-500 text-zinc-900 hover:bg-white font-black px-10 text-base shadow-xl shadow-emerald-500/20 transition-all hover:scale-105"
@@ -289,7 +349,7 @@ const FeatureDetail = () => {
           </motion.div>
         </div>
       </section>
-
+ 
       <Footer />
     </div>
   );
