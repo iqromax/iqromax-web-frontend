@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { blogPosts } from '@/data/blogData';
 import { useEffect, useState } from 'react';
-import api from '@/lib/axios';
+import api, { getImageUrl } from '@/lib/axios';
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -128,7 +128,7 @@ const BlogDetail = () => {
               <div className="flex flex-col gap-6 items-center">
                 <div className="w-12 h-12 rounded-full border-2 border-emerald-500 p-0.5 overflow-hidden flex items-center justify-center bg-zinc-50">
                   {post.author_image || post.authorImage ? (
-                    <img src={post.author_image || post.authorImage} alt={post.author} className="w-full h-full rounded-full object-cover" />
+                    <img src={getImageUrl(post.author_image || post.authorImage)} alt={post.author} className="w-full h-full rounded-full object-cover" />
                   ) : <User className="w-5 h-5 text-zinc-400" />}
                 </div>
                 <div className="h-12 w-[1px] bg-zinc-100" />
@@ -178,7 +178,7 @@ const BlogDetail = () => {
                   <div className="flex items-center gap-2.5">
                     <div className="w-6 h-6 rounded-full overflow-hidden border border-zinc-200 flex items-center justify-center bg-zinc-50">
                        {post.author_image || post.authorImage ? (
-                         <img src={post.author_image || post.authorImage} alt={post.author} className="w-full h-full object-cover" />
+                         <img src={getImageUrl(post.author_image || post.authorImage)} alt={post.author} className="w-full h-full object-cover" />
                        ) : <User className="w-3 h-3 text-zinc-400" />}
                     </div>
                     {post.author}
@@ -194,7 +194,7 @@ const BlogDetail = () => {
                 className="relative h-[300px] md:h-[540px] rounded-[48px] overflow-hidden mb-16 shadow-2xl shadow-zinc-200/50"
               >
                 <img 
-                  src={post.image} 
+                  src={getImageUrl(post.image)} 
                   alt={post.title}
                   className="w-full h-full object-cover"
                 />

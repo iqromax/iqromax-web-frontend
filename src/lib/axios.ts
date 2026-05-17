@@ -12,4 +12,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export const getImageUrl = (path: string | undefined | null) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/';
+  const base = apiBase.replace(/\/api\/?$/, '');
+  return `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 export default api;

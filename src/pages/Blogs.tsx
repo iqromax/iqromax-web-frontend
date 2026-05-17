@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { blogPosts } from '@/data/blogData';
 import { useState, useEffect } from 'react';
-import api from '@/lib/axios';
+import api, { getImageUrl } from '@/lib/axios';
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -104,7 +104,7 @@ const Blogs = () => {
               const idOrSlug = isDb ? post.slug : post.id;
               const dateText = isDb ? new Date(post.created_at).toLocaleDateString() : post.date;
               const excerptText = isDb ? (post.content ? post.content.slice(0, 100) + '...' : '') : post.excerpt;
-              const authorImageSrc = isDb && post.author_image ? post.author_image : `https://i.pravatar.cc/100?u=${post.author}`;
+              const authorImageSrc = isDb && post.author_image ? getImageUrl(post.author_image) : `https://i.pravatar.cc/100?u=${post.author}`;
 
               return (
                 <motion.article
@@ -118,7 +118,7 @@ const Blogs = () => {
                 >
                   <div className="relative h-56 overflow-hidden bg-zinc-100">
                     <img 
-                      src={post.image} 
+                      src={getImageUrl(post.image)} 
                       alt={post.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />

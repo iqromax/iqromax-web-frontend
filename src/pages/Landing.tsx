@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import api from '@/lib/axios';
+import api, { getImageUrl } from '@/lib/axios';
 import * as Icons from 'lucide-react';
 
 const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
@@ -250,7 +250,7 @@ const Landing = () => {
                       {/* Background Layer */}
                       <div className="absolute inset-0">
                         <img 
-                          src={slide.image} 
+                          src={getImageUrl(slide.image)} 
                           alt="" 
                           className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
                         />
@@ -452,12 +452,12 @@ const Landing = () => {
 
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex -ml-4">
-                {(dbBlogs.length > 0 ? dbBlogs : blogPosts).map((post, i) => {
+                 {(dbBlogs.length > 0 ? dbBlogs : blogPosts).map((post, i) => {
                   const isDb = !!post.slug;
                   const idOrSlug = isDb ? post.slug : post.id;
                   const dateText = isDb ? new Date(post.created_at).toLocaleDateString() : post.date;
                   const excerptText = isDb ? (post.content ? post.content.slice(0, 100) + '...' : '') : post.excerpt;
-                  const authorImageSrc = isDb && post.author_image ? post.author_image : `https://i.pravatar.cc/100?u=${post.author}`;
+                  const authorImageSrc = isDb && post.author_image ? getImageUrl(post.author_image) : `https://i.pravatar.cc/100?u=${post.author}`;
 
                   return (
                     <div key={post.id || idOrSlug} className="flex-[0_0_100%] min-w-0 pl-4 sm:flex-[0_0_50%] lg:flex-[0_0_33.33%] py-2">
@@ -475,7 +475,7 @@ const Landing = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.5 }}
-                            src={post.image} 
+                            src={getImageUrl(post.image)} 
                             alt={post.title}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
