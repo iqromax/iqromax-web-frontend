@@ -67,7 +67,7 @@ const AbacusPractice = () => {
   const { playSound, soundEnabled, toggleSound } = useSound();
   const isMobile = useIsMobile();
   
-  const [abacusColumns, setAbacusColumns] = useState(5);
+  const [abacusColumns, setAbacusColumns] = useState(10);
   const [abacusMode, setAbacusMode] = useState<AbacusMode>('beginner');
   const [abacusOrientation, setAbacusOrientation] = useState<AbacusOrientation>('horizontal');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -236,7 +236,7 @@ const AbacusPractice = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/40 shadow-sm">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/abacus-simulator" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           

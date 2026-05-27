@@ -76,7 +76,7 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
     navigate('/');
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string, external = false) => !external && location.pathname === path;
 
   const navItems = [
     { path: '/', icon: Home, label: "Asosiy" },
@@ -103,9 +103,15 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
             {navItems.map((item) => (
               <button
                 key={item.path}
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  if (item.external) {
+                    window.location.href = item.path;
+                  } else {
+                    navigate(item.path);
+                  }
+                }}
                 className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
-                  isActive(item.path)
+                  isActive(item.path, item.external)
                     ? 'text-primary bg-primary/5'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900'
                 }`}
@@ -174,11 +180,15 @@ export const Navbar = ({ soundEnabled, onToggleSound }: NavbarProps) => {
             <button
               key={item.path}
               onClick={() => {
-                navigate(item.path);
+                if (item.external) {
+                  window.location.href = item.path;
+                } else {
+                  navigate(item.path);
+                }
                 setMobileMenuOpen(false);
               }}
               className={`flex items-center gap-3 w-full p-3 rounded-lg text-sm font-bold transition-all ${
-                isActive(item.path)
+                isActive(item.path, item.external)
                   ? 'bg-primary/10 text-primary'
                   : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900'
               }`}
