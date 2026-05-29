@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const host = window.location.hostname;
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/',
+  baseURL: import.meta.env.VITE_API_URL || `http://${host}:8000/api/`,
 });
 
 api.interceptors.request.use((config) => {
@@ -17,7 +18,8 @@ export const getImageUrl = (path: string | undefined | null) => {
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
-  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/';
+  const host = window.location.hostname;
+  const apiBase = import.meta.env.VITE_API_URL || `http://${host}:8000/api/`;
   const base = apiBase.replace(/\/api\/?$/, '');
   return `${base}${path.startsWith('/') ? '' : '/'}${path}`;
 };
