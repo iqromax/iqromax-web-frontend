@@ -308,7 +308,7 @@ const AdminDashboard = () => {
     try {
       await api.post('ads/', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          
         }
       });
       toast.success("Reklama muvaffaqiyatli qo'shildi");
@@ -347,7 +347,7 @@ const AdminDashboard = () => {
     try {
       await api.patch(`ads/${editingAd.id}/`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          
         }
       });
       toast.success("Reklama muvaffaqiyatli tahrirlandi");
@@ -509,7 +509,7 @@ const AdminDashboard = () => {
 
     try {
       await api.patch(`feature-details/${editingFeatureDetail.id}/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: {  }
       });
       toast.success("Detail muvaffaqiyatli tahrirlandi");
       setIsEditFeatureDetailModalOpen(false);
@@ -574,7 +574,7 @@ const AdminDashboard = () => {
 
     try {
       await api.post('feature-details/', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: {  }
       });
       toast.success("Xususiyat detali muvaffaqiyatli qo'shildi");
       setIsAddFeatureDetailModalOpen(false);
@@ -616,7 +616,7 @@ const AdminDashboard = () => {
 
     try {
       await api.post('blogs/', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: {  }
       });
       toast.success("Yangilik muvaffaqiyatli qo'shildi");
       setIsAddNewsModalOpen(false);
@@ -664,7 +664,7 @@ const AdminDashboard = () => {
 
     try {
       await api.patch(`blogs/${editingNews.slug}/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: {  }
       });
       toast.success("Yangilik muvaffaqiyatli tahrirlandi");
       setIsEditNewsModalOpen(false);
