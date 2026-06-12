@@ -9,85 +9,18 @@ import {
 import { Button } from './ui/button';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Autoplay from 'embla-carousel-autoplay';
-import api from '@/lib/axios';
-import { getImageUrl } from '@/lib/axios';
+import api, { getImageUrl } from '@/lib/axios';
 
-// ----- Rang konfiguratsiyasi (inline CSS - Tailwind purge muammosidan xoli) -----
-const OVERLAY_STYLES: Record<string, {
-  gradient: string;
-  badgeBg: string;
-  badgeColor: string;
-  badgeBorder: string;
-  titleColor: string;
-  descColor: string;
-  btnColor: string;
-}> = {
-  white:   {
-    gradient:    'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.97) 55%, rgba(255,255,255,0.6) 75%, transparent 100%)',
-    badgeBg:     'rgba(16,185,129,0.15)',
-    badgeColor:  '#065f46',
-    badgeBorder: '1px solid rgba(16,185,129,0.35)',
-    titleColor:  '#111827',
-    descColor:   '#374151',
-    btnColor:    '#111827',
-  },
-  emerald: {
-    gradient:    'linear-gradient(to right, rgba(5,150,105,1) 0%, rgba(5,150,105,0.97) 50%, rgba(5,150,105,0.55) 75%, transparent 100%)',
-    badgeBg:     'rgba(255,255,255,0.28)',
-    badgeColor:  '#fff',
-    badgeBorder: '1px solid rgba(255,255,255,0.45)',
-    titleColor:  '#ffffff',
-    descColor:   'rgba(255,255,255,0.92)',
-    btnColor:    '#ffffff',
-  },
-  blue: {
-    gradient:    'linear-gradient(to right, rgba(29,78,216,1) 0%, rgba(29,78,216,0.97) 50%, rgba(29,78,216,0.55) 75%, transparent 100%)',
-    badgeBg:     'rgba(255,255,255,0.28)',
-    badgeColor:  '#fff',
-    badgeBorder: '1px solid rgba(255,255,255,0.45)',
-    titleColor:  '#ffffff',
-    descColor:   'rgba(255,255,255,0.92)',
-    btnColor:    '#ffffff',
-  },
-  violet: {
-    gradient:    'linear-gradient(to right, rgba(109,40,217,1) 0%, rgba(109,40,217,0.97) 50%, rgba(109,40,217,0.55) 75%, transparent 100%)',
-    badgeBg:     'rgba(255,255,255,0.28)',
-    badgeColor:  '#fff',
-    badgeBorder: '1px solid rgba(255,255,255,0.45)',
-    titleColor:  '#ffffff',
-    descColor:   'rgba(255,255,255,0.92)',
-    btnColor:    '#ffffff',
-  },
-  amber: {
-    gradient:    'linear-gradient(to right, rgba(217,119,6,1) 0%, rgba(217,119,6,0.97) 50%, rgba(217,119,6,0.55) 75%, transparent 100%)',
-    badgeBg:     'rgba(255,255,255,0.28)',
-    badgeColor:  '#fff',
-    badgeBorder: '1px solid rgba(255,255,255,0.45)',
-    titleColor:  '#ffffff',
-    descColor:   'rgba(255,255,255,0.92)',
-    btnColor:    '#ffffff',
-  },
-  rose: {
-    gradient:    'linear-gradient(to right, rgba(190,18,60,1) 0%, rgba(190,18,60,0.97) 50%, rgba(190,18,60,0.55) 75%, transparent 100%)',
-    badgeBg:     'rgba(255,255,255,0.28)',
-    badgeColor:  '#fff',
-    badgeBorder: '1px solid rgba(255,255,255,0.45)',
-    titleColor:  '#ffffff',
-    descColor:   'rgba(255,255,255,0.92)',
-    btnColor:    '#ffffff',
-  },
-  slate: {
-    gradient:    'linear-gradient(to right, rgba(15,23,42,1) 0%, rgba(15,23,42,0.97) 50%, rgba(15,23,42,0.55) 75%, transparent 100%)',
-    badgeBg:     'rgba(255,255,255,0.18)',
-    badgeColor:  '#fff',
-    badgeBorder: '1px solid rgba(255,255,255,0.3)',
-    titleColor:  '#ffffff',
-    descColor:   'rgba(255,255,255,0.85)',
-    btnColor:    '#ffffff',
-  },
+// ─── Rang → to'q CSS rang ───────────────────────────────────────────────────
+const COLOR_MAP: Record<string, { solid: string; text: string; badgeBg: string }> = {
+  white:   { solid: '255,255,255', text: '#111827', badgeBg: 'rgba(16,185,129,0.15)' },
+  emerald: { solid: '5,150,105',   text: '#ffffff', badgeBg: 'rgba(255,255,255,0.25)' },
+  blue:    { solid: '29,78,216',   text: '#ffffff', badgeBg: 'rgba(255,255,255,0.25)' },
+  violet:  { solid: '109,40,217',  text: '#ffffff', badgeBg: 'rgba(255,255,255,0.25)' },
+  amber:   { solid: '180,83,9',    text: '#ffffff', badgeBg: 'rgba(255,255,255,0.25)' },
+  rose:    { solid: '190,18,60',   text: '#ffffff', badgeBg: 'rgba(255,255,255,0.25)' },
+  slate:   { solid: '15,23,42',    text: '#ffffff', badgeBg: 'rgba(255,255,255,0.18)' },
 };
-
-
 
 interface AdSlide {
   id: number;
@@ -114,8 +47,6 @@ export const HeroCarousel = ({ userRole }: HeroCarouselProps = {}) => {
 
   useEffect(() => {
     fetchSlides();
-
-    // Sahifa fokusga qaytganda (admin paneldan asosiy sahifaga o'tganda) qayta yuklash
     const onVisible = () => {
       if (document.visibilityState === 'visible') fetchSlides();
     };
@@ -148,32 +79,48 @@ export const HeroCarousel = ({ userRole }: HeroCarouselProps = {}) => {
         <CarouselContent className="-ml-0">
           {slides.map((slide) => {
             const colorKey = slide.overlay_color || 'white';
-            const style = OVERLAY_STYLES[colorKey] || OVERLAY_STYLES['white'];
+            const c = COLOR_MAP[colorKey] || COLOR_MAP['white'];
+            const { solid, text, badgeBg } = c;
+
+            // Gradient: chap tomonda to'q rang, o'ngda shaffof
+            const gradient = `linear-gradient(to right,
+              rgba(${solid},1)    0%,
+              rgba(${solid},0.98) 40%,
+              rgba(${solid},0.80) 62%,
+              rgba(${solid},0.35) 80%,
+              transparent        100%)`;
+
+            const descColor = colorKey === 'white' ? '#374151' : 'rgba(255,255,255,0.9)';
+            const btnBorder  = colorKey === 'white' ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.35)';
+            const btnBgHover = colorKey === 'white' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.18)';
 
             return (
               <CarouselItem key={slide.id} className="pl-0 basis-full">
-                <div className="relative w-full min-h-[280px] xs:min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] rounded-2xl sm:rounded-3xl overflow-hidden group shadow-lg flex">
+                <div className="relative w-full min-h-[280px] xs:min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] rounded-2xl sm:rounded-3xl overflow-hidden group shadow-lg">
 
-                  {/* Background image */}
+                  {/* Rasm — to'liq background */}
                   <img
                     src={getImageUrl(slide.image)}
                     alt={slide.title}
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
-                  {/* Chap tomondagi rangli overlay panel — inline gradient */}
+                  {/* Rangli gradient overlay — rasm ustida, ABSOLUTE */}
                   <div
-                    className="relative z-10 w-[55%] sm:w-[48%] lg:w-[42%] flex flex-col justify-center px-5 sm:px-8 lg:px-10 py-6 sm:py-8"
-                    style={{ background: style.gradient }}
-                  >
+                    className="absolute inset-0 z-10"
+                    style={{ background: gradient }}
+                  />
+
+                  {/* Matn kontenti — gradient ustida */}
+                  <div className="absolute inset-0 z-20 flex flex-col justify-center px-5 sm:px-8 lg:px-10 py-6 sm:py-8 w-[58%] sm:w-[50%] lg:w-[44%]">
                     {/* Tag badge */}
                     {slide.tag && (
                       <span
                         className="inline-flex items-center gap-1.5 self-start px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold mb-3 sm:mb-4"
                         style={{
-                          background: style.badgeBg,
-                          color: style.badgeColor,
-                          border: style.badgeBorder,
+                          background: badgeBg,
+                          color: text,
+                          border: `1px solid ${colorKey === 'white' ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.4)'}`,
                         }}
                       >
                         <Sparkles className="w-3 h-3" />
@@ -181,39 +128,36 @@ export const HeroCarousel = ({ userRole }: HeroCarouselProps = {}) => {
                       </span>
                     )}
 
-                    {/* Title */}
+                    {/* Sarlavha */}
                     <h2
                       className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black leading-tight mb-2 sm:mb-3"
-                      style={{ color: style.titleColor }}
+                      style={{ color: text }}
                     >
                       {slide.title}
                     </h2>
 
-                    {/* Description */}
+                    {/* Tavsif */}
                     <p
                       className="text-xs sm:text-sm lg:text-base font-medium leading-relaxed line-clamp-3 sm:line-clamp-4 mb-4 sm:mb-6"
-                      style={{ color: style.descColor }}
+                      style={{ color: descColor }}
                     >
                       {slide.description}
                     </p>
 
-                    {/* CTA Button */}
+                    {/* CTA tugma */}
                     <button
                       onClick={() => navigate('/train')}
-                      className="inline-flex items-center gap-2 self-start px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl backdrop-blur-sm text-sm font-bold transition-all hover:scale-105 active:scale-95"
+                      className="inline-flex items-center gap-2 self-start px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95"
                       style={{
-                        color: style.btnColor,
-                        background: 'rgba(128,128,128,0.18)',
-                        border: `1px solid ${style.btnColor === '#ffffff' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.15)'}`,
+                        color: text,
+                        background: btnBgHover,
+                        border: `1.5px solid ${btnBorder}`,
                       }}
                     >
                       Batafsil
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
-
-                  {/* O'ng tomonda qora gradient */}
-                  <div className="absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-black/30 to-transparent pointer-events-none" />
                 </div>
               </CarouselItem>
             );
