@@ -107,8 +107,19 @@ export const HeroCarousel = ({ userRole }: HeroCarouselProps = {}) => {
   const [current, setCurrent] = useState(0);
   const [slides, setSlides] = useState<AdSlide[]>([]);
 
+  const fetchSlides = () => {
+    api.get(`ads/?t=${Date.now()}`).then(res => setSlides(res.data)).catch(() => {});
+  };
+
   useEffect(() => {
-    api.get('ads/').then(res => setSlides(res.data)).catch(() => {});
+    fetchSlides();
+
+    // Sahifa fokusga qaytganda (admin paneldan asosiy sahifaga o'tganda) qayta yuklash
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchSlides();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
   }, []);
 
   useEffect(() => {
