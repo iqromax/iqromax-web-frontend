@@ -383,9 +383,9 @@ const Landing = () => {
               </Button>
             </div>
 
-            {/* Progress Indicators */}
+            {/* Progress Indicators — faqat desktop */}
             {slides.length > 0 && (
-              <div className="absolute bottom-10 left-10 md:left-24 flex gap-3 z-20">
+              <div className="absolute bottom-10 left-10 md:left-24 hidden md:flex gap-3 z-20">
                 {slides.map((_, i) => (
                   <button
                     key={i}
@@ -399,6 +399,7 @@ const Landing = () => {
                 ))}
               </div>
             )}
+
           </div>
         </section>
 
