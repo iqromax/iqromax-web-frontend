@@ -254,7 +254,22 @@ const Landing = () => {
                           alt="" 
                           className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/20" />
+                      {/* Rangli gradient overlay — overlay_color ga qarab */}
+                        {(() => {
+                          const colorMap: Record<string, string> = {
+                            white:   '255,255,255',
+                            emerald: '5,150,105',
+                            blue:    '29,78,216',
+                            violet:  '109,40,217',
+                            amber:   '180,83,9',
+                            rose:    '190,18,60',
+                            slate:   '15,23,42',
+                          };
+                          const solid = colorMap[slide.overlay_color] || colorMap['white'];
+                          const grad = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.97) 45%, rgba(${solid},0.72) 65%, rgba(${solid},0.15) 85%, transparent 100%)`;
+                          return <div className="absolute inset-0" style={{ background: grad }} />;
+                        })()}
+
                         {/* Decorative Mesh Gradient */}
                         <div className={`absolute inset-0 opacity-30 mix-blend-multiply bg-gradient-to-br ${slideColors[i % slideColors.length]}`} />
                       </div>
@@ -262,39 +277,54 @@ const Landing = () => {
                       {/* Content Layer */}
                       <div className="relative h-full container mx-auto flex flex-col justify-center px-10 md:px-24 z-10">
                         <div className="max-w-xl">
-                          <motion.div 
-                            initial={{ y: 20, opacity: 0 }}
-                            whileInView={{ y: 0, opacity: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-black tracking-[0.2em] mb-8 w-fit uppercase"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                            {slide.tag || "AKSIYA"}
-                          </motion.div>
-                          
-                          <motion.h2 
-                            initial={{ y: 30, opacity: 0 }}
-                            whileInView={{ y: 0, opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.1 }}
-                            className="text-3xl md:text-6xl font-black mb-6 leading-[1.1] text-zinc-900 tracking-tight"
-                          >
-                            {slide.title.split(' ').map((word: string, idx: number) => (
-                              <span key={idx} className={idx === slide.title.split(' ').length - 1 ? 'text-emerald-500' : ''}>
-                                {word}{' '}
-                              </span>
-                            ))}
-                          </motion.h2>
-                          
-                          <motion.p 
-                            initial={{ y: 30, opacity: 0 }}
-                            whileInView={{ y: 0, opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="text-zinc-500 text-sm md:text-lg font-medium max-w-md leading-relaxed"
-                          >
-                            {slide.description || slide.subtitle}
-                          </motion.p>
+                          {(() => {
+                            const isLight = !slide.overlay_color || slide.overlay_color === 'white';
+                            const textMain   = isLight ? '#111827' : '#ffffff';
+                            const textAccent = isLight ? '#10b981' : 'rgba(255,255,255,0.9)';
+                            const textSub    = isLight ? '#6b7280' : 'rgba(255,255,255,0.8)';
+                            const badgeBg    = isLight ? 'rgba(16,185,129,0.1)'  : 'rgba(255,255,255,0.2)';
+                            const badgeBorder= isLight ? 'rgba(16,185,129,0.25)' : 'rgba(255,255,255,0.35)';
+                            const badgeColor = isLight ? '#059669' : '#fff';
+                            return (
+                              <>
+                                <motion.div
+                                  initial={{ y: 20, opacity: 0 }}
+                                  whileInView={{ y: 0, opacity: 1 }}
+                                  transition={{ duration: 0.5 }}
+                                  className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black tracking-[0.2em] mb-8 w-fit uppercase"
+                                  style={{ background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}
+                                >
+                                  <Sparkles className="w-4 h-4" />
+                                  {slide.tag || "AKSIYA"}
+                                </motion.div>
+                                <motion.h2
+                                  initial={{ y: 30, opacity: 0 }}
+                                  whileInView={{ y: 0, opacity: 1 }}
+                                  transition={{ duration: 0.6, delay: 0.1 }}
+                                  className="text-3xl md:text-6xl font-black mb-6 leading-[1.1] tracking-tight"
+                                  style={{ color: textMain }}
+                                >
+                                  {slide.title.split(' ').map((word: string, idx: number) => (
+                                    <span key={idx} style={{ color: idx === slide.title.split(' ').length - 1 ? textAccent : textMain }}>
+                                      {word}{' '}
+                                    </span>
+                                  ))}
+                                </motion.h2>
+                                <motion.p
+                                  initial={{ y: 30, opacity: 0 }}
+                                  whileInView={{ y: 0, opacity: 1 }}
+                                  transition={{ duration: 0.6, delay: 0.2 }}
+                                  className="text-sm md:text-lg font-medium max-w-md leading-relaxed"
+                                  style={{ color: textSub }}
+                                >
+                                  {slide.description || slide.subtitle}
+                                </motion.p>
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
+
                     </div>
                   ))
                 )}

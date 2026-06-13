@@ -82,13 +82,8 @@ export const HeroCarousel = ({ userRole }: HeroCarouselProps = {}) => {
             const c = COLOR_MAP[colorKey] || COLOR_MAP['white'];
             const { solid, text, badgeBg } = c;
 
-            // Gradient: chap tomonda to'q rang, o'ngda shaffof
-            const gradient = `linear-gradient(to right,
-              rgba(${solid},1)    0%,
-              rgba(${solid},0.98) 40%,
-              rgba(${solid},0.80) 62%,
-              rgba(${solid},0.35) 80%,
-              transparent        100%)`;
+            // Gradient: bir qatorda (CSS newline muammosidan xoli)
+            const gradient = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.97) 45%, rgba(${solid},0.75) 65%, rgba(${solid},0.2) 82%, transparent 100%)`;
 
             const descColor = colorKey === 'white' ? '#374151' : 'rgba(255,255,255,0.9)';
             const btnBorder  = colorKey === 'white' ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.35)';
