@@ -245,88 +245,120 @@ const Landing = () => {
                     </div>
                   </div>
                 ) : (
-                  slides.map((slide, i) => (
-                    <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[400px] md:h-[550px] overflow-hidden">
-                      {/* Background Layer */}
-                      <div className="absolute inset-0">
-                        <img 
-                          src={getImageUrl(slide.image)} 
-                          alt="" 
-                          className="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
-                        />
-                      {/* Rangli gradient overlay — overlay_color ga qarab */}
-                        {(() => {
-                          const colorMap: Record<string, string> = {
-                            white:   '255,255,255',
-                            emerald: '5,150,105',
-                            blue:    '29,78,216',
-                            violet:  '109,40,217',
-                            amber:   '180,83,9',
-                            rose:    '190,18,60',
-                            slate:   '15,23,42',
-                          };
-                          const solid = colorMap[slide.overlay_color] || colorMap['white'];
-                          const grad = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.97) 45%, rgba(${solid},0.72) 65%, rgba(${solid},0.15) 85%, transparent 100%)`;
-                          return <div className="absolute inset-0" style={{ background: grad }} />;
-                        })()}
+                   slides.map((slide, i) => {
+                    const colorMap: Record<string, string> = {
+                      white:   '255,255,255',
+                      emerald: '5,150,105',
+                      blue:    '29,78,216',
+                      violet:  '109,40,217',
+                      amber:   '180,83,9',
+                      rose:    '190,18,60',
+                      slate:   '15,23,42',
+                    };
+                    const solid = colorMap[slide.overlay_color] || colorMap['white'];
+                    const isLight = !slide.overlay_color || slide.overlay_color === 'white';
+                    const textMain   = isLight ? '#111827' : '#ffffff';
+                    const textAccent = isLight ? '#10b981' : 'rgba(255,255,255,0.92)';
+                    const textSub    = isLight ? '#6b7280' : 'rgba(255,255,255,0.8)';
+                    const badgeBg    = isLight ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.22)';
+                    const badgeBorder= isLight ? 'rgba(16,185,129,0.3)'  : 'rgba(255,255,255,0.4)';
+                    const badgeColor = isLight ? '#059669' : '#fff';
 
-                        {/* Decorative Mesh Gradient */}
-                        <div className={`absolute inset-0 opacity-30 mix-blend-multiply bg-gradient-to-br ${slideColors[i % slideColors.length]}`} />
+                    // Desktop: chapdan o'ngga gradient
+                    const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.97) 45%, rgba(${solid},0.72) 65%, rgba(${solid},0.12) 85%, transparent 100%)`;
+                    // Mobile: pastdan yuqoriga gradient
+                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.97) 42%, rgba(${solid},0.65) 62%, rgba(${solid},0.1) 82%, transparent 100%)`;
+
+                    return (
+                    <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[420px] md:h-[550px] overflow-hidden">
+                      {/* Rasm — to'liq background */}
+                      <img
+                        src={getImageUrl(slide.image)}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
+                      />
+
+                      {/* MOBILE gradient: pastdan yuqoriga (md dan katta bo'lsa yashiriladi) */}
+                      <div
+                        className="absolute inset-0 z-10 md:hidden"
+                        style={{ background: gradMobile }}
+                      />
+
+                      {/* DESKTOP gradient: chapdan o'ngga (faqat md va undan katta) */}
+                      <div
+                        className="absolute inset-0 z-10 hidden md:block"
+                        style={{ background: gradDesktop }}
+                      />
+
+                      {/* Decorative Mesh Gradient */}
+                      <div className={`absolute inset-0 z-10 opacity-20 mix-blend-multiply bg-gradient-to-br ${slideColors[i % slideColors.length]}`} />
+
+                      {/* MOBILE Content — pastda */}
+                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-6 pb-7 pt-10">
+                        {slide.tag && (
+                          <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-[10px] font-black tracking-[0.18em] mb-4 w-fit uppercase"
+                            style={{ background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}
+                          >
+                            <Sparkles className="w-3 h-3" />
+                            {slide.tag}
+                          </span>
+                        )}
+                        <h2
+                          className="text-2xl font-black mb-2 leading-tight tracking-tight"
+                          style={{ color: textMain }}
+                        >
+                          {slide.title.split(' ').map((word: string, idx: number) => (
+                            <span key={idx} style={{ color: idx === slide.title.split(' ').length - 1 ? textAccent : textMain }}>
+                              {word}{' '}
+                            </span>
+                          ))}
+                        </h2>
+                        <p className="text-sm font-medium leading-relaxed line-clamp-2" style={{ color: textSub }}>
+                          {slide.description || slide.subtitle}
+                        </p>
                       </div>
 
-                      {/* Content Layer */}
-                      <div className="relative h-full container mx-auto flex flex-col justify-center px-10 md:px-24 z-10">
+                      {/* DESKTOP Content — chapda */}
+                      <div className="hidden md:flex absolute inset-0 z-20 flex-col justify-center px-24">
                         <div className="max-w-xl">
-                          {(() => {
-                            const isLight = !slide.overlay_color || slide.overlay_color === 'white';
-                            const textMain   = isLight ? '#111827' : '#ffffff';
-                            const textAccent = isLight ? '#10b981' : 'rgba(255,255,255,0.9)';
-                            const textSub    = isLight ? '#6b7280' : 'rgba(255,255,255,0.8)';
-                            const badgeBg    = isLight ? 'rgba(16,185,129,0.1)'  : 'rgba(255,255,255,0.2)';
-                            const badgeBorder= isLight ? 'rgba(16,185,129,0.25)' : 'rgba(255,255,255,0.35)';
-                            const badgeColor = isLight ? '#059669' : '#fff';
-                            return (
-                              <>
-                                <motion.div
-                                  initial={{ y: 20, opacity: 0 }}
-                                  whileInView={{ y: 0, opacity: 1 }}
-                                  transition={{ duration: 0.5 }}
-                                  className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black tracking-[0.2em] mb-8 w-fit uppercase"
-                                  style={{ background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}
-                                >
-                                  <Sparkles className="w-4 h-4" />
-                                  {slide.tag || "AKSIYA"}
-                                </motion.div>
-                                <motion.h2
-                                  initial={{ y: 30, opacity: 0 }}
-                                  whileInView={{ y: 0, opacity: 1 }}
-                                  transition={{ duration: 0.6, delay: 0.1 }}
-                                  className="text-3xl md:text-6xl font-black mb-6 leading-[1.1] tracking-tight"
-                                  style={{ color: textMain }}
-                                >
-                                  {slide.title.split(' ').map((word: string, idx: number) => (
-                                    <span key={idx} style={{ color: idx === slide.title.split(' ').length - 1 ? textAccent : textMain }}>
-                                      {word}{' '}
-                                    </span>
-                                  ))}
-                                </motion.h2>
-                                <motion.p
-                                  initial={{ y: 30, opacity: 0 }}
-                                  whileInView={{ y: 0, opacity: 1 }}
-                                  transition={{ duration: 0.6, delay: 0.2 }}
-                                  className="text-sm md:text-lg font-medium max-w-md leading-relaxed"
-                                  style={{ color: textSub }}
-                                >
-                                  {slide.description || slide.subtitle}
-                                </motion.p>
-                              </>
-                            );
-                          })()}
+                          <motion.div
+                            initial={{ y: 20, opacity: 0 }}
+                            whileInView={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black tracking-[0.2em] mb-8 w-fit uppercase"
+                            style={{ background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}
+                          >
+                            <Sparkles className="w-4 h-4" />
+                            {slide.tag || "AKSIYA"}
+                          </motion.div>
+                          <motion.h2
+                            initial={{ y: 30, opacity: 0 }}
+                            whileInView={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className="text-5xl xl:text-6xl font-black mb-6 leading-[1.1] tracking-tight"
+                            style={{ color: textMain }}
+                          >
+                            {slide.title.split(' ').map((word: string, idx: number) => (
+                              <span key={idx} style={{ color: idx === slide.title.split(' ').length - 1 ? textAccent : textMain }}>
+                                {word}{' '}
+                              </span>
+                            ))}
+                          </motion.h2>
+                          <motion.p
+                            initial={{ y: 30, opacity: 0 }}
+                            whileInView={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="text-lg font-medium max-w-md leading-relaxed"
+                            style={{ color: textSub }}
+                          >
+                            {slide.description || slide.subtitle}
+                          </motion.p>
                         </div>
                       </div>
-
                     </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
