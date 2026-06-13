@@ -264,10 +264,11 @@ const Landing = () => {
                     const badgeBorder= isLight ? 'rgba(16,185,129,0.3)'  : 'rgba(255,255,255,0.4)';
                     const badgeColor = isLight ? '#059669' : '#fff';
 
-                    // Desktop: chapdan o'ngga gradient
-                    const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.97) 45%, rgba(${solid},0.72) 65%, rgba(${solid},0.12) 85%, transparent 100%)`;
-                    // Mobile: pastdan yuqoriga gradient
-                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.97) 42%, rgba(${solid},0.65) 62%, rgba(${solid},0.1) 82%, transparent 100%)`;
+                    // Desktop: chapdan o'ngga gradient — faqat chap ~40% ni qoplaydi
+                    const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.95) 28%, rgba(${solid},0.55) 45%, rgba(${solid},0.1) 58%, transparent 70%)`;
+                    // Mobile: pastdan yuqoriga gradient — faqat pastki ~45% ni qoplaydi
+                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.95) 30%, rgba(${solid},0.55) 48%, rgba(${solid},0.08) 65%, transparent 78%)`;
+
 
                     return (
                     <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[420px] md:h-[550px] overflow-hidden">
