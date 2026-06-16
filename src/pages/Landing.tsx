@@ -257,12 +257,30 @@ const Landing = () => {
                     };
                     const solid = colorMap[slide.overlay_color] || colorMap['white'];
                     const isLight = !slide.overlay_color || slide.overlay_color === 'white';
-                    const textMain   = isLight ? '#111827' : '#ffffff';
-                    const textAccent = isLight ? '#10b981' : 'rgba(255,255,255,0.92)';
-                    const textSub    = isLight ? '#6b7280' : 'rgba(255,255,255,0.8)';
+
+                    // text_color API fieldiga qarab matn rangi
+                    const TEXT_COLOR_MAP: Record<string, string> = {
+                      white:   '#ffffff',
+                      dark:    '#111827',
+                      emerald: '#059669',
+                      blue:    '#1d4ed8',
+                      amber:   '#b45309',
+                      rose:    '#be185d',
+                    };
+                    const resolvedTextColor = slide.text_color && slide.text_color !== 'dark' && slide.text_color !== 'white'
+                      ? TEXT_COLOR_MAP[slide.text_color] || (isLight ? '#111827' : '#ffffff')
+                      : slide.text_color === 'white' ? '#ffffff'
+                      : isLight ? '#111827' : '#ffffff';
+
+                    const textMain   = resolvedTextColor;
+                    const textAccent = resolvedTextColor;
+                    const textSub    = slide.text_color === 'white'
+                      ? 'rgba(255,255,255,0.85)'
+                      : isLight ? '#6b7280' : 'rgba(255,255,255,0.8)';
                     const badgeBg    = isLight ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.22)';
                     const badgeBorder= isLight ? 'rgba(16,185,129,0.3)'  : 'rgba(255,255,255,0.4)';
-                    const badgeColor = isLight ? '#059669' : '#fff';
+                    const badgeColor = resolvedTextColor;
+
 
                     // Desktop: chapdan o'ngga gradient — faqat chap ~30% ni qoplaydi
                     const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.92) 18%, rgba(${solid},0.45) 30%, rgba(${solid},0.05) 42%, transparent 52%)`;

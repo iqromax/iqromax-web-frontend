@@ -111,6 +111,7 @@ const AdminDashboard = () => {
   const [ads, setAds] = useState<any[]>([]);
   const [adImageFile, setAdImageFile] = useState<File | null>(null);
   const [adOverlayColor, setAdOverlayColor] = useState('white');
+  const [adTextColor, setAdTextColor] = useState('dark');
   
   // New dynamic states
   const [features, setFeatures] = useState<any[]>([]);
@@ -305,6 +306,7 @@ const AdminDashboard = () => {
     formData.append('tag', section);
     formData.append('image', adImageFile);
     formData.append('overlay_color', adOverlayColor);
+    formData.append('text_color', adTextColor);
 
     try {
       await api.post('ads/', formData);
@@ -324,6 +326,7 @@ const AdminDashboard = () => {
     setEditingAd(ad);
     setImagePreview(ad.image);
     setAdOverlayColor(ad.overlay_color || 'white');
+    setAdTextColor(ad.text_color || 'dark');
     setIsEditAdModalOpen(true);
   };
 
@@ -339,6 +342,7 @@ const AdminDashboard = () => {
     formData.append('description', desc);
     formData.append('tag', section);
     formData.append('overlay_color', adOverlayColor);
+    formData.append('text_color', adTextColor);
     if (adImageFile) {
       formData.append('image', adImageFile);
     }
@@ -752,7 +756,7 @@ const AdminDashboard = () => {
                     <Textarea id="desc" placeholder="Ma'lumot..." className="rounded-xl border-zinc-100 bg-zinc-50 focus:bg-white transition-all min-h-[80px] text-sm resize-none" required />
                   </div>
 
-                  {/* Rang tanlash */}
+                  {/* Fon rangi tanlash */}
                   <div className="space-y-2">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Matn fonining rangi</Label>
                     <div className="grid grid-cols-7 gap-2">
@@ -783,6 +787,41 @@ const AdminDashboard = () => {
                         white:'Oq', emerald:'Yashil', blue:"Ko'k", violet:'Binafsha',
                         amber:'Sariq', rose:'Qizil', slate:"To'q ko'k"
                       }[adOverlayColor]}</span>
+                    </p>
+                  </div>
+
+                  {/* Matn rangi tanlash */}
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Matn rangi</Label>
+                    <div className="grid grid-cols-6 gap-2">
+                      {[
+                        { key: 'white',   bg: 'bg-white border-2 border-zinc-300', label: 'Oq',     textPreview: 'A', textCls: 'text-zinc-400' },
+                        { key: 'dark',    bg: 'bg-zinc-900',                        label: 'Qora',   textPreview: 'A', textCls: 'text-white' },
+                        { key: 'emerald', bg: 'bg-emerald-500',                     label: 'Yashil', textPreview: 'A', textCls: 'text-white' },
+                        { key: 'blue',    bg: 'bg-blue-600',                        label: 'Ko\'k',  textPreview: 'A', textCls: 'text-white' },
+                        { key: 'amber',   bg: 'bg-amber-400',                       label: 'Sariq',  textPreview: 'A', textCls: 'text-white' },
+                        { key: 'rose',    bg: 'bg-rose-600',                        label: 'Qizil',  textPreview: 'A', textCls: 'text-white' },
+                      ].map(c => (
+                        <button
+                          key={c.key}
+                          type="button"
+                          title={c.label}
+                          onClick={() => setAdTextColor(c.key)}
+                          className={`h-8 w-full rounded-xl ${c.bg} flex items-center justify-center font-black text-sm transition-all ${
+                            adTextColor === c.key
+                              ? 'ring-2 ring-offset-2 ring-zinc-900 scale-110'
+                              : 'hover:scale-105 opacity-70 hover:opacity-100'
+                          }`}
+                        >
+                          <span className={c.textCls}>A</span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[9px] text-zinc-400 font-medium">
+                      Tanlangan: <span className="font-bold text-zinc-700">{{
+                        white:'Oq', dark:'Qora', emerald:'Yashil',
+                        blue:"Ko'k", amber:'Sariq', rose:'Qizil'
+                      }[adTextColor]}</span>
                     </p>
                   </div>
 
@@ -878,6 +917,42 @@ const AdminDashboard = () => {
                       }[adOverlayColor]}</span>
                     </p>
                   </div>
+
+                  {/* Matn rangi tanlash - Edit */}
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Matn rangi</Label>
+                    <div className="grid grid-cols-6 gap-2">
+                      {[
+                        { key: 'white',   bg: 'bg-white border-2 border-zinc-300', label: 'Oq',     textCls: 'text-zinc-400' },
+                        { key: 'dark',    bg: 'bg-zinc-900',                        label: 'Qora',   textCls: 'text-white' },
+                        { key: 'emerald', bg: 'bg-emerald-500',                     label: 'Yashil', textCls: 'text-white' },
+                        { key: 'blue',    bg: 'bg-blue-600',                        label: 'Ko\'k',  textCls: 'text-white' },
+                        { key: 'amber',   bg: 'bg-amber-400',                       label: 'Sariq',  textCls: 'text-white' },
+                        { key: 'rose',    bg: 'bg-rose-600',                        label: 'Qizil',  textCls: 'text-white' },
+                      ].map(c => (
+                        <button
+                          key={c.key}
+                          type="button"
+                          title={c.label}
+                          onClick={() => setAdTextColor(c.key)}
+                          className={`h-8 w-full rounded-xl ${c.bg} flex items-center justify-center font-black text-sm transition-all ${
+                            adTextColor === c.key
+                              ? 'ring-2 ring-offset-2 ring-zinc-900 scale-110'
+                              : 'hover:scale-105 opacity-70 hover:opacity-100'
+                          }`}
+                        >
+                          <span className={c.textCls}>A</span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[9px] text-zinc-400 font-medium">
+                      Tanlangan: <span className="font-bold text-zinc-700">{{
+                        white:'Oq', dark:'Qora', emerald:'Yashil',
+                        blue:"Ko'k", amber:'Sariq', rose:'Qizil'
+                      }[adTextColor]}</span>
+                    </p>
+                  </div>
+
 
                   <DialogFooter className="pt-2">
                     <Button type="submit" className="w-full h-12 rounded-2xl bg-zinc-900 hover:bg-emerald-600 text-white font-black text-base shadow-xl shadow-zinc-900/10 transition-all">
