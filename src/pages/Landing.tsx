@@ -277,8 +277,8 @@ const Landing = () => {
 
                     // Desktop: chapdan o'ngga gradient — faqat chap ~30% ni qoplaydi
                     const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.92) 18%, rgba(${solid},0.45) 30%, rgba(${solid},0.05) 42%, transparent 52%)`;
-                    // Mobile: pastdan yuqoriga gradient — faqat pastki ~35% ni qoplaydi
-                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.92) 20%, rgba(${solid},0.45) 32%, rgba(${solid},0.05) 44%, transparent 56%)`;
+                    // Mobile: pastdan yuqoriga gradient — matn sig'ishi uchun ~75% ni qoplaydi
+                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.92) 25%, rgba(${solid},0.55) 45%, rgba(${solid},0.05) 65%, transparent 75%)`;
 
 
                     return (
@@ -306,18 +306,18 @@ const Landing = () => {
                       <div className={`absolute inset-0 z-10 opacity-20 mix-blend-multiply bg-gradient-to-br ${slideColors[i % slideColors.length]}`} />
 
                       {/* MOBILE Content — pastda */}
-                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-6 pb-7 pt-10">
+                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-4 pb-3 pt-6">
                         {slide.tag && (
                           <span
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-[10px] font-black tracking-[0.18em] mb-4 w-fit uppercase"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[9px] font-black tracking-[0.15em] mb-1.5 w-fit uppercase"
                             style={{ background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}
                           >
-                            <Sparkles className="w-3 h-3" />
+                            <Sparkles className="w-2.5 h-2.5" />
                             {slide.tag}
                           </span>
                         )}
                         <h2
-                          className="text-2xl font-black mb-2 leading-tight tracking-tight"
+                          className="text-lg font-black mb-1 leading-tight tracking-tight"
                           style={{ color: textMain }}
                         >
                           {slide.title.split(' ').map((word: string, idx: number) => (
@@ -326,7 +326,7 @@ const Landing = () => {
                             </span>
                           ))}
                         </h2>
-                        <p className="text-sm font-medium leading-relaxed line-clamp-2" style={{ color: textSub }}>
+                        <p className="text-xs font-medium leading-snug line-clamp-2" style={{ color: textSub }}>
                           {slide.description || slide.subtitle}
                         </p>
                       </div>
