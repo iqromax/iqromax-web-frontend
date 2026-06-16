@@ -306,29 +306,31 @@ const Landing = () => {
                       <div className={`absolute inset-0 z-10 opacity-20 mix-blend-multiply bg-gradient-to-br ${slideColors[i % slideColors.length]}`} />
 
                       {/* MOBILE Content — pastda */}
-                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-4 pb-3 pt-6">
+                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-4 pb-3 pt-6 flex justify-between items-end gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h2
+                            className="text-lg font-black mb-1 leading-tight tracking-tight"
+                            style={{ color: textMain }}
+                          >
+                            {slide.title.split(' ').map((word: string, idx: number) => (
+                              <span key={idx} style={{ color: idx === slide.title.split(' ').length - 1 ? textAccent : textMain }}>
+                                {word}{' '}
+                              </span>
+                            ))}
+                          </h2>
+                          <p className="text-xs font-medium leading-snug line-clamp-2" style={{ color: textSub }}>
+                            {slide.description || slide.subtitle}
+                          </p>
+                        </div>
                         {slide.tag && (
                           <span
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[9px] font-black tracking-[0.15em] mb-1.5 w-fit uppercase"
+                            className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black tracking-[0.15em] uppercase"
                             style={{ background: badgeBg, color: badgeColor, border: `1px solid ${badgeBorder}` }}
                           >
                             <Sparkles className="w-2.5 h-2.5" />
                             {slide.tag}
                           </span>
                         )}
-                        <h2
-                          className="text-lg font-black mb-1 leading-tight tracking-tight"
-                          style={{ color: textMain }}
-                        >
-                          {slide.title.split(' ').map((word: string, idx: number) => (
-                            <span key={idx} style={{ color: idx === slide.title.split(' ').length - 1 ? textAccent : textMain }}>
-                              {word}{' '}
-                            </span>
-                          ))}
-                        </h2>
-                        <p className="text-xs font-medium leading-snug line-clamp-2" style={{ color: textSub }}>
-                          {slide.description || slide.subtitle}
-                        </p>
                       </div>
 
                       {/* DESKTOP Content — chapda */}
