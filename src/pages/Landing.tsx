@@ -267,12 +267,13 @@ const Landing = () => {
                       rose: '#e11d48'
                     };
                     const fallbackColor = isLight ? '#111827' : '#ffffff';
-                    const textMain   = slide.text_color ? textColorMap[slide.text_color] : fallbackColor;
-                    const textAccent = isLight ? '#10b981' : 'rgba(255,255,255,0.92)';
-                    const textSub    = isLight ? '#6b7280' : 'rgba(255,255,255,0.8)';
-                    const badgeBg    = isLight ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.22)';
-                    const badgeBorder= isLight ? 'rgba(16,185,129,0.3)'  : 'rgba(255,255,255,0.4)';
-                    const badgeColor = isLight ? '#059669' : '#fff';
+                    const hasCustomText = !!slide.text_color;
+                    const textMain   = hasCustomText ? textColorMap[slide.text_color] : fallbackColor;
+                    const textAccent = hasCustomText ? textMain : (isLight ? '#10b981' : 'rgba(255,255,255,0.92)');
+                    const textSub    = hasCustomText ? textMain : (isLight ? '#6b7280' : 'rgba(255,255,255,0.8)');
+                    const badgeBg    = hasCustomText ? 'rgba(0,0,0,0.05)' : (isLight ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.22)');
+                    const badgeBorder= hasCustomText ? textMain : (isLight ? 'rgba(16,185,129,0.3)'  : 'rgba(255,255,255,0.4)');
+                    const badgeColor = hasCustomText ? textMain : (isLight ? '#059669' : '#fff');
 
                     // Desktop: chapdan o'ngga gradient — faqat chap ~30% ni qoplaydi
                     const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.92) 18%, rgba(${solid},0.45) 30%, rgba(${solid},0.05) 42%, transparent 52%)`;
