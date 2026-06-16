@@ -271,7 +271,7 @@ const Landing = () => {
 
 
                     return (
-                    <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[200px] md:h-[550px] overflow-hidden">
+                    <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[180px] md:h-[550px] overflow-hidden">
                       {/* Rasm — to'liq background */}
                       <img
                         src={getImageUrl(slide.image)}
