@@ -306,7 +306,7 @@ const Landing = () => {
                       <div className={`absolute inset-0 z-10 opacity-20 mix-blend-multiply bg-gradient-to-br ${slideColors[i % slideColors.length]}`} />
 
                       {/* MOBILE Content — pastda */}
-                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-4 pb-3 pt-6 flex justify-between items-end gap-2">
+                      <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-6 pb-3 pt-6 flex justify-between items-end gap-2">
                         <div className="flex-1 min-w-0">
                           <h2
                             className="text-lg font-black mb-1 leading-tight tracking-tight"
