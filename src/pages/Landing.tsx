@@ -264,10 +264,10 @@ const Landing = () => {
                     const badgeBorder= isLight ? 'rgba(16,185,129,0.3)'  : 'rgba(255,255,255,0.4)';
                     const badgeColor = isLight ? '#059669' : '#fff';
 
-                    // Desktop: chapdan o'ngga gradient — faqat chap ~40% ni qoplaydi
-                    const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.95) 28%, rgba(${solid},0.55) 45%, rgba(${solid},0.1) 58%, transparent 70%)`;
-                    // Mobile: pastdan yuqoriga gradient — faqat pastki ~45% ni qoplaydi
-                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.95) 30%, rgba(${solid},0.55) 48%, rgba(${solid},0.08) 65%, transparent 78%)`;
+                    // Desktop: chapdan o'ngga gradient — faqat chap ~30% ni qoplaydi
+                    const gradDesktop = `linear-gradient(to right, rgba(${solid},1) 0%, rgba(${solid},0.92) 18%, rgba(${solid},0.45) 30%, rgba(${solid},0.05) 42%, transparent 52%)`;
+                    // Mobile: pastdan yuqoriga gradient — faqat pastki ~35% ni qoplaydi
+                    const gradMobile  = `linear-gradient(to top, rgba(${solid},1) 0%, rgba(${solid},0.92) 20%, rgba(${solid},0.45) 32%, rgba(${solid},0.05) 44%, transparent 56%)`;
 
 
                     return (
