@@ -271,12 +271,12 @@ const Landing = () => {
 
 
                     return (
-                    <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[420px] md:h-[550px] overflow-hidden">
+                    <div key={slide.id} className="flex-[0_0_100%] min-w-0 relative h-[500px] md:h-[550px] overflow-hidden">
                       {/* Rasm — to'liq background */}
                       <img
                         src={getImageUrl(slide.image)}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
+                        className="absolute inset-0 w-full h-full object-cover object-top md:object-center transition-transform duration-[10s] group-hover:scale-110"
                       />
 
                       {/* MOBILE gradient: pastdan yuqoriga (md dan katta bo'lsa yashiriladi) */}
