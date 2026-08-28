@@ -5,12 +5,14 @@ import iqromaxLogo from '../assets/iqromax-logo-full.png';
 
 const AppDownloadLanding = () => {
   const [searchParams] = useSearchParams();
-  const promoCode = searchParams.get('promo') || searchParams.get('ref');
+  const rawPromoParam = searchParams.get('promo') || searchParams.get('ref');
   const [isCopied, setIsCopied] = useState(false);
   const [downloadLink, setDownloadLink] = useState('https://iqromax.net');
+  const [isValidatingPromo, setIsValidatingPromo] = useState(!!rawPromoParam);
+  const [validPromoCode, setValidPromoCode] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchLink() {
+    async function fetchLinkAndValidate() {
       try {
         const res = await fetch('/api/download-link');
         if (res.ok) {
@@ -18,13 +20,36 @@ const AppDownloadLanding = () => {
           if (data.link) setDownloadLink(data.link);
         }
       } catch (e) {}
+
+      if (rawPromoParam) {
+        try {
+          const cleanPromo = rawPromoParam.replace(/^#+/, '').trim();
+          const res = await fetch(`/api/promo/validate/${encodeURIComponent(cleanPromo)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.valid && data.promo) {
+              setValidPromoCode(data.promo);
+            } else {
+              setValidPromoCode(null);
+            }
+          } else {
+            setValidPromoCode(null);
+          }
+        } catch (e) {
+          setValidPromoCode(null);
+        } finally {
+          setIsValidatingPromo(false);
+        }
+      } else {
+        setIsValidatingPromo(false);
+      }
     }
-    fetchLink();
-  }, []);
+    fetchLinkAndValidate();
+  }, [rawPromoParam]);
 
   const handleCopyPromo = () => {
-    if (!promoCode) return;
-    navigator.clipboard.writeText(promoCode);
+    if (!validPromoCode) return;
+    navigator.clipboard.writeText(validPromoCode);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2500);
   };
@@ -56,8 +81,8 @@ const AppDownloadLanding = () => {
       {/* Main Content Area */}
       <main className="w-full max-w-4xl px-4 py-6 flex flex-col items-center text-center z-10 space-y-8">
         
-        {/* Special Invitation Badge (Only if invited via promo link) */}
-        {promoCode && (
+        {/* Special Invitation Badge (Only if invited via valid promo link) */}
+        {!isValidatingPromo && validPromoCode && (
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm">
             <Gift className="w-4 h-4 text-emerald-600" />
             <span className="text-xs sm:text-sm font-bold text-emerald-700">
@@ -76,8 +101,8 @@ const AppDownloadLanding = () => {
           </p>
         </div>
 
-        {/* Promo Code Card (Rendered ONLY when promo URL parameter is present) */}
-        {promoCode && (
+        {/* Promo Code Card (Rendered ONLY when promo URL parameter is valid and user exists in DB) */}
+        {!isValidatingPromo && validPromoCode && (
           <div className="w-full max-w-md bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-200/60 relative group">
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-[11px] px-4 py-1.5 rounded-full shadow-md uppercase tracking-wider">
               Sizning Bonus Promokodingiz
@@ -86,7 +111,7 @@ const AppDownloadLanding = () => {
             <div className="mt-2 space-y-3">
               <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <span className="text-2xl sm:text-3xl font-mono font-black text-emerald-600 tracking-wider">
-                  {promoCode}
+                  {validPromoCode}
                 </span>
                 <button
                   onClick={handleCopyPromo}
