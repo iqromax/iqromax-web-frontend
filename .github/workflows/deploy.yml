@@ -33,6 +33,7 @@ jobs:
           source: "dist/*"
           target: "/var/www/iqromax_mobile/iqromax-web-frontend/dist"
           strip_prefix: "dist"
+          rm: true
 
       - name: 6. Reload Nginx on VPS
         uses: appleboy/ssh-action@master
@@ -41,4 +42,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            sudo chown -R www-data:www-data /var/www/iqromax_mobile/iqromax-web-frontend/dist
+            sudo chmod -R 755 /var/www/iqromax_mobile/iqromax-web-frontend/dist
             sudo systemctl reload nginx
