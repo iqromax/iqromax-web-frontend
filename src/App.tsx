@@ -63,6 +63,7 @@ const LiveClassroom = lazy(() => import("@/pages/LiveClassroom"));
 const Subjects = lazy(() => import("@/pages/Subjects"));
 const SubjectPractice = lazy(() => import("@/pages/SubjectPractice"));
 const LMSDashboard = lazy(() => import("@/pages/LMSDashboard"));
+const AppDownloadLanding = lazy(() => import("@/pages/AppDownloadLanding"));
 
 // Lazy load heavy widgets
 const HelpChatWidget = lazy(() => import("@/components/HelpChatWidget").then(m => ({ default: m.HelpChatWidget })));
@@ -111,6 +112,7 @@ const App = () => (
                   <Suspense fallback={<LazyFallback />}>
                     <Routes>
                       <Route path="/" element={<Landing />} />
+                      <Route path="/downloading" element={<AppDownloadLanding />} />
                       <Route path="/home" element={<KidsHome />} />
                       <Route path="/feature/:id" element={<FeatureDetail />} />
                       <Route path="/blog/:id" element={<BlogDetail />} />
