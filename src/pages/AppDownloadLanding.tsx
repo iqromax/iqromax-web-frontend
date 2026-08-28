@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Download, Gift, CheckCircle2, ShieldCheck, Zap, Trophy, ArrowRight } from 'lucide-react';
 import iqromaxLogo from '../assets/iqromax-logo-full.png';
@@ -7,6 +7,20 @@ const AppDownloadLanding = () => {
   const [searchParams] = useSearchParams();
   const promoCode = searchParams.get('promo') || searchParams.get('ref');
   const [isCopied, setIsCopied] = useState(false);
+  const [downloadLink, setDownloadLink] = useState('https://iqromax.net');
+
+  useEffect(() => {
+    async function fetchLink() {
+      try {
+        const res = await fetch('/api/download-link');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.link) setDownloadLink(data.link);
+        }
+      } catch (e) {}
+    }
+    fetchLink();
+  }, []);
 
   const handleCopyPromo = () => {
     if (!promoCode) return;
@@ -16,8 +30,8 @@ const AppDownloadLanding = () => {
   };
 
   const handleDownloadApp = () => {
-    // Redirect to direct APK or store link
-    window.location.href = 'https://iqromax.net';
+    // Redirect to direct APK or store link configured by admin
+    window.location.href = downloadLink;
   };
 
   return (
